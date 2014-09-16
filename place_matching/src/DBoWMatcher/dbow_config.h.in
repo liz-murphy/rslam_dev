@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine DBOW_ORB_VOC_FILE "@DBOW_ORB_VOC_FILE@"

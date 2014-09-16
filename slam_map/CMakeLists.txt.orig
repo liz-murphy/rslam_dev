@@ -1,0 +1,48 @@
+project(SlamMap)
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") 
+
+find_package( Sophus REQUIRED )
+
+include_directories(
+  ${Sophus_INCLUDE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}	# For protobuf output
+  )
+
+set(DATASTORE_SRCS
+  src/DataStore/PersistentDataStore.cpp
+  )
+
+set( _MAP_SOURCES
+  src/ReferenceFrame.cpp
+  src/TransformEdge.cpp
+  src/Landmark.cpp
+  src/SlamMap.cpp
+  src/Measurement.cpp
+  src/sqlite3/sqlite3.c
+  src/PointerSlamMapProxy.cpp
+  src/GlobalMapView/GlobalMapView.cpp
+  src/GlobalMapView/GlobalMapViewUpdater.cpp
+  src/ProtobufIO.cpp
+  src/FrameObjectProtobufIO.cpp
+  src/MapEvent.cpp
+  src/NotificationCenter.cpp
+  ${DATASTORE_SRCS}
+  )
+
+
+set(SLAMMAP_LIBS
+  ${OpenCV2_LIBRARIES}
+  dl
+  )
+
+if(UNIX AND NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  list(APPEND SLAMMAP_LIBS atomic)
+endif()
+
+
+add_library(slam_map
+  ${_MAP_SOURCES} 
+  )
+
+target_link_libraries(slam_map ${SLAMMAP_LIBS})
