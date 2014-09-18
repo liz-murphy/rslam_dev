@@ -6,11 +6,11 @@
 #include <set>
 #include <slam_map/MapVisitor/MapVisitor.h>
 #include <slam_map/ReferenceFrame.h>
-#include <slam_map/slam_map.h>
+#include <slam_map/SlamMap.h>
 
 class NearbyNodesMapVisitor : public MapVisitor {
  public:
-  NearbyNodesMapVisitor(const slam_map* const map,
+  NearbyNodesMapVisitor(const SlamMap* const map,
                         std::set<ReferenceFrameId>* nearby,
                         bool with_covisible) :
       map_(map),
@@ -41,7 +41,7 @@ class NearbyNodesMapVisitor : public MapVisitor {
   }
 
  private:
-  const slam_map* const map_;
+  const SlamMap* const map_;
   bool with_covisible_;
   std::set<ReferenceFrameId>* nearby_;
 

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include <slam_map/slam_mapFwd.h>
+#include <slam_map/SlamMapFwd.h>
 #include <slam_map/MapEvent.h>
 #include <mutex>
 namespace rslam {

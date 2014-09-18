@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   sophus
   miniglog
+  calibu
+  non_free
 )
 
 ## System dependencies are found with CMake's conventions
@@ -86,7 +88,7 @@ find_package(Eigen REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES utils
-  CATKIN_DEPENDS roscpp sophus common 
+  CATKIN_DEPENDS roscpp sophus common miniglog non_free
   DEPENDS Eigen 
 )
 

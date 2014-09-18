@@ -10,8 +10,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include <common/MathTypes.h>
-#include <slam_map/slam_mapFwd.h>
+#include <utils/MathTypes.h>
+#include <slam_map/SlamMapFwd.h>
 #include <slam_map/ReferenceFrameId.h>
 #include <slam_map/TransformEdgeId.h>
 
@@ -20,16 +20,16 @@
  * respect to the first frame added to the View.
  *
  * This class uses a GlobalMapViewUpdater internally to maintain
- * synchronization with the slam_mapProxy it's given.
+ * synchronization with the SlamMapProxy it's given.
  */
 class GlobalMapView {
   typedef std::lock_guard<std::mutex> LockGuardT;
 
  public:
-  GlobalMapView(const std::shared_ptr<slam_mapProxy>& map);
+  GlobalMapView(const std::shared_ptr<SlamMapProxy>& map);
   virtual ~GlobalMapView();
 
-  void Reset(const std::shared_ptr<slam_mapProxy>& map);
+  void Reset(const std::shared_ptr<SlamMapProxy>& map);
 
   /** Configure which frame is used as the global identity */
   void set_root_id(const ReferenceFrameId& id);
@@ -70,6 +70,7 @@ class GlobalMapView {
    */
   void ResetAndLoadWholeMap();
 
+  void UpdateDebugLevel(int level){debug_level_=level;};
  protected:
   inline void set_root_id_inline(const ReferenceFrameId& id);
   inline void AddEdgeInline(const TransformEdgeId& id);
@@ -90,7 +91,7 @@ class GlobalMapView {
                          const Sophus::SE3t& t_ab);
 
  private:
-  std::shared_ptr<slam_mapProxy> map_;
+  std::shared_ptr<SlamMapProxy> map_;
   std::shared_ptr<GlobalMapViewUpdater> updater_;
   std::unordered_map<ReferenceFrameId, Sophus::SE3t> frames_;
   std::unordered_set<TransformEdgeId> edges_;
@@ -101,4 +102,5 @@ class GlobalMapView {
   mutable std::mutex mutex_;
   mutable std::map<SessionId, int> maps_;
   friend class LoadWholeMapVisitor;
+  int debug_level_;
 };

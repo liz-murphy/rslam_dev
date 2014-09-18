@@ -8,12 +8,13 @@
 
 #include <string>
 #include <vector>
-#include <CommonFrontEnd/PatchHomography.h>
+#include <slam_map/PatchHomography.h>
 #include <Eigen/Core>
 #include <miniglog/logging.h>
 #include <slam_map/MatchFlags.h>
 #include <slam_map/MeasurementId.h>
-
+#include <common/config.h>
+#include <common/scalar.h>
 ///
 /// A measurement in a single camera
 struct Measurement {

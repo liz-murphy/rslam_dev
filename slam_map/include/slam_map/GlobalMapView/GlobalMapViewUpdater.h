@@ -4,9 +4,10 @@
 
 #include <condition_variable>
 #include <thread>
-#include <Utils/AtomicQueue.h>
-#include <slam_map/slam_map.h>
-#include <slam_map/slam_mapFwd.h>
+#include <utils/AtomicQueue.h>
+#include <slam_map/SlamMap.h>
+#include <slam_map/SlamMapFwd.h>
+#include <slam_map/SlamMapProxy.h>
 
 /**
  * Class to handle synchronization of GlobalMapView with a slam_map
@@ -19,10 +20,10 @@
  */
 class GlobalMapViewUpdater {
  public:
-  GlobalMapViewUpdater(const std::shared_ptr<slam_mapProxy>& map,
+  GlobalMapViewUpdater(const std::shared_ptr<SlamMapProxy>& map,
                        GlobalMapView* global_view);
   virtual ~GlobalMapViewUpdater();
-  void Reset(const std::shared_ptr<slam_mapProxy>& map);
+  void Reset(const std::shared_ptr<SlamMapProxy>& map);
   void HandleUpdate(const rslam::map::MapEventUpdate& update);
   void Quit();
   bool IsRunning() const {
@@ -34,7 +35,7 @@ class GlobalMapViewUpdater {
   void ViewUpdateLoop();
 
  private:
-  std::shared_ptr<slam_mapProxy> map_;
+  std::shared_ptr<SlamMapProxy> map_;
   GlobalMapView* global_view_;
   std::thread view_update_thread_;
   std::atomic<bool> should_quit_;

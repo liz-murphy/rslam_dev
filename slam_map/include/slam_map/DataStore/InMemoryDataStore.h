@@ -8,9 +8,9 @@
 
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/TransformEdge.h>
-#include <slam_map/DataStore/slam_mapDataStore.h>
+#include <slam_map/DataStore/SlamMapDataStore.h>
 
-class InMemoryDataStore : public slam_mapDataStore {
+class InMemoryDataStore : public SlamMapDataStore {
  public:
   InMemoryDataStore() {}
   virtual ~InMemoryDataStore() {}

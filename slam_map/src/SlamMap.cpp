@@ -9,8 +9,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
-//#include <CVars/CVar.h>
-#include <slam_map/slam_map.h>
+#include <slam_map/SlamMap.h>
 #include <slam_map/DataStore/InMemoryDataStore.h>
 #include <slam_map/DataStore/InMemorySingleTrackDataStore.h>
 #include <slam_map/DataStore/PersistentDataStore.h>
@@ -19,15 +18,16 @@
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/TransformEdge.h>
 #include <slam_map/MapVisitor/NearbyNodesMapVisitor.h>
+#include <slam_map/SlamMapParamsConfig.h>
 
 //static int& g_hold_debug_level =
  //   CVarUtils::CreateCVar<>("map.hold_frames_debug", 1,
-  //                          "Debug level for slam_map frame holding.");
+  //                          "Debug level for SlamMap frame holding.");
 
 // This will disappear when we properly namespace this class
 using namespace rslam::map;
 
-slam_map::slam_map()
+SlamMap::SlamMap()
     : store_(new InMemoryDataStore()),
       token_(0),
       hold_token_(0),
@@ -36,12 +36,12 @@ slam_map::slam_map()
       notifier_(std::make_shared<NotificationCenter>()) {
 }
 
-slam_map::~slam_map() {
+SlamMap::~SlamMap() {
   notifier_->Notify(kFinalMapEvent, ReferenceFrameId());
 }
 
 /// Allocate a new frame, but do not link it into the graph.
-SlamFramePtr slam_map::AddFrame(const double time) {
+SlamFramePtr SlamMap::AddFrame(const double time) {
   SlamFramePtr frame(new ReferenceFrame);
   ReferenceFrameId new_frame_id(last_frame_id_ + 1, id_);
   frame->set_id(new_frame_id);
@@ -66,7 +66,7 @@ SlamFramePtr slam_map::AddFrame(const double time) {
   return frame;
 }
 
-void slam_map::AddFrame(const SlamFramePtr& new_node) {
+void SlamMap::AddFrame(const SlamFramePtr& new_node) {
   CHECK(new_node);
   if (SlamFramePtr existing = GetFramePtr(new_node->id())) {
     existing->Merge(*new_node);
@@ -77,7 +77,7 @@ void slam_map::AddFrame(const SlamFramePtr& new_node) {
   }
 }
 
-void slam_map::AddEdge(const SlamEdgePtr& new_edge) {
+void SlamMap::AddEdge(const SlamEdgePtr& new_edge) {
   CHECK(new_edge);
   TransformEdgeId edge_id = new_edge->id();
   bool added_new = false;
@@ -110,34 +110,34 @@ void slam_map::AddEdge(const SlamEdgePtr& new_edge) {
   }
 }
 
-void slam_map::Clear() {
+void SlamMap::Clear() {
   store_->ClearFrames();
   store_->ClearEdges();
 }
 
-void slam_map::Save() const {
+void SlamMap::Save() const {
   store_->Save();
 }
 
-bool slam_map::CanSave() const {
+bool SlamMap::CanSave() const {
   return store_->CanSave();
 }
 
-unsigned int slam_map::NumFrames() const {
+unsigned int SlamMap::NumFrames() const {
   return store_->NumFrames();
 }
 
-unsigned int slam_map::NumSessions() const {
+unsigned int SlamMap::NumSessions() const {
   return store_->NumSessions();
 }
 
-unsigned int slam_map::NumEdges() const {
+unsigned int SlamMap::NumEdges() const {
   return store_->NumEdges();
 }
 
 // lookup the id
 /// Output: global Id of edge
-bool slam_map::_FindEdgeId(const ReferenceFrameId& start_id,
+bool SlamMap::_FindEdgeId(const ReferenceFrameId& start_id,
                           const ReferenceFrameId& end_id,
                           TransformEdgeId& edge_id) const {
   SlamFramePtr pf = GetFramePtr(start_id);
@@ -158,7 +158,7 @@ bool slam_map::_FindEdgeId(const ReferenceFrameId& start_id,
   return false;
 }
 
-SlamEdgePtr slam_map::AddEdge(const SlamFramePtr& a,
+SlamEdgePtr SlamMap::AddEdge(const SlamFramePtr& a,
                              const SlamFramePtr& b,
                              const Sophus::SE3t &t_ab,
                              bool is_loop_closure) {
@@ -197,17 +197,17 @@ SlamEdgePtr slam_map::AddEdge(const SlamFramePtr& a,
   return edge;
 }
 
-bool slam_map::HasFrame(const ReferenceFrameId& id) const {
+bool SlamMap::HasFrame(const ReferenceFrameId& id) const {
   return store_->GetFramePtr(id).get();
 }
 
-bool slam_map::HasEdge(const ReferenceFrameId& start_id,
+bool SlamMap::HasEdge(const ReferenceFrameId& start_id,
                       const ReferenceFrameId& end_id) const {
   TransformEdgeId tmp;
   return _FindEdgeId(start_id, end_id, tmp);
 }
 
-void slam_map::SwapEdgeStartFrame(const TransformEdgeId& old_edge_id,
+void SlamMap::SwapEdgeStartFrame(const TransformEdgeId& old_edge_id,
                                  const ReferenceFrameId& old_start_id,
                                  const ReferenceFrameId& new_start_id ,
                                  const Sophus::SE3t new_t_ab) {
@@ -227,7 +227,7 @@ void slam_map::SwapEdgeStartFrame(const TransformEdgeId& old_edge_id,
   pEndFrame->AddNeighbor(new_edge_id);
 }
 
-SlamEdgePtr slam_map::GetEdgePtr(const ReferenceFrameId& start_id,
+SlamEdgePtr SlamMap::GetEdgePtr(const ReferenceFrameId& start_id,
                                 const ReferenceFrameId& end_id) const {
   if (HasFrame(start_id) && HasFrame(end_id)) {
     TransformEdgeId edge_id;
@@ -240,33 +240,33 @@ SlamEdgePtr slam_map::GetEdgePtr(const ReferenceFrameId& start_id,
 }
 
 SlamEdgePtr
-slam_map::GetEdgePtr(const TransformEdgeId& edge_id) const {
+SlamMap::GetEdgePtr(const TransformEdgeId& edge_id) const {
   return store_->GetEdgePtr(edge_id);
 }
 
 // return reference to frame
 SlamFramePtr
-slam_map::GetFramePtr(const MeasurementId& id) const {
+SlamMap::GetFramePtr(const MeasurementId& id) const {
   return GetFramePtr(id.frame_id);
 }
 
 SlamFramePtr
-slam_map::GetFramePtr(const ReferenceFrameId& frame_id) const {
+SlamMap::GetFramePtr(const ReferenceFrameId& frame_id) const {
   return store_->GetFramePtr(frame_id);
 }
 
 SlamFramePtr
-slam_map::GetFramePtrLoaded(const ReferenceFrameId& frame_id) const {
+SlamMap::GetFramePtrLoaded(const ReferenceFrameId& frame_id) const {
   return IsFrameLoaded(frame_id) ? GetFramePtr(frame_id) : nullptr;
 }
 
 SlamEdgePtr
-slam_map::GetEdgePtrLoaded(const TransformEdgeId& edge_id) const {
+SlamMap::GetEdgePtrLoaded(const TransformEdgeId& edge_id) const {
   return IsEdgeLoaded(edge_id) ? GetEdgePtr(edge_id) : nullptr;
 }
 
 // update the transform between two frames:
-void slam_map::UpdateEdgeImuPoints(
+void SlamMap::UpdateEdgeImuPoints(
     const TransformEdgeId& edge_id,
     const std::vector<ba::ImuPoseT<Scalar>>& vMeas,
     const Eigen::Vector3t& g) {
@@ -284,7 +284,7 @@ void slam_map::UpdateEdgeImuPoints(
   edge->set_g(g);
 }
 
-bool slam_map::GetMeasurement(const MeasurementId& id,
+bool SlamMap::GetMeasurement(const MeasurementId& id,
                              MultiViewMeasurement &Msr) const {
   SlamFramePtr ptr = store_->GetFramePtr(id.frame_id);
   return ptr && ptr->GetMeasurement(id, &Msr);
@@ -292,19 +292,19 @@ bool slam_map::GetMeasurement(const MeasurementId& id,
 
 // Return reference in Msr to measurement identified by a Frame Id and
 // a local measurement index. True if found, false otherwise.
-bool slam_map::GetMeasurement(const ReferenceFrameId& frame_id,
+bool SlamMap::GetMeasurement(const ReferenceFrameId& frame_id,
                              const unsigned int uMsrLocalIndex,
                              MultiViewMeasurement &Msr) const {
   SlamFramePtr ptr = store_->GetFramePtr(frame_id);
   return ptr && ptr->GetMeasurement(uMsrLocalIndex, &Msr);
 }
 
-bool slam_map::GetLandmark(const LandmarkId& Id, Landmark* lm) const {
+bool SlamMap::GetLandmark(const LandmarkId& Id, Landmark* lm) const {
   SlamFramePtr ptr = store_->GetFramePtr(Id.ref_frame_id);
   return ptr && ptr->GetLandmark(Id.landmark_index, lm);
 }
 
-void slam_map::AddNewMeasurementsToFrame(
+void SlamMap::AddNewMeasurementsToFrame(
     const ReferenceFrameId& frame_id,
     std::vector<MultiViewMeasurement> &measurements) {
   SlamFramePtr z_frame = GetFramePtr(frame_id);
@@ -322,7 +322,7 @@ void slam_map::AddNewMeasurementsToFrame(
   }
 }
 
-void slam_map::RemoveMeasurementsFromFrame(const ReferenceFrameId& frame_id) {
+void SlamMap::RemoveMeasurementsFromFrame(const ReferenceFrameId& frame_id) {
   // first eliminate measurements from landmark sessions
   SlamFramePtr frame = store_->GetFramePtr(frame_id);
 
@@ -345,23 +345,23 @@ void slam_map::RemoveMeasurementsFromFrame(const ReferenceFrameId& frame_id) {
   store_->GetFramePtr(frame_id)->RemoveMeasurements();
 }
 
-uint64_t slam_map::GetHoldToken() const {
+uint64_t SlamMap::GetHoldToken() const {
   ++hold_token_;
   std::lock_guard<std::mutex> lock(hold_mutex_);
   hold_updating_[hold_token_] = false;
   return hold_token_;
 }
 
-void slam_map::RemoveFrameHold(uint64_t token) {
+void SlamMap::RemoveFrameHold(uint64_t token) {
   std::lock_guard<std::mutex> lock(hold_mutex_);
   holds_.erase(token);
 }
 
-void slam_map::SetHoldFrames(uint64_t token,
+void SlamMap::SetHoldFrames(uint64_t token,
                             const ReferenceFrameId& root_id,
                             unsigned int depth,
                             bool with_covisible) {
-  LOG(g_hold_debug_level) << "Holding frames: root : " << root_id
+  LOG(hold_debug_level_) << "Holding frames: root : " << root_id
                           << " to depth " << depth
                           << (with_covisible ? "" : " not")
                           << " including covisible" << std::endl;
@@ -385,11 +385,11 @@ void slam_map::SetHoldFrames(uint64_t token,
     }
     if (hold_updating_[token]) return;
   }
-  std::thread update_thread(std::bind(&slam_map::UpdateHeldFrames, this, token));
+  std::thread update_thread(std::bind(&SlamMap::UpdateHeldFrames, this, token));
   update_thread.detach();
 }
 
-void slam_map::SetHoldFramesSync(uint64_t token,
+void SlamMap::SetHoldFramesSync(uint64_t token,
                                 const ReferenceFrameId& root_id,
                                 unsigned int depth,
                                 bool with_covisible) {
@@ -401,7 +401,7 @@ void slam_map::SetHoldFramesSync(uint64_t token,
   UpdateHeldFrames(token);
 }
 
-void slam_map::ClearEdgeAttributes(uint32_t attribute) {
+void SlamMap::ClearEdgeAttributes(uint32_t attribute) {
   std::lock_guard<std::mutex> lock(edge_attrib_mutex_);
   auto itr = edge_attributes_.begin();
   while (itr != edge_attributes_.end()) {
@@ -416,12 +416,12 @@ void slam_map::ClearEdgeAttributes(uint32_t attribute) {
   }
 }
 
-void slam_map::SetEdgeAttribute(const TransformEdgeId &id, uint32_t attribute) {
+void SlamMap::SetEdgeAttribute(const TransformEdgeId &id, uint32_t attribute) {
   std::lock_guard<std::mutex> lock(edge_attrib_mutex_);
   edge_attributes_[id] |= attribute;
 }
 
-uint32_t slam_map::GetEdgeAttribute(const TransformEdgeId &id) const {
+uint32_t SlamMap::GetEdgeAttribute(const TransformEdgeId &id) const {
   std::lock_guard<std::mutex> lock(edge_attrib_mutex_);
   auto it = edge_attributes_.find(id);
   if (it != edge_attributes_.end()) {
@@ -432,7 +432,7 @@ uint32_t slam_map::GetEdgeAttribute(const TransformEdgeId &id) const {
 }
 
 
-void slam_map::UpdateHeldFrames(uint64_t token) {
+void SlamMap::UpdateHeldFrames(uint64_t token) {
   HoldRequest hold;
   {
     std::lock_guard<std::mutex> lock(hold_mutex_);
@@ -447,7 +447,7 @@ void slam_map::UpdateHeldFrames(uint64_t token) {
     visitor.set_root_id(hold.root_id);
     visitor.set_depth(hold.depth);
     BFS(&visitor);
-    LOG(g_hold_debug_level) << "Gathered " << new_holds.size()
+    LOG(hold_debug_level_) << "Gathered " << new_holds.size()
                             << " frames to be held from "
                             << " root id " << hold.root_id
                             << " at depth " << hold.depth
@@ -455,7 +455,7 @@ void slam_map::UpdateHeldFrames(uint64_t token) {
                             << " including covisible" << std::endl;
   }
 
-  LOG(g_hold_debug_level) << "Setting " << new_holds.size()
+  LOG(hold_debug_level_) << "Setting " << new_holds.size()
                           << " frames to be held" << std::endl;
 
   {
@@ -480,7 +480,7 @@ void slam_map::UpdateHeldFrames(uint64_t token) {
   hold_updating_[token] = false;
 }
 
-void slam_map::InitWithPersistence(const std::string& filename,
+void SlamMap::InitWithPersistence(const std::string& filename,
                                   bool continue_existing) {
   auto store = new PersistentDataStore();
   store->Init(filename, continue_existing);
@@ -488,7 +488,7 @@ void slam_map::InitWithPersistence(const std::string& filename,
   store_->set_notification_center(notifier_);
 }
 
-void slam_map::InitInMemory(const SessionStorage& type) {
+void SlamMap::InitInMemory(const SessionStorage& type) {
   if (type == kSingleSessionStorage) {
     store_.reset(new InMemorySingleTrackDataStore());
   } else {
@@ -497,23 +497,23 @@ void slam_map::InitInMemory(const SessionStorage& type) {
   store_->set_notification_center(notifier_);
 }
 
-bool slam_map::IsFrameLoaded(const ReferenceFrameId& id) const {
+bool SlamMap::IsFrameLoaded(const ReferenceFrameId& id) const {
   return store_->IsFrameLoaded(id);
 }
 
-bool slam_map::IsEdgeLoaded(const TransformEdgeId& id) const {
+bool SlamMap::IsEdgeLoaded(const TransformEdgeId& id) const {
   return store_->IsEdgeLoaded(id);
 }
 
-void slam_map::BFS(MapVisitor* visitor) const {
+void SlamMap::BFS(MapVisitor* visitor) const {
   InternalBFS(visitor, false);
 }
 
-void slam_map::InMemoryBFS(MapVisitor* visitor) const {
+void SlamMap::InMemoryBFS(MapVisitor* visitor) const {
   InternalBFS(visitor, true);
 }
 
-void slam_map::InternalBFS(MapVisitor* visitor, bool only_loaded) const {
+void SlamMap::InternalBFS(MapVisitor* visitor, bool only_loaded) const {
   const unsigned int max_depth = visitor->depth();
   ReferenceFrameId root_id = visitor->root_id();
   const bool ignore_broken = visitor->should_ignore_broken();
@@ -613,7 +613,7 @@ void slam_map::InternalBFS(MapVisitor* visitor, bool only_loaded) const {
   visitor->Finished();
 }
 
-void slam_map::ParentTraverse(MapVisitor* visitor) const {
+void SlamMap::ParentTraverse(MapVisitor* visitor) const {
   const unsigned int max_depth = visitor->depth();
   ReferenceFrameId root_id = visitor->root_id();
   const bool ignore_broken = visitor->should_ignore_broken();
@@ -678,36 +678,36 @@ void slam_map::ParentTraverse(MapVisitor* visitor) const {
   visitor->Finished();
 }
 
-size_t slam_map::NumCameras() const {
+size_t SlamMap::NumCameras() const {
   return store_->NumCameras();
 }
 
-void slam_map::AddCamera(const SessionId& session_id, const _CameraRigPtr& cam) {
+void SlamMap::AddCamera(const SessionId& session_id, const _CameraRigPtr& cam) {
   store_->AddCamera(session_id, cam);
 }
 
-void slam_map::SetCamera(const SessionId& session_id, const _CameraRigPtr& cam) {
+void SlamMap::SetCamera(const SessionId& session_id, const _CameraRigPtr& cam) {
   store_->SetCamera(session_id, cam);
 }
 
-CameraRigPtr slam_map::GetCamera(const SessionId& session_id) const {
+CameraRigPtr SlamMap::GetCamera(const SessionId& session_id) const {
   return store_->GetCamera(session_id);
 }
 
-bool slam_map::HasCamera(const SessionId& session_id) const {
+bool SlamMap::HasCamera(const SessionId& session_id) const {
   return store_->GetCamera(session_id).get();
 }
 
-void slam_map::Subscribe(const std::vector<MapEvent>& event_subscriptions,
+void SlamMap::Subscribe(const std::vector<MapEvent>& event_subscriptions,
                         const NotificationCallback& callback) {
   notifier_->Subscribe(event_subscriptions, callback);
 }
 
-void slam_map::sessions(std::vector<SessionId>* sessions) const {
+void SlamMap::sessions(std::vector<SessionId>* sessions) const {
   store_->sessions(sessions);
 }
 
-ReferenceFrameId slam_map::SessionStart(const SessionId& session) const {
+ReferenceFrameId SlamMap::SessionStart(const SessionId& session) const {
   ReferenceFrameId frame_id;
   frame_id.session_id = session;
 

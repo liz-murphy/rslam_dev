@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <Common/scalar.h>
-#include <Utils/MathTypes.h>
+#include <common/scalar.h>
+#include <utils/MathTypes.h>
 
 namespace rslam {
 namespace map {

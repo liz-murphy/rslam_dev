@@ -149,7 +149,7 @@ target_link_libraries(test_so2
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS sophus sophus_node
+# install(TARGETS sophus 
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

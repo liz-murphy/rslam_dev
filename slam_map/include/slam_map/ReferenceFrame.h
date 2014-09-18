@@ -20,9 +20,9 @@
 #include <slam_map/Measurement.h>
 #include <slam_map/Landmark.h>
 #include <slam_map/ReferenceFrameId.h>
-#include <slam_map/slam_mapFwd.h>
+#include <slam_map/SlamMapFwd.h>
 #include <slam_map/TransformEdgeId.h>
-#include <Utils/MathTypes.h>
+#include <utils/MathTypes.h>
 
 class ReferenceFrame {
   typedef std::lock_guard<std::mutex> LockGuardT;

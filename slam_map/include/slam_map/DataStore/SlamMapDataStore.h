@@ -3,12 +3,12 @@
 #include <memory>
 #include <set>
 #include <vector>
-#include <slam_map/slam_mapFwd.h>
+#include <slam_map/SlamMapFwd.h>
 
-class slam_mapDataStore {
+class SlamMapDataStore {
  public:
-  slam_mapDataStore() {}
-  virtual ~slam_mapDataStore() {}
+  SlamMapDataStore() {}
+  virtual ~SlamMapDataStore() {}
 
   /** Save the map */
   virtual void Save() const = 0;

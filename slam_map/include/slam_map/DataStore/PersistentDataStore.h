@@ -9,10 +9,10 @@
 #include <queue>
 #include <unordered_map>
 #include <vector>
-#include <slam_map/slam_mapFwd.h>
-#include <slam_map/DataStore/slam_mapDataStore.h>
+#include <slam_map/SlamMapFwd.h>
+#include <slam_map/DataStore/SlamMapDataStore.h>
 
-class PersistentDataStore : public slam_mapDataStore {
+class PersistentDataStore : public SlamMapDataStore {
  public:
   typedef PersistentBackend<SlamEdgePtrTable> EdgeStoreT;
   typedef PersistentBackend<SlamFramePtrTable> FrameStoreT;

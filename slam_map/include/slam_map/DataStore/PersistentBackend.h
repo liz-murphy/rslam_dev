@@ -14,11 +14,11 @@
 #include <utility>
 #include <vector>
 
-#include <CVars/CVar.h>
+//#include <CVars/CVar.h>
 #include <miniglog/logging.h>
-#include <Utils/AtomicQueue.h>
+#include <utils/AtomicQueue.h>
 
-#include <rslam.pb.h>
+#include <pb_msgs/rslam.pb.h>
 
 template <typename TableT>
 class PersistentBackend {

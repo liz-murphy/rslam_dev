@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <rslam.pb.h>
+#include <pb_msgs/rslam.pb.h>
 #include <algorithm>
 #include <Eigen/Core>
-#include <CommonFrontEnd/PatchHomography.h>
-#include <PbMsgs/Matrix.h>
-#include <PbMsgs/Pose.h>
+#include <slam_map/PatchHomography.h>
+#include <pb_msgs/Matrix.h>
+#include <pb_msgs/Pose.h>
 #include <calibu/cam/CameraRig.h>
 #include <miniglog/logging.h>
 #include <slam_map/LandmarkId.h>

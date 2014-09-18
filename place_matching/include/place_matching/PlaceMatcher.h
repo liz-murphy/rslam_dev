@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include <mutex>
-#include <place_matching/place_match_candidate.h>
+#include <place_matching/PlaceMatchCandidate.h>
 #include <slam_map/SlamMap.h>
 
 namespace cv {

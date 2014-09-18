@@ -1,0 +1,57 @@
+package pb;
+
+import "Pose.proto";
+
+message DoubleMatrixMsg
+{
+    optional int32  rows = 1;
+    optional int32  cols = 2;
+    repeated double data = 3 [packed=true];
+}
+
+message FrameObjectMsg
+{
+    extensions 100 to max;
+
+    enum Type
+    {
+	Cube = 1;
+	Teapot = 2;
+	Text = 3;
+    }
+
+    required Type type = 1;
+    optional bytes uuid = 2;
+}
+
+message CubeObjectMsg
+{
+    extend FrameObjectMsg {
+	required CubeObjectMsg object = 100;
+    }
+
+    optional PoseMsg t_po = 1;
+    optional DoubleMatrixMsg scale = 2;
+}
+
+message TeapotObjectMsg
+{
+    extend FrameObjectMsg {
+	required TeapotObjectMsg object = 101;
+    }
+
+    optional PoseMsg t_po = 1;
+    optional DoubleMatrixMsg scale = 2;
+}
+
+message TextObjectMsg
+{
+    extend FrameObjectMsg {
+	required TextObjectMsg object = 102;
+    }
+
+    optional PoseMsg t_po = 1;
+    optional DoubleMatrixMsg scale = 2;
+    optional string text = 3;
+    optional DoubleMatrixMsg color = 4;
+}

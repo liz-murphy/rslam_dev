@@ -1,0 +1,13 @@
+package pb;
+
+import "Image.proto";
+import "rslam.proto";
+
+message TemplateMsg {
+    optional ReferenceFrameIdMsg id = 1;
+    optional ImageMsg image = 2;
+}
+
+message TemplateCorpusMsg {
+    repeated TemplateMsg place = 1;
+}

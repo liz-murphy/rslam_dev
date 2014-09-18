@@ -12,7 +12,7 @@
 #include <slam_map/SlamMapFwd.h>
 #include <slam_map/ReferenceFrameId.h>
 #include <slam_map/TransformEdgeId.h>
-#include <Utils/MathTypes.h>
+#include <utils/MathTypes.h>
 
 class TransformEdge {
  public:

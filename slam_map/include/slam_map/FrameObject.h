@@ -4,8 +4,8 @@
 #pragma once
 
 #include <memory>
-#include <FrameObject.pb.h>
-#include <Utils/MathTypes.h>
+#include <pb_msgs/FrameObject.pb.h>
+#include <utils/MathTypes.h>
 #include <slam_map/uuid.h>
 
 /** Arbitrary renderable objects that can be attached to a ReferenceFrame */

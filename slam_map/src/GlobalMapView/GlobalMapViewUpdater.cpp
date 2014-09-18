@@ -2,11 +2,11 @@
 // accompanying LICENSE file for more information.
 #include <slam_map/GlobalMapView/GlobalMapViewUpdater.h>
 #include <slam_map/GlobalMapView/GlobalMapView.h>
-#include <slam_map/slam_map.h>
-#include <slam_map/slam_mapProxy.h>
+#include <slam_map/SlamMap.h>
+#include <slam_map/SlamMapProxy.h>
 
 GlobalMapViewUpdater::GlobalMapViewUpdater(
-    const std::shared_ptr<slam_mapProxy>& map,
+    const std::shared_ptr<SlamMapProxy>& map,
     GlobalMapView* global_view)
     : map_(map), global_view_(global_view), should_quit_(false),
       view_update_running_(false) {
@@ -19,7 +19,7 @@ GlobalMapViewUpdater::~GlobalMapViewUpdater() {
   Quit();
 }
 
-void GlobalMapViewUpdater::Reset(const std::shared_ptr<slam_mapProxy>& map) {
+void GlobalMapViewUpdater::Reset(const std::shared_ptr<SlamMapProxy>& map) {
   Quit();
   map_ = map;
   edge_updates_ = std::make_shared<AtomicQueue<rslam::map::MapEventUpdate> >();

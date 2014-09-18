@@ -2,7 +2,7 @@
 // accompanying LICENSE file for more information.
 
 #include <slam_map/TransformEdge.h>
-#include <HAL/Utils/TicToc.h>
+#include <utils/TicToc.h>
 #include <miniglog/logging.h>
 #include <slam_map/NotificationCenter.h>
 

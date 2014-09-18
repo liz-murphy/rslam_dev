@@ -1,0 +1,135 @@
+package pb;
+
+import "FrameObject.proto";
+import "CameraModel.proto";
+
+message SessionIdMsg
+{
+    optional bytes uuid = 1;
+}
+
+message ReferenceFrameIdMsg
+{
+    optional uint32 frame_id = 1;
+    optional SessionIdMsg session_id = 2;
+}
+
+message TransformEdgeIdMsg
+{
+    optional int32 edge_id = 1;
+    optional SessionIdMsg session_id = 2;
+    optional ReferenceFrameIdMsg start = 3;
+    optional ReferenceFrameIdMsg end = 4;
+}
+
+message LandmarkIdMsg
+{
+    optional ReferenceFrameIdMsg ref_frame_id = 1;
+    optional int32     landmark_id = 2;
+}
+
+message MeasurementIdMsg
+{
+    optional ReferenceFrameIdMsg ref_frame_id = 1;
+    optional int32     measurement_id = 2;
+    optional LandmarkIdMsg landmark_id = 3;
+}
+
+message PixelMsg
+{
+    optional double u = 1;
+    optional double v = 2;
+}
+
+message PatchHomographyMsg
+{
+    optional int32 state = 1;
+    optional double scale = 2;
+    optional DoubleMatrixMsg h = 3;
+}
+
+// pixel measurement in a single image
+message MeasurementMsg
+{
+    optional MeasurementIdMsg   id = 1;
+    optional PixelMsg           pixel = 2;
+
+    optional uint32             match_flag = 3;
+    optional double             matching_error = 4;
+    optional double             reprojection_error = 5;
+    optional float              scale = 6;
+    optional float              orientation = 7;
+    optional PatchHomographyMsg patch_homography = 8;
+    optional DoubleMatrixMsg    patch_vector = 9;
+}
+
+// represent mesaurements form multiple synchronized cameras
+message MultiViewMeasurementMsg
+{
+    repeated MeasurementMsg  measurements = 1; // one for each synchronized camera
+}
+
+message LandmarkMsg
+{
+    optional LandmarkIdMsg    id = 1;
+    optional uint32           base_camera = 2;
+    optional DoubleMatrixMsg  patch = 3;        // actual image patch
+    optional bytes            feature_descriptor = 4;  // feature descriptor
+    repeated MeasurementIdMsg feature_track = 6; // vector of measurement id's
+
+    // TODO remove these, as they are temp working vars:
+    optional string           name = 7;
+    optional bool             active = 8;
+    optional uint32           num_failed_track_attempts = 9;
+    optional uint32           pyramid_level = 10;
+    optional int32            landmark_state = 11;
+    optional double           extent = 12;
+    optional DoubleMatrixMsg  orientation = 13;
+    optional DoubleMatrixMsg  relative_pos = 14;
+}
+
+// relative edge between two nodes
+message TransformEdgeMsg
+{
+    optional TransformEdgeIdMsg  id = 1;
+    optional double last_modified_time = 2;
+    optional DoubleMatrixMsg transform = 4;
+    optional DoubleMatrixMsg g = 5;
+    optional bool is_broken = 6;
+    optional bool is_loop_closure = 7;
+}
+
+// one node per relative frame
+message ReferenceFrameMsg
+{
+    optional ReferenceFrameIdMsg      id = 1;
+    optional TransformEdgeIdMsg       parent_edge_id = 2;
+    repeated TransformEdgeIdMsg       neighbor_edge_ids = 3;
+    optional double                   sensor_time = 4;
+    optional bool                     is_isolated = 5;
+    repeated LandmarkMsg              landmarks = 6;
+
+    // this is not invariant to the viewing device... yet
+    repeated MultiViewMeasurementMsg  measurements = 7;   // pixel measurements
+    optional DoubleMatrixMsg          velocity = 8;
+    optional double                   last_modified_time = 9;
+    repeated FrameObjectMsg           objects = 10;
+    optional DoubleMatrixMsg          gravity = 11;
+    optional DoubleMatrixMsg          biases = 12;
+}
+
+/** @todo Move into Calibu */
+message CameraRigMsg
+{
+    repeated CameraModelMsg cameras = 1;
+}
+
+message SlamMapMsg
+{
+    // Map Ids correspond to rigs
+    repeated SessionIdMsg         session_ids = 1;
+    repeated CameraRigMsg       rigs    = 2;
+
+    repeated ReferenceFrameMsg  nodes	= 3;
+    repeated TransformEdgeMsg   edges	= 4;
+}

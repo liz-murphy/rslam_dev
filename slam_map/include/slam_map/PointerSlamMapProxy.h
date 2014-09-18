@@ -6,12 +6,12 @@
 #include <slam_map/SlamMapProxy.h>
 
 /**
- * slam_mapProxy that operates through a pointer to a slam_map.
+ * SlamMapProxy that operates through a pointer to a SlamMap.
  */
-class Pointerslam_mapProxy : public slam_mapProxy {
+class PointerSlamMapProxy : public SlamMapProxy {
  public:
-  explicit Pointerslam_mapProxy(const std::shared_ptr<slam_map>& map);
-  virtual ~Pointerslam_mapProxy();
+  explicit PointerSlamMapProxy(const std::shared_ptr<SlamMap>& map);
+  virtual ~PointerSlamMapProxy();
 
   void Save() const override;
 
@@ -52,5 +52,5 @@ class Pointerslam_mapProxy : public slam_mapProxy {
       const std::vector<rslam::map::MapEvent>& event_subscriptions,
       const rslam::map::NotificationCallback& listener) override;
  private:
-  const std::shared_ptr<slam_map> map_;
+  const std::shared_ptr<SlamMap> map_;
 };

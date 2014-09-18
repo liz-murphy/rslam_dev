@@ -19,12 +19,13 @@
 #include <opencv2/opencv.hpp>
 
 #include <ba/Types.h>
-#include <slam_map/slam_mapFwd.h>
+#include <slam_map/SlamMapFwd.h>
 #include <slam_map/MapEvent.h>
 #include <slam_map/Landmark.h>
 #include <slam_map/ReferenceFrameId.h>
 #include <slam_map/TransformEdgeId.h>
-#include <Utils/MathTypes.h>
+#include <slam_map/DataStore/SlamMapDataStore.h>
+#include <utils/MathTypes.h>
 
 struct HoldRequest {
   ReferenceFrameId root_id;
@@ -32,7 +33,7 @@ struct HoldRequest {
   bool with_covisible;
 };
 
-class slam_map {
+class SlamMap {
  public:
   // Is this map used for any number of sessions or only for a single
   // track. Single track operation is more optimized, but also
@@ -42,8 +43,8 @@ class slam_map {
     kMultipleSessionStorage
   };
 
-  slam_map();
-  ~slam_map();
+  SlamMap();
+  ~SlamMap();
 
   ///
   /// Initialize a persistent map, backed by the given file
@@ -192,6 +193,9 @@ class slam_map {
   void Subscribe(const std::vector<rslam::map::MapEvent>& event_subscriptions,
                  const rslam::map::NotificationCallback& listener);
 
+  void UpdateDebugLevel(int level){debug_level_=level;};
+  void UpdateHoldDebugLevel(int level){hold_debug_level_=level;};
+
  protected:
   bool _FindEdgeId(const ReferenceFrameId& start_id,
                    const ReferenceFrameId& end_id,
@@ -208,7 +212,7 @@ class slam_map {
   void InternalBFS(MapVisitor* visitor, bool only_loaded) const;
 
  private:
-  std::shared_ptr<slam_mapDataStore> store_;
+  std::shared_ptr<SlamMapDataStore> store_;
 
   mutable std::atomic<uint64_t> token_, hold_token_;
   mutable std::map<uint64_t, bool> hold_updating_;
@@ -227,4 +231,8 @@ class slam_map {
   /** The unique identifier for this map for all time */
   SessionId id_;
   std::shared_ptr<rslam::map::NotificationCenter> notifier_;
+
+  /** Replace CVars functionality with private member variables, accessors and dynamic reconfigure*/
+  int hold_debug_level_;
+  int debug_level_;
 };

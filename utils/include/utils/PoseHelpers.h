@@ -5,7 +5,7 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <Common/scalar.h>
+#include <common/scalar.h>
 
 namespace rslam
 {

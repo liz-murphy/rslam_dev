@@ -6,18 +6,18 @@
 #include <vector>
 #include <slam_map/SlamMapFwd.h>
 #include <slam_map/SlamMap.h>
-#include <Utils/MathTypes.h>
+#include <utils/MathTypes.h>
 
 /**
- * Interface for a remotely accessible slam_map.
+ * Interface for a remotely accessible SlamMap.
  *
- * This means the slam_map is located elsewhere, but you can still read
+ * This means the SlamMap is located elsewhere, but you can still read
  * from it. Operations may go over the network or simply be local.
  */
-class slam_mapProxy {
+class SlamMapProxy {
  public:
-  slam_mapProxy() {}
-  virtual ~slam_mapProxy() {}
+  SlamMapProxy() {}
+  virtual ~SlamMapProxy() {}
 
   virtual void Save() const = 0;
 

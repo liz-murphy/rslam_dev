@@ -3,8 +3,8 @@
 
 #include <slam_map/FrameObjectProtobufIO.h>
 #include <slam_map/ProtobufIO.h>
-#include <PbMsgs/Matrix.h>
-#include <PbMsgs/Pose.h>
+#include <pb_msgs/Matrix.h>
+#include <pb_msgs/Pose.h>
 #include <miniglog/logging.h>
 
 namespace pb {

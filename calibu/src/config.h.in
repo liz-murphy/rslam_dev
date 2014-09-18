@@ -1,0 +1,24 @@
+#ifndef _CALIBU_CONFIG_H_
+#define _CALIBU_CONFIG_H_
+
+/// Version
+#define CALIBU_VERSION_MAJOR @CALIBU_VERSION_MAJOR@
+#define CALIBU_VERSION_MINOR @CALIBU_VERSION_MINOR@
+#define CALIBU_VERSION_STRING "@CALIBU_VERSION@"
+
+/// Platform
+#cmakedefine _UNIX_
+#cmakedefine _WIN_
+#cmakedefine _OSX_
+#cmakedefine _LINUX_
+#cmakedefine _ANDROID_
+
+/// Compiler
+#cmakedefine _GCC_
+#cmakedefine _MSVC_
+
+/// Optional Libraries
+#cmakedefine HAVE_OPENCV
+
+
+#endif //_CALIBU_CONFIG_H_

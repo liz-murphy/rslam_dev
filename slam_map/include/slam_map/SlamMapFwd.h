@@ -24,8 +24,8 @@ typedef std::shared_ptr<ReferenceFrame> SlamFramePtr;
 
 class Landmark;
 struct PoseContainerT;
-class slam_map;
-class slam_mapDataStore;
+class SlamMap;
+class SlamMapDataStore;
 struct MeasurementContainer;
 class MultiViewMeasurement;
 
@@ -41,8 +41,8 @@ class CameraRigPtrTable;
 template<typename TableT> class PersistentBackend;
 class MapVisitor;
 
-class slam_mapProxy;
-class Pointerslam_mapProxy;
+class SlamMapProxy;
+class PointerSlamMapProxy;
 struct FrameObject;
 struct CubeObject;
 struct TeapotObject;

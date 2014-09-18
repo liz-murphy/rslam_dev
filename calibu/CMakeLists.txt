@@ -1,39 +1,54 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(place_matching)
+project(calibu)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/)
+
+set(CALIBU_VERSION_MAJOR 0)
+set(CALIBU_VERSION_MINOR 1)
+set(CALIBU_VERSION ${CALIBU_VERSION_MAJOR}.${CALIBU_VERSION_MINOR})
+
+option(BUILD_APPLICATIONS "Build Applications" ON)
+option(BUILD_SHARED_LIBS "Build Shared Library" ON)
+
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall ${CMAKE_CXX_FLAGS}")
+
+#add_subdirectory(src)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  slam_map
-  utils
+  sophus
+  cmake_modules
+)
+
+find_package(Eigen REQUIRED)
+find_package(OpenCV REQUIRED)
+
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+
+SET(SOURCES
+  ${SRC_DIR}/cam/CameraXml.cpp
+  ${SRC_DIR}/cam/Rectify.cpp
+  ${SRC_DIR}/cam/rectify_crtp.cpp
+  ${SRC_DIR}/cam/StereoRectify.cpp
+  ${SRC_DIR}/conics/Conic.cpp
+  ${SRC_DIR}/conics/ConicFinder.cpp
+  ${SRC_DIR}/conics/FindConics.cpp
+  ${SRC_DIR}/image/ImageProcessing.cpp
+  ${SRC_DIR}/image/Label.cpp
+  ${SRC_DIR}/target/Hungarian.cpp
+  ${SRC_DIR}/target/RandomGrid.cpp
+  ${SRC_DIR}/target/TargetGridDot.cpp
+  ${SRC_DIR}/target/TargetRandomDot.cpp
+  ${SRC_DIR}/utils/Utils.cpp
+  ${SRC_DIR}/utils/Xml.cpp
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(OpenCV REQUIRED)
+# find_package(Boost REQUIRED COMPONENTS system)
 
-add_subdirectory(src/TemplateMatcher)
-
-
-option(BUILD_DBoWMatcher "Build DBoWMatcher loop detector" ON)
-if(BUILD_DBoWMatcher)
-    add_subdirectory(src/DBoWMatcher)      # DBM_ vars
-  endif()
-
-include_directories(
-  ${PROJECT_SOURCE_DIR}/include
-  ${catkin_INCLUDE_DIRS} 
-)
-
-add_library(place_matching
-  src/PlaceMatcher.cpp
-  src/PlaceMatcherFactory.cpp
-)
-
-target_link_libraries(place_matching ${OpenCV2_LIBRARIES})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -102,8 +117,8 @@ target_link_libraries(place_matching ${OpenCV2_LIBRARIES})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES place_matching
-  CATKIN_DEPENDS roscpp ${OpenCV2_LIBRARIES} 
+  LIBRARIES calibu
+  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
 )
 
@@ -117,22 +132,26 @@ catkin_package(
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN_INCLUDE_DIRS}
+  ${OPENCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(place_matching
-#   src/${PROJECT_NAME}/place_matching.cpp
-# )
+ add_library(calibu
+   ${SOURCES}
+ )
+
+target_link_libraries(calibu ${CALIBU_LINK_LIBS} ${OPENCV_LIBRARIES})
 
 ## Declare a cpp executable
-# add_executable(place_matching_node src/place_matching_node.cpp)
+# add_executable(calibu_node src/calibu_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(place_matching_node place_matching_generate_messages_cpp)
+# add_dependencies(calibu_node calibu_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(place_matching_node
+# target_link_libraries(calibu_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -151,18 +170,19 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS place_matching place_matching_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+ install(TARGETS calibu 
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+#PATTERN ".svn" EXCLUDE
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -176,7 +196,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_place_matching.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_calibu.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

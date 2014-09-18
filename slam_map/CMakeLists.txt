@@ -11,6 +11,17 @@ find_package(catkin REQUIRED COMPONENTS
   sophus
   common
   utils
+  cmake_modules
+  pb_msgs
+  calibu
+  ba
+  dynamic_reconfigure
+)
+
+find_package(Eigen REQUIRED)
+
+generate_dynamic_reconfigure_options(
+  cfg/SlamMapParams.cfg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -85,8 +96,8 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES slam_map
-  CATKIN_DEPENDS roscpp
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp pb_msgs sophus common utils cmake_modules sophus ba
+  DEPENDS system_lib Eigen
 )
 
 ###########
@@ -97,9 +108,11 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/include
 )
+
 
 ## Declare a cpp library
 add_library(slam_map
@@ -118,6 +131,8 @@ add_library(slam_map
     src/NotificationCenter.cpp
     src/DataStore/PersistentDataStore.cpp
  )
+
+add_dependencies(slam_map ${PROJECT_NAME}_gencfg)
 
 ## Declare a cpp executable
 # add_executable(slam_map_node src/slam_map_node.cpp)

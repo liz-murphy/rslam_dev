@@ -10,9 +10,9 @@
 
 #include <calibu/Calibu.h>
 
-#include <NonFree/Quartic.h>
+#include <non_free/Quartic.h>
 
-#include <Utils/MathTypes.h>
+#include <utils/MathTypes.h>
 
 
 #define SQUARE(x) ((x)*(x))

@@ -4,8 +4,8 @@
 #pragma once
 
 #include <vector>
-//#include <Common/config.h>
-//#include <Utils/MathTypes.h>
+#include <common/config.h>
+#include <utils/MathTypes.h>
 #include <slam_map/SlamMapFwd.h>
 #include <slam_map/LandmarkId.h>
 #include <slam_map/MeasurementId.h>
