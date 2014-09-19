@@ -3,6 +3,9 @@
 
 #include <utils/PrintMessage.h>
 #include <common_front_end/FeatureMatch.h>
+//#include <common_front_end/CommonFrontEndCVars.h>
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <common_front_end/CommonFrontEndParamsConfig.h>
 
 #include <assert.h>
 #include <math.h>
@@ -88,7 +91,7 @@ Feature*  FindBestFeatureInRow(const float           x,
           !(*it)->used ) {
         if (fabs(y - (*it)->y) <= max_error_y) {
 #ifndef ANDROID
-          if(!g_common_cvars.feature_descriptor.compare("SURF")) {
+          if(CommonFrontEndConfig::getConfig()->feature_descriptor == common_front_end::CommonFrontEndParams_SURF) {
             float score = sl2(
                 reinterpret_cast<const float*>(descriptor),
                 reinterpret_cast<const float*>(&(*it)->descriptor[0]),
@@ -112,12 +115,12 @@ Feature*  FindBestFeatureInRow(const float           x,
     }
   }
 
-  if(!g_common_cvars.feature_descriptor.compare("SURF")) {
+  if(CommonFrontEndConfig::getConfig()->feature_descriptor == common_front_end::CommonFrontEndParams_SURF) {
     match_score = (float)dbest_score;
     if( best_score == DBL_MAX ){
       match_flag = NoFeaturesToMatch;  // no features found in search window
     }
-    else if( dbest_score > g_common_cvars.feature_matching_threshold ) {
+    else if( dbest_score > CommonFrontEndConfig::getConfig()->feature_matching_threshold ) {
       match_flag  = NoMatchOnLine;
     }
     else{
@@ -130,7 +133,7 @@ Feature*  FindBestFeatureInRow(const float           x,
     if( best_score == 512 ){
       match_flag = NoFeaturesToMatch;  // no features found in search window
     }
-    else if( best_score > g_common_cvars.feature_matching_threshold ) {
+    else if( best_score > CommonFrontEndConfig::getConfig()->feature_matching_threshold ) {
       match_flag  = NoMatchOnLine;
     }
     else{
@@ -191,7 +194,7 @@ Feature* FindBestFeatureInRegion(
       if ((*it)->x >= left_boundary &&
           (*it)->x <= right__boundary &&
           !(*it)->used) {
-        if (!g_common_cvars.feature_descriptor.compare("SURF")) { // Returns 0 on equal
+        if (CommonFrontEndConfig::getConfig()->feature_descriptor == common_front_end::CommonFrontEndParams_SURF) { // Returns 0 on equal
           nScore = sl2((float*)descriptor,
                        (float *)&(*it)->descriptor[0],
                        (*it)->descsize/4);
@@ -218,10 +221,10 @@ Feature* FindBestFeatureInRegion(
   if( nBestScore == 512 ){
     match_flag = NoFeaturesToMatch; // no features found in search window
   }
-  else if( nBestScore > g_common_cvars.feature_matching_threshold ) { // this number is super important!
+  else if( nBestScore > CommonFrontEndConfig::getConfig()->feature_matching_threshold ) { // this number is super important!
     match_flag  = NoMatchInRegion; // matched feature is not good enough
   }
-  else if( nBestScore * g_common_cvars.match_error_factor >= nNextBestScore ) {
+  else if( nBestScore * CommonFrontEndConfig::getConfig()->match_error_factor >= nNextBestScore ) {
     match_flag  = AmbiguousMatch;
   }
   else{

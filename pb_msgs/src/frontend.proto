@@ -1,0 +1,12 @@
+package pb;
+
+import "rslam.proto";
+
+message PlaceFrameMappingMsg {
+    optional ReferenceFrameIdMsg frame_id = 1;
+    optional uint32 place_id = 2;
+}
+
+message FrontendMsg {
+    repeated PlaceFrameMappingMsg place_ids = 1;
+}

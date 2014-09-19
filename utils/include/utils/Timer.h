@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <HAL/Utils/TicToc.h>
+#include <utils/TicToc.h>
 
 class Timer {
  public:

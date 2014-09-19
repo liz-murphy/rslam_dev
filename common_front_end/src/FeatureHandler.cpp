@@ -59,9 +59,9 @@ bool FeatureHandler::Init(const Options& options) {
                                       options.fast_do_nms,
                                       options.fast_skip_level0));
       break;
-    case TRACK_2D:
-      m_pFeatureDetector = std::make_shared<Track2dFeatureDetector>();
-      break;
+   // case TRACK_2D:
+    //  m_pFeatureDetector = std::make_shared<Track2dFeatureDetector>();
+     // break;
     case SIMULATION:
       m_pFeatureDetector = std::shared_ptr<cv::FeatureDetector>(
           new SimFeatureDetector(options.sim_camera_id));

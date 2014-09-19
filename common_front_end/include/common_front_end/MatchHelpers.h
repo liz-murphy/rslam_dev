@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <CommonFrontEnd/PatchMatch.h>
-#include <CommonFrontEnd/CommonFrontEndParams.h>
-#include <CommonFrontEnd/FeatureMatch.h>
+#include <common_front_end/PatchMatch.h>
+#include <common_front_end/CommonFrontEndParamsConfig.h>
+#include <common_front_end/FeatureMatch.h>
 #include <slam_map/PatchHomography.h>
-#include <Utils/PrintMessage.h>
-#include <Utils/MathTypes.h>
-#include <Utils/Utils.h>
+#include <utils/PrintMessage.h>
+#include <utils/MathTypes.h>
+#include <utils/Utils.h>
 
 #include <algorithm>
 
@@ -137,7 +137,8 @@ inline Feature* FindBestMatchInRegion(
   if (!g_common_cvars.feature_detector.compare("TRACK_2D") ||
       !g_common_cvars.feature_detector.compare("FLYBY")) {
     return GetBestTrack2dMatch( feature_id, search_image, match_score, match_flag );
-  } else if( !g_common_cvars.feature_detector.compare("SIMULATION") ) {
+  } 
+  if( CommonFrontEnd::getConfig()->feature_detector("SIMULATION") ) {
 
     int search_col  = round( H.CenterPixel()[0] );
     int search_row  = round( H.CenterPixel()[1] );

@@ -46,6 +46,7 @@ set( PROTO_IN
     src/FrameObject.proto
     src/rslam.proto
     src/template.proto
+    src/frontend.proto
 )
 
 set(arguments

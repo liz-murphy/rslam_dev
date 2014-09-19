@@ -6,10 +6,10 @@
 #include <cfloat>
 #include <random>
 #include <calibu/cam/CameraRig.h>
-#include <CommonFrontEnd/CommonFrontEndParams.h>
-#include <Utils/MathTypes.h>
-#include <Utils/PrintMessage.h>
-#include <Utils/Utils.h>
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <utils/MathTypes.h>
+#include <utils/PrintMessage.h>
+#include <utils/Utils.h>
 
 ///
 /// \brief GetUniqueIndices
@@ -152,7 +152,7 @@ inline bool GoodRandIndices(
   }
 
   if (num_good_indices < 3) {
-    PrintMessage( g_common_cvars.ransac_debug_level,
+    PrintMessage( CommonFrontEndConfig::getConfig()->ransac_debug_level,
                   "    WARNING: only %d good measurements in cam[%d] "
                   "-- not enough for RANSAC\n",
                   num_good_indices, selected_cam_id );
@@ -183,7 +183,7 @@ inline bool GoodRandIndices(
   } while (points_are_colinear && count++ < max_trials);
 
   if (points_are_colinear || points_have_large_depth){
-    PrintMessage( g_common_cvars.ransac_debug_level,
+    PrintMessage( CommonFrontEndConfig::getConfig()->ransac_debug_level,
                   "      RANSAC Failed to select a measurement subset.\n");
     return false;
   }
@@ -213,10 +213,10 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
   // Camera pose solutions for subset
   std::vector<Sophus::SE3t > poses;
 
-  const unsigned int max_trials   = g_common_cvars.ransac_max_trials;
+  const unsigned int max_trials   = CommonFrontEnd::getConfig()->ransac_max_trials;
   const unsigned int max_data_trials = 100; // CVar
-  const double  prob              = g_common_cvars.ransac_probability ;
-  const double  outlier_threshold = g_common_cvars.ransac_outlier_threshold;
+  const double  prob              = CommonFrontEnd::getConfig()->ransac_probability ;
+  const double  outlier_threshold = CommonFrontEnd::getConfig()->ransac_outlier_threshold;
   const double  eps               = 1.0e-10;
   unsigned int  trial_count       = 0;
   unsigned int  num_trials        = 1;
@@ -229,9 +229,9 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
   unsigned int best_num_inliers = 0;
   double    best_total_error = DBL_MAX;
 
-  PrintMessage(g_common_cvars.ransac_debug_level,"<RANSAC>\n");
+  PrintMessage(CommonFrontEndConfig::getConfig()->ransac_debug_level,"<RANSAC>\n");
   if (num_meas < 3) {
-    PrintMessage(g_common_cvars.ransac_debug_level,
+    PrintMessage(CommonFrontEndConfig::getConfig()->ransac_debug_level,
                  "  RANSAC: not enough measurements\n");
   }
 
@@ -251,10 +251,10 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
                          selected_cam,
                          sub_set_indices,
                          rng)) {
-      PrintMessage(g_common_cvars.ransac_debug_level,
+      PrintMessage(CommonFrontEndConfig::getConfig()->ransac_debug_level,
                    "  Unable to select a nondegenerate data set.\n");
       if (num_tries++ > max_data_trials) {
-        PrintMessage(g_common_cvars.ransac_debug_level,
+        PrintMessage(CommonFrontEndConfig::getConfig()->ransac_debug_level,
                      "  Unable to select a nondegenerate data "
                      "set after %d tries, bailing\n", num_tries);
         return false;
@@ -266,7 +266,7 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
     const Eigen::Vector2t& z2 = points_2d[sub_set_indices[1]];
     const Eigen::Vector2t& z3 = points_2d[sub_set_indices[2]];
 
-    PrintMessage(g_common_cvars.ransac_debug_level,
+    PrintMessage(CommonFrontEnd::getConfig()->ransac_debug_level,
                  "  Selected MultiViewMeasurements: [%d %d %d] from cam[%d]:"
                  " [%.3f %.3f],  [%.3f %.3f],  [%.3f %.3f]\n",
                  sub_set_indices[0],sub_set_indices[1],sub_set_indices[2],
@@ -371,7 +371,7 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
 
     // Safeguard vs infinite loop
     if (trial_count > max_trials) {
-      PrintMessage(g_common_cvars.ransac_debug_level,
+      PrintMessage(CommonFrontEndConfig::getConfig()->ransac_debug_level,
                    "  RANSAC reached the maximum number of trials\n");
       break;
     }
@@ -379,7 +379,7 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
 
   //check if a solution was found
   if (!success) {
-    LOG(g_common_cvars.ransac_debug_level) << "RANSAC did not find a model";
+    LOG(CommonFrontEndConfig::getConfig()->ransac_debug_level) << "RANSAC did not find a model";
   } else {
     t_ab = best_twv;
   }
@@ -387,6 +387,6 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
   //PrintMessage(g_frontend_cvars.estimate_debug_level,
   //             "  RANSAC found %d inliers with pose est %s\n",
   //             best_num_inliers, Pose2Str(t_ab.matrix()) );
-  LOG(g_common_cvars.ransac_debug_level) << "<RANSAC>";
+  LOG(CommonFrontEndConfig::getConfig()->ransac_debug_level) << "<RANSAC>";
   return true;
 }
