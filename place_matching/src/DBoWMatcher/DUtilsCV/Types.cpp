@@ -23,7 +23,7 @@
 
 #include <opencv/cv.h>
 #include <string>
-#include "Types.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/Types.h>
 
 using namespace DUtilsCV;
 

@@ -1,4 +1,4 @@
-#include "TemplatedLoopDetector.h"
+#include <place_matching/DBoWMatcher/DLoopDetector/TemplatedLoopDetector.h>
 
 // --------------------------------------------------------------------------
 

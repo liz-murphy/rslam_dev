@@ -21,7 +21,7 @@
  *
  */
 
-#include "LUT.h"
+#include <place_matching/DBoWMatcher/DUtils/LUT.h>
 
 int DUtils::LUT::ones8bits[256] = 
 {

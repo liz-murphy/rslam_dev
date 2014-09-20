@@ -17,8 +17,8 @@
  */
 
 #include <cfloat>
-#include "TemplatedVocabulary.h"
-#include "BowVector.h"
+#include <place_matching/DBoWMatcher/DBoW2/TemplatedVocabulary.h>
+#include <place_matching/DBoWMatcher/DBoW2/BowVector.h>
 
 using namespace DBoW2;
 

@@ -1,0 +1,67 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\horizDT-DDFormat.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\horizDT-DDFormat.txt'
+Display Warnings: '1'
+
+Test Case Id: 21 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 27 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 54 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 59 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 82 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 88 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 89 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 98 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 154 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 165 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 178 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 180 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 204 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 212 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 219 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 225 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 237 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+
+
+Results: 
+
+	Successful
+		Equivalent Results	246 
+		Different Results	0 
+	Warnings
+		Equivalent Results	17 
+		Different Results	0 
+	Errors (No Results)		0 
+	Total Test Cases		263 

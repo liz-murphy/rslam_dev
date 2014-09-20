@@ -16,7 +16,7 @@
  *
  */
 
-#include "FeatureVector.h"
+#include <place_matching/DBoWMatcher/DBoW2/FeatureVector.h>
 #include <map>
 #include <vector>
 #include <iostream>

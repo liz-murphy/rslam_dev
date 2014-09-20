@@ -12,6 +12,8 @@
 #include <slam_map/SlamMap.h>
 #include <slam_map/TransformEdge.h>
 
+#include <back_end/BackEndConfig.h>
+
 /** Visitor to gather active frame set for BackEnd::RefineMap */
 template <typename BundleAdjuster>
 class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
@@ -62,7 +64,7 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
       bool should_delete = false;
       if (lm_state == eLmkAtInfinity) {
         // We require a minimum number of observations before adding it
-        if (track->size() < (size_t)min_lm_observations) {
+        if (track->size() < (size_t)BackEndConfig::getConfig()->min_lm_observations) {
           should_delete = true;
         }
       } else {

@@ -23,8 +23,8 @@
 
 #include <vector>
 #include <algorithm>
-#include "Timestamp.h"
-#include "TimeManager.h"
+#include <place_matching/DBoWMatcher/DUtils/Timestamp.h>
+#include <place_matching/DBoWMatcher/DUtils/TimeManager.h>
 
 using namespace std;
 using namespace DUtils;

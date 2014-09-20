@@ -28,8 +28,8 @@
 #include <fstream>
 #include <iomanip>
 
-#include "PMVSCamera.h"
-#include "DUtils.h"
+#include <place_matching/DBoWMatcher/DVision/PMVSCamera.h>
+#include <place_matching/DBoWMatcher/DUtils/DUtils.h>
 
 using namespace std;
 using namespace DVision::PMVS;

@@ -1,5 +1,7 @@
 #include <sparse_tracking/EstimateRelativePose.h>
 #include <slam_map/SlamMap.h>
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <sparse_tracking/TrackingConfig.h>
 
 namespace rslam {
 namespace sparse {
@@ -109,8 +111,8 @@ int DoReThreading(const LocalMap &work_set,
       const Eigen::Vector2t pr(refined_x, refined_y);
       const Eigen::Vector2t e = pr - p;
 
-      if (error < g_common_cvars.esm_threshold &&
-          e.norm() < g_common_cvars.esm_subpixel_threshold) {
+      if (error < CommonFrontEndConfig::getConfig()->esm_threshold &&
+          e.norm() < CommonFrontEndConfig::getConfig()->esm_subpixel_threshold) {
         z.SetFlag(cam_id, GoodMatch);
         z.SetPixelInCam(cam_id, refined_x, refined_y);
         z.SetPatchHomography(cam_id, homography);
@@ -131,7 +133,7 @@ int FlagOutliers(
     double                               &msre,
     int* infinity_lms)
 {
-  PrintMessage(g_tracking_cvars.flagoutliers_debug_level, "<FlagOutliers>\n");
+  PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level, "<FlagOutliers>\n");
 
   int num_inliers = 0;
   int num_landmarks_at_infinity = 0;
@@ -177,7 +179,7 @@ int FlagOutliers(
       const Eigen::Vector2t   e = p - z.Pixel(cam_id);
       const Scalar error = e.norm();
 
-      PrintMessage(g_tracking_cvars.flagoutliers_debug_level,
+      PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level,
                    "FlagOutliers: LM %s cam[%d] z=[%.2f, %.2f], "
                    "hx=[%.2f, %.2f] error %f\n",
                    lm.id(), cam_id, z.Pixel(cam_id)[0], z.Pixel(cam_id)[1],
@@ -187,7 +189,7 @@ int FlagOutliers(
 
       //if "dist" to model is > than the inlier threshold ->FLAG as outlier
       if (error > outlier_threshold ){
-        PrintMessage(g_tracking_cvars.flagoutliers_debug_level,
+        PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level,
                      "FlagOutliers %s reprojection error %f too big\n",
                      lm.id(), error);
         z.SetFlag(cam_id, outlier_flag);
@@ -204,7 +206,7 @@ int FlagOutliers(
   } else {
     msre = DBL_MAX;
   }
-  PrintMessage(g_tracking_cvars.flagoutliers_debug_level, "</FlagOutliers>\n");
+  PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level, "</FlagOutliers>\n");
 
   if (infinity_lms) {
     *infinity_lms = num_landmarks_at_infinity;
@@ -297,26 +299,26 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   //=================================================================
   if (!no_tic) timer->Tic("MatchInTime");
   bool have_enough_matches = false;
-  float search_radius = g_common_cvars.initial_search_radius;
+  float search_radius = CommonFrontEndConfig::getConfig()->initial_search_radius;
   int matching_attempts = 0;
-  int max_attempts = g_common_cvars.num_match_in_time_attempts;
+  int max_attempts = CommonFrontEndConfig::getConfig()->num_match_in_time_attempts;
   while (!have_enough_matches && ++matching_attempts <= max_attempts) {
     // compute matches
     system_status.num_mit_matches =
         MatchInTime(frame_id, images, working_set, options, new_measurements,
                     feature_matches, search_radius);
 
-    PrintMessage(g_tracking_cvars.matchintime_debug_level,
+    PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                  "MATCH-IN-TIME num tentative matches: %d\n",
                  system_status.num_mit_matches);
 
     have_enough_matches =
-        system_status.num_mit_matches >= g_tracking_cvars.min_tracked_features;
+        system_status.num_mit_matches >= TrackingConfig::getConfig()->min_tracked_features;
     if (!have_enough_matches) {
       // increase search area
-      PrintMessage(g_tracking_cvars.matchintime_debug_level,
+      PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                    "MIT FAILURE -> Increasing Search area \n");
-      search_radius *= g_common_cvars.search_radius_grow_rate;
+      search_radius *= CommonFrontEndConfig::getConfig()->search_radius_grow_rate;
     }
   }
   if (!no_tic) timer->Toc("MatchInTime");
@@ -380,7 +382,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   }
 
   Sophus::SE3t ransac_t_ab = t_ab;
-  if (g_tracking_cvars.do_ransac) {
+  if (TrackingConfig::getConfig()->do_ransac) {
     if (!Ransac(points_3d, points_2d, cam_ids, rig,
                 &system_status.rng, ransac_t_ab)) {
       if (!no_tic) timer->Toc("RANSAC");
@@ -393,7 +395,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   // How many landmarks are at infinity
   int infinity_lms = 0;
   system_status.num_inliers =
-      FlagOutliers( g_common_cvars.ransac_outlier_threshold,
+      FlagOutliers( CommonFrontEndConfig::getConfig()->ransac_outlier_threshold,
                     RansacOutlier,
                     working_set,
                     ransac_t_ab,
@@ -402,11 +404,11 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
                     system_status.rmsre,
                     &infinity_lms);
 
-  PrintMessage(g_tracking_cvars.estimate_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->estimate_debug_level,
                "RANSAC inliers: %d, inlierPercent: %f\n",
                system_status.num_inliers,
                float(system_status.num_inliers) /
-               g_common_cvars.num_features_to_track);
+               CommonFrontEndConfig::getConfig()->num_features_to_track);
 
   // failure case
   if (system_status.num_inliers + infinity_lms < 16) {
@@ -452,11 +454,11 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
     //=================================================================
     // Given the estimated transform, try to find missing 3D-2D matches
     //=================================================================
-    if (g_tracking_cvars.do_rethreading) {
+    if (TrackingConfig::getConfig()->do_rethreading) {
       if (!no_tic) timer->Tic("Rethreading");
       int rethreaded_msr = DoReThreading(working_set, t_ab,
                                          new_measurements, images);
-      PrintMessage(g_tracking_cvars.estimate_debug_level,
+      PrintMessage(TrackingConfig::getConfig()->estimate_debug_level,
                    "Rethreaded msr: %d\n", rethreaded_msr );
       backend.GaussNewton(working_set, new_measurements, map, t_ab, has_imu,
                           meas);

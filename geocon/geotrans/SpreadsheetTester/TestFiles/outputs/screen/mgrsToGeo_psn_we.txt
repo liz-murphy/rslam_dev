@@ -1,0 +1,16 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\mgrsToGeo_psn_we.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\mgrsToGeo_psn_we.txt'
+Display Warnings: '1'
+
+
+
+Results: 
+
+	Successful
+		Equivalent Results	31 
+		Different Results	0 
+	Warnings
+		Equivalent Results	0 
+		Different Results	0 
+	Errors (No Results)		0 
+	Total Test Cases		31 

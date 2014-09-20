@@ -25,7 +25,7 @@
  *
  */
 
-#include "SurfSet.h"
+#include <place_matching/DBoWMatcher/DVision/SurfSet.h>
 
 #if USE_SURF
 

@@ -90,7 +90,7 @@ bool PushMap(const BundleAdjuster& ba,
       std::vector<ba::ImuMeasurementT<Scalar> > meas =
           imu_buffer->GetRange(res.measurements.front().time,
                                res.measurements.back().time +
-                               g_imu_visualization_time_extra);
+                               BackEndConfig::getConfig()->imu_visualization_time_extra);
 
       const ba::PoseT<Scalar>& pose = ba.GetPose(res.pose1_id);
       res.IntegrateResidual(pose, meas,

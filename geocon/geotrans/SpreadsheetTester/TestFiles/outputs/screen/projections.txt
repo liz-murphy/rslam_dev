@@ -1,0 +1,1686 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\projections.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\projections.txt'
+Display Warnings: '1'
+
+Test Case Id: 5 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 6 - Warning: Input Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 7 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 8 - Warning: Input Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 9 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 10 - Warning: Input Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 15 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 16 - Warning: Input Albers Equal Area Conic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 21 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 22 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 23 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 24 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 25 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 26 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 31 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 32 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 41 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 42 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 43 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 44 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 45 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 46 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 47 - Expected: -48974.626000, 5099713.497000   Calculated: -48974.625732, 5099711.804781 
+Test Case Id: 51 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 52 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 57 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 58 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 59 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 60 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 61 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 62 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 67 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 68 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 75 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 76 - Warning: Input Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 77 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 78 - Warning: Input Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 79 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 80 - Warning: Input Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 85 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 86 - Warning: Input Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 87 - Warning: Output Polyconic: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 89 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 90 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 91 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 92 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 95 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 96 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 97 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 98 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 107 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 108 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 109 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 110 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 111 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 112 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 117 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Polyconic: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 118 - Warning: Input Polyconic: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 119 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Test Case Id: 120 - Warning: Input Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 123 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Test Case Id: 124 - Warning: Input Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 125 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Test Case Id: 126 - Warning: Input Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 127 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Mercator: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 128 - Warning: Input Transverse Mercator: 
+Longitude is too far from Central Meridian, distortion may be significant
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 130 - Warning: Input Transverse Mercator: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 133 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Mercator: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 134 - Warning: Input Transverse Mercator: 
+Longitude is too far from Central Meridian, distortion may be significant
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 137 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 138 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 139 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 140 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 141 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 142 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 143 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 144 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 145 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 146 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 147 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 148 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 149 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Stereographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 150 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 151 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 152 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 153 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 154 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 155 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 156 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 157 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 158 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 159 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 160 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 161 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 162 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 163 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 164 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 165 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 166 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 167 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 168 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 169 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 170 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 173 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 174 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 175 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 176 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 177 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 178 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 179 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 180 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 181 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 182 - Warning: Input Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 183 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 184 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 187 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 188 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 189 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 190 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 191 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 192 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 193 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 194 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 195 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 196 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 197 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 198 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 199 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 200 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 209 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 210 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 211 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 212 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 213 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 214 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 219 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Orthographic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 220 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 221 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 222 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 223 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 224 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 225 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 226 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 227 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 228 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 229 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 230 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 231 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 232 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 233 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 234 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 235 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 236 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 237 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 238 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 239 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 240 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 249 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 250 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 251 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 252 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 253 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 254 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 259 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 260 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 261 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 262 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 263 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 264 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 265 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 266 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 267 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 268 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 269 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 270 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 271 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 272 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 281 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 282 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 283 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 284 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 285 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 286 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 291 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Van der Grinten: 
+Location is not within valid domain for current datum
+
+Test Case Id: 292 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 293 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Oblique Mercator: 
+Location is not within valid domain for current datum
+
+Test Case Id: 294 - Warning: Input Oblique Mercator: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 305 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Bonne: 
+Location is not within valid domain for current datum
+
+Test Case Id: 306 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 307 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Bonne: 
+Location is not within valid domain for current datum
+
+Test Case Id: 308 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 309 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Bonne: 
+Location is not within valid domain for current datum
+
+Test Case Id: 310 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 315 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Bonne: 
+Location is not within valid domain for current datum
+
+Test Case Id: 316 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 317 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cassini: 
+Location is not within valid domain for current datum
+
+Test Case Id: 318 - Warning: Input Cassini: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 319 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 320 - Warning: Input Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 321 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 322 - Warning: Input Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 323 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 324 - Warning: Input Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 325 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 326 - Warning: Input Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 327 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cassini: 
+Location is not within valid domain for current datum
+
+Test Case Id: 328 - Warning: Input Cassini: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 329 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cassini: 
+Location is not within valid domain for current datum
+
+Test Case Id: 330 - Warning: Input Cassini: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 331 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cassini: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 332 - Warning: Input Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 333 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 334 - Warning: Input Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 335 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 337 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cassini: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 338 - Warning: Input Cassini: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 339 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 340 - Warning: Input Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 349 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 350 - Warning: Input Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 351 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 352 - Warning: Input Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 353 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 354 - Warning: Input Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 359 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 360 - Warning: Input Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 361 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 362 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 371 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 372 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 373 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 374 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 375 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 376 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 381 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 382 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 383 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 384 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 393 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 394 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 395 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 396 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 397 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 398 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 403 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 404 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 413 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 414 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 415 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 416 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 417 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 418 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 423 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 424 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 425 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mollweide (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 426 - Warning: Input Mollweide (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 435 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mollweide (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 436 - Warning: Input Mollweide (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 437 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mollweide (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 438 - Warning: Input Mollweide (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 439 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mollweide (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 440 - Warning: Input Mollweide (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 443 - Expected: -2.710000, 9009964.760000   Calculated: -3.751134, 9009964.761287 
+Test Case Id: 445 - Expected: 4.520000, -9009964.760000   Calculated: 6.251891, -9009964.761238 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Mollweide (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 446 - Warning: Input Mollweide (S): 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 447 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 448 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 457 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 458 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 459 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 460 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 461 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 462 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 467 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 468 - Warning: Input Sinusoidal: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 469 - Warning: Input Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 478 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 479 - Warning: Input Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 480 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Test Case Id: 481 - Warning: Input Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 482 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 483 - Warning: Input Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 486 - Expected: 0.000000, 5017021.350000   Calculated: -0.000000, -14986910.107760 
+Test Case Id: 488 - Expected: 0.050000, -5017021.070000   Calculated: 0.000000, 14986910.107558 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 489 - Warning: Input Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 495 - Expected: 8050247.000000, 26775888.000000   Calculated: 8060188.097082, 26765832.663081 
+
+
+Results: 
+
+	Successful
+		Equivalent Results	211 
+		Different Results	4 
+	Warnings
+		Equivalent Results	280 
+		Different Results	2 
+	Errors (No Results)		0 
+	Total Test Cases		497 

@@ -1,0 +1,23 @@
+TEST CASE ID	INPUT DATUM(Code)	INPUT PROJECTION	OUTPUT DATUM(Code)	OUTPUT PROJECTION	INPUT ZONE	OUTPUT ZONE	INPUT_COORDS			OUTPUT_COORDS			CALCULATED_OUTPUT_COORDS				INPUT_SYSTEM_PARAMETERS										OUTPUT_SYSTEM_PARAMETERS										RESULTS
+					OR HEMISPHERE	OR HEMISPHERE	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	Calculated Zone or Hemisphere	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	
+
+1	ADI-M	Geocentric	ADI-M	Lambert Conformal Conic			6378249	0	0	0	1105889.446		0	1105889													-5.5	10.5	0	-10	0	0					
+2	WGE	Geocentric	WGE	Mercator			0	167521	6354559	-473081.0106	19557317		-473081	19557317															96	45	0	0					
+3	NAR-A	Geocentric	NAR-A	Polar Stereographic			-557747	0	-6332401	82849.62359	469863.564		82850	469864															170	-45	0	0					
+4	ADI-M	Geocentric	ADI-M	MGRS			6378249	0	0	31NAL6601600000			31NAL6601600000																								
+5	WGE	Geocentric	WGE	UPS		N	0	167521	6354559	2166544	2000000		2166544	2000000		N																					
+6	NAR-A	Geocentric	NAR-A	MGRS			-557747	0	-6332401	BAG0000044543			BAG0000044543																								
+7	WGE	Geocentric	WGE	UTM		-16	0	-4517591	-4487348	263554	5012670		263554	5012671		-16																					
+8	ADI-F	Geocentric	MIN-A	Lambert Conformal Conic			6378249	0	0	81.33	1105983.59		81	1105984													-5.5	10.5	0	-10	0	0					
+9	WGE	Geocentric	WGC	Mercator			0	167521	6354559	-473093	19557308		-473093	19557307															96	45	0	0					
+10	CAZ	Geocentric	DID	Polar Stereographic			-557747	0	-6332401	83024.59	470161.17		83025	470161															170	-45	0	0					
+11	ADI-F	Geocentric	PTN	MGRS			6378249	0	0	30NZR3393100501			30NZR3393100501																								
+12	WGE	Geocentric	WGC	UPS		N	0	167521	6354559	2166544	2000000		2166544	2000000		N																					
+13	WGC	Geocentric	CAZ	MGRS			-557747	0	-6332401	BAG0012744652			BAG0012744652																								
+14	HIT	Geocentric	SAN-D	UTM		-16	0	-4517591	-4487348	263646	5012614		263646	5012614		-16
+15	WGE	Geocentric	WGC	Geodetic			6378137	0	0	-0.000041	-0.000154		-0.000041	-0.000154		
+16	WGE	Geocentric	WGC	Geodetic			0	6378137	0	-0.000041	89.999846		-0.000041	89.999846		
+17	WGE	Geocentric	WGC	Geodetic			0	0	6356752	90	-0.000154		90	-0.000154		
+18	WGE	Geocentric	WGC	Geocentric			6378137	0	0	6378136	-17	-4	6378136	-17	-4	
+19	WGE	Geocentric	WGC	Geocentric			0	6378137	0	17	6378136	-4	17	6378136	-4	
+20	WGE	Geocentric	WGC	Geocentric			0	0	6356752	0	0	6356746	0	0	6356746	

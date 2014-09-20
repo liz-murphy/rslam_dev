@@ -1,0 +1,38 @@
+package pb;
+
+import "rslam.proto";
+
+message KeyPointMsg {
+    optional float x = 1;
+    optional float y = 2;
+}
+
+message KeyPointVectorMsg {
+    repeated KeyPointMsg keypoint = 1;
+}
+
+// Represents a BINARY descriptor vector
+message BinaryDescriptorMsg {
+    repeated uint32 data = 1 [packed=true];
+}
+
+message DescriptorVectorMsg {
+    repeated BinaryDescriptorMsg binary_descriptor = 1;
+}
+
+message LandmarkIdVectorMsg {
+    repeated LandmarkIdMsg landmarks = 1;
+}
+
+message DBoWPlaceMsg {
+    optional ReferenceFrameIdMsg index = 1;
+    optional DescriptorVectorMsg descriptor_vector = 2;
+    optional KeyPointVectorMsg keypoint_vector = 3;
+    optional LandmarkIdVectorMsg landmarks_vector = 4;
+}
+
+message DBoWCorpusMsg {
+    repeated ReferenceFrameIdMsg index = 1;
+    repeated DescriptorVectorMsg descriptor_vector = 2;
+    repeated KeyPointVectorMsg keypoint_vector = 3;
+}

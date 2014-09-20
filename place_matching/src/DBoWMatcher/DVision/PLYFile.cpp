@@ -21,7 +21,7 @@
  *
  */
 
-#include "PLYFile.h"
+#include <place_matching/DBoWMatcher/DVision/PLYFile.h>
 #include <string>
 #include <vector>
 #include <fstream>

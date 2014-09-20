@@ -213,10 +213,10 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
   // Camera pose solutions for subset
   std::vector<Sophus::SE3t > poses;
 
-  const unsigned int max_trials   = CommonFrontEnd::getConfig()->ransac_max_trials;
+  const unsigned int max_trials   = CommonFrontEndConfig::getConfig()->ransac_max_trials;
   const unsigned int max_data_trials = 100; // CVar
-  const double  prob              = CommonFrontEnd::getConfig()->ransac_probability ;
-  const double  outlier_threshold = CommonFrontEnd::getConfig()->ransac_outlier_threshold;
+  const double  prob              = CommonFrontEndConfig::getConfig()->ransac_probability ;
+  const double  outlier_threshold = CommonFrontEndConfig::getConfig()->ransac_outlier_threshold;
   const double  eps               = 1.0e-10;
   unsigned int  trial_count       = 0;
   unsigned int  num_trials        = 1;
@@ -266,7 +266,7 @@ inline bool Ransac(const std::vector<Eigen::Vector4t> &points_3d,
     const Eigen::Vector2t& z2 = points_2d[sub_set_indices[1]];
     const Eigen::Vector2t& z3 = points_2d[sub_set_indices[2]];
 
-    PrintMessage(CommonFrontEnd::getConfig()->ransac_debug_level,
+    PrintMessage(CommonFrontEndConfig::getConfig()->ransac_debug_level,
                  "  Selected MultiViewMeasurements: [%d %d %d] from cam[%d]:"
                  " [%.3f %.3f],  [%.3f %.3f],  [%.3f %.3f]\n",
                  sub_set_indices[0],sub_set_indices[1],sub_set_indices[2],

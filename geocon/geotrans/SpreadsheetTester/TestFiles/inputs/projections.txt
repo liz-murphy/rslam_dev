@@ -1,0 +1,500 @@
+TEST CASE ID	INPUT DATUM(Code)	INPUT PROJECTION	OUTPUT DATUM(Code)	OUTPUT PROJECTION	INPUT ZONE	OUTPUT ZONE	INPUT_COORDS			OUTPUT_COORDS			CALCULATED_OUTPUT_COORDS				INPUT_SYSTEM_PARAMETERS										OUTPUT_SYSTEM_PARAMETERS										RESULTS
+					OR HEMISPHERE	OR HEMISPHERE	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	Calculated Zone or Hemisphere	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	
+
+1	CAC	Geodetic	CAC	Albers Equal Area			35	-75		1885472.726	1535925.005		n/a	n/a				 	 	 		 	 				29.5	45.5	-96	23	0	0					
+2	CAC	Albers Equal Area	CAC	Geodetic			1885472.73	1535925		34.9999999	-75		n/a	n/a			29.5	45.5	-96	23	0	0					 	 	 		 	 					
+3	WGE	Geodetic	WGE	Albers Equal Area			-35	75		-1885428.391	-1535969.286		n/a	n/a			 	 	 		 	 					-29.5	-45.5	96	-23	0	0					
+4	WGE	Albers Equal Area	WGE	Geodetic			-1885428.39	-1535969.29		-35	75		n/a	n/a			-29.5	-45.5	96	-23	0	0					 	 	 		 	 					
+5	ADI-M	Geodetic	ADI-M	Albers Equal Area			-0.5	-0.5		-55196.77351	1049933.634		n/a	n/a			 	 	 		 	 					-5.5	10.5	0	-10	0	0					
+6	ADI-M	Albers Equal Area	ADI-M	Geodetic			-55196.77	1049933.63		-0.5	-0.5		n/a	n/a			-5.5	10.5	0	-10	0	0					 	 	 		 	 					
+7	ADI-M	Geodetic	ADI-M	Albers Equal Area			0	0		0	1105679.86		n/a	n/a			 	 	 		 	 					-5.5	10.5	0	-10	0	0					
+8	ADI-M	Albers Equal Area	ADI-M	Geodetic			0	1105679.86		0	0		n/a	n/a			-5.5	10.5	0	-10	0	0					 	 	 		 	 					
+9	NAR-A	Geodetic	NAR-A	Albers Equal Area			0	-180		-19801976.82	2451650.067		n/a	n/a			 	 	 		 	 					-5.5	10.5	0	-10	0	0					
+10	NAR-A	Albers Equal Area	NAR-A	Geodetic			-19801976.82	2451650.07		0	180		n/a	n/a			-5.5	10.5	0	-10	0	0					 	 	 		 	 					
+11	WGC	Geodetic	WGC	Albers Equal Area			89.5	75		-331342.2992	4401570.483		n/a	n/a			 	 	 		 	 					50.5	65.5	96	45	0	0					
+12	WGC	Albers Equal Area	WGC	Geodetic			-331342.3	4401570.48		89.4999996	75		n/a	n/a			50.5	65.5	96	45	0	0					 	 	 		 	 					
+13	WGE	Geodetic	WGE	Albers Equal Area			90	90		-95910.90903	4356031.822		n/a	n/a			 	 	 		 	 					50.5	65.5	96	45	0	0					
+14	WGE	Albers Equal Area	WGE	Geodetic			-95910.91	4356031.82		90	90		n/a	n/a			50.5	65.5	96	45	0	0					 	 	 		 	 
+15	NAR-A	Geodetic	NAR-A	Albers Equal Area			-90	-180		159484.3674	-4363529.947		n/a	n/a			 	 	 		 	 					-50.5	-65.5	170	-45	0	0
+16	NAR-A	Albers Equal Area	NAR-A	Geodetic			159484.37	-4363529.95		-90	-179.9999998		n/a	n/a			-50.5	-65.5	170	-45	0	0					 	 	 		 	 
+17	CAC	Geodetic	CAC	Lambert Conformal Conic			35	-75		1894410.898	1564649.478		n/a	n/a			 	 	 		 	 					33	45	-96	23	0	0
+18	CAC	Lambert Conformal Conic	CAC	Geodetic			1894410.9	1564649.48		35	-75		n/a	n/a			33	45	-96	23	0	0					 	 	 		 	 
+19	WGE	Geodetic	WGE	Lambert Conformal Conic			-35	75		-1884610.298	-1545786.955		n/a	n/a			 	 	 		 	 					-29.5	-45.5	96	-23	0	0
+20	WGE	Lambert Conformal Conic	WGE	Geodetic			-1884610.3	-1545786.95		-35	75		n/a	n/a			-29.5	-45.5	96	-23	0	0					 	 	 		 	 
+21	ADI-M	Geodetic	ADI-M	Lambert Conformal Conic			-0.5	-0.5		-55196.06879	1051089.135		n/a	n/a			 	 	 		 	 					-5.5	10.5	0	-10	0	0
+22	ADI-M	Lambert Conformal Conic	ADI-M	Geodetic			-55196.07	1051089.13		-0.5	-0.5		n/a	n/a			-5.5	10.5	0	-10	0	0					 	 	 		 	 
+23	ADI-M	Geodetic	ADI-M	Lambert Conformal Conic			0	0		0	1105889.446		n/a	n/a			 	 	 		 	 					-5.5	10.5	0	-10	0	0
+24	ADI-M	Lambert Conformal Conic	ADI-M	Geodetic			0	1105889.45		0	0		n/a	n/a			-5.5	10.5	0	-10	0	0					 	 	 		 	 
+25	NAR-A	Geodetic	NAR-A	Lambert Conformal Conic			0	-180		-19800156.59	2469347.44		n/a	n/a			 	 	 		 	 					-5.5	10.5	0	-10	0	0
+26	NAR-A	Lambert Conformal Conic	NAR-A	Geodetic			-19800156.59	2469347.44		0	-180		n/a	n/a			-5.5	10.5	0	-10	0	0					 	 	 		 	 
+27	WGC	Geodetic	WGC	Lambert Conformal Conic			89.5	75		-34485.46242	5288409.045		n/a	n/a			 	 	 		 	 					50.5	65.5	96	45	0	0
+28	WGC	Lambert Conformal Conic	WGC	Geodetic			-34485.46	5288409.04		89.5	75.0000022		n/a	n/a			50.5	65.5	96	45	0	0					 	 	 		 	 
+29	WGE	Geodetic	WGE	Lambert Conformal Conic			90	90		0	5395427.571		n/a	n/a			 	 	 		 	 					50.5	65.5	96	45	0	0
+30	WGE	Lambert Conformal Conic	WGE	Geodetic			0	5395427.57		90	96		n/a	n/a			50.5	65.5	96	45	0	0					 	 	 		 	 
+31	NAR-A	Geodetic	NAR-A	Lambert Conformal Conic			-85	-180		117932.6374	-4606824.154		n/a	n/a			 	 	 		 	 					-50.5	-65.5	170	-45	0	0
+32	NAR-A	Lambert Conformal Conic	NAR-A	Geodetic			117932.64	-4606824.15		-85	-179.9999998		n/a	n/a			-50.5	-65.5	170	-45	0	0					 	 	 		 	 
+33	WGE	Geodetic	WGE	Lambert Conformal Conic			1	180		12566785.6	16379311.7		n/a	n/a													38	33	0	0	0	0
+34	WGE	Lambert Conformal Conic	WGE	Geodetic			12566785.6	16379311.7		1	180		n/a	n/a			38	33	0	0	0	0										
+35	WGE	Geodetic	WGE	Lambert Conformal Conic			1	-180		-12566785.6	16379311.7		n/a	n/a													38	33	0	0	0	0
+36	WGE	Lambert Conformal Conic	WGE	Geodetic			-12566785.6	16379311.7		1	-180		n/a	n/a			38	33	0	0	0	0										
+37	CAC	Geodetic	CAC	Lambert Conformal Conic			35	-75		1905553.369	412711.533		n/a	n/a			 	 	 		 	 					33	33	-96	33	0	0
+38	CAC	Lambert Conformal Conic	CAC	Geodetic			1905553.37	412711.533		35	-75		n/a	n/a			33	33	-96	33	0	0					 		 		 	 
+39	WGE	Geodetic	WGE	Lambert Conformal Conic			-35	75		-1915604.45	-784188.812		n/a	n/a			 		 		 	 					-29.5	-29.5	96	-29.5	0	0
+40	WGE	Lambert Conformal Conic	WGE	Geodetic			-1915604.45	-784188.812		-35	75		n/a	n/a			-29.5	-29.5	96	-29.5	0	0					 		 		 	 
+41	ADI-M	Geodetic	ADI-M	Lambert Conformal Conic			-0.5	-0.5		-55869.18232	553512.776		n/a	n/a			 		 		 	 					-5.5	-5.5	0	-5.5	0	0
+42	ADI-M	Lambert Conformal Conic	ADI-M	Geodetic			-55869.18	553512.776		-0.5	-0.5		n/a	n/a			-5.5	-5.5	0	-5.5	0	0					 		 		 	 
+43	ADI-M	Geodetic	ADI-M	Lambert Conformal Conic			0	0		0	609048.992		n/a	n/a			 		 		 	 					-5.5	-5.5	0	-5.5	0	0
+44	ADI-M	Lambert Conformal Conic	ADI-M	Geodetic			0	609048.992		0	0		n/a	n/a			-5.5	-5.5	0	-5.5	0	0					 		 		 	 
+45	NAR-A	Geodetic	NAR-A	Lambert Conformal Conic			0	-180		-19826481.2	-2398613.428		n/a	n/a			 		 		 	 					-5.5	-5.5	0	-5.5	0	0
+46	NAR-A	Lambert Conformal Conic	NAR-A	Geodetic			-19826481.2	-2398613.428		0	180		n/a	n/a			-5.5	-5.5	0	-5.5	0	0					 		 		 	 
+47	WGC	Geodetic	WGC	Lambert Conformal Conic			89.5	75		-48974.626	5099713.497		n/a	n/a			 		 		 	 					50.5	50.5	96	50.5	0	0
+48	WGC	Lambert Conformal Conic	WGC	Geodetic			-48974.626	5099713.497		89.5	75		n/a	n/a			50.5	50.5	96	50.5	0	0					 		 		 	 
+49	WGE	Geodetic	WGE	Lambert Conformal Conic			90	90		0	5268240.13		n/a	n/a			 		 		 	 					50.5	50.5	96	50.5	0	0
+50	WGE	Lambert Conformal Conic	WGE	Geodetic			0	5268240.13		90	96		n/a	n/a			50.5	50.5	96	50.5	0	0					 		 		 	 
+51	NAR-A	Geodetic	NAR-A	Lambert Conformal Conic			-85	-180		139338.1608	-4239869.004		n/a	n/a			 		 		 	 					-50.5	-50.5	170	-50.5	0	0
+52	NAR-A	Lambert Conformal Conic	NAR-A	Geodetic			139338.16	-4239869.004		-85	179.9999999		n/a	n/a			-50.5	-50.5	170	-50.5	0	0					 	 	 		 	 
+53	CAC	Geodetic	CAC	Mercator			35	-75		11688673.72	4139145.66		n/a	n/a			 	 	 		 	 					 	 	-180	0	0	0
+54	CAC	Mercator	CAC	Geodetic			11688673.72	4139145.66		35	-75		n/a	n/a			 	 	-180	0	0	0					 	 	 		 	 
+55	WGE	Geodetic	WGE	Mercator			-35	75		-2152973.253	-3812261.351		n/a	n/a			 	 	 		 	 					 	 	96	-23	0	0
+56	WGE	Mercator	WGE	Geodetic			-2152973.25	-3812261.35		-35	75		n/a	n/a			 	 	96	-23	0	0					 	 	 		 	 
+57	ADI-M	Geodetic	ADI-M	Mercator			-0.5	-0.5		-54820.73613	-54448.46312		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+58	ADI-M	Mercator	ADI-M	Geodetic			-54820.74	-54448.46		-0.5	-0.5		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+59	ADI-M	Geodetic	ADI-M	Mercator			0	0		0	0		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+60	ADI-M	Mercator	ADI-M	Geodetic			0	0		0	0		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+61	NAR-A	Geodetic	NAR-A	Mercator			0	-180		-19735085.53	0		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+62	NAR-A	Mercator	NAR-A	Geodetic			-19735085.53	0		0	180		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+63	WGC	Geodetic	WGC	Mercator			89.5	75		-1655782.992	24520598.45		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+64	WGC	Mercator	WGC	Geodetic			-1655782.99	24520598.45		89.5	75		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+65	WGE	Geodetic	WGE	Mercator			89	90		-473081.0106	21389168.32		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+66	WGE	Mercator	WGE	Geodetic			-473081.01	21389168.32		89	90		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+67	NAR-A	Geodetic	NAR-A	Mercator			-85	-180		788468.3509	-14115743.96		n/a	n/a			 	 	 		 	 					 	 	170	-45	0	0
+68	NAR-A	Mercator	NAR-A	Geodetic			788468.35	-14115743.96		-85	180		n/a	n/a			 	 	170	-45	0	0					 	 	 		 	 
+69	EUR-7	Geodetic	EUR-7	Polar Stereographic			-75	150		-1540033.611	-560526.394		n/a	n/a			 	 	 		 	 					 	 	-100	-71	0	0
+70	EUR-7	Polar Stereographic	EUR-7	Geodetic			-1540033.6	-560526.4		-75.0000001	149.9999997		n/a	n/a			 	 	-100	-71	0	0					 	 	 		 	 
+71	CAC	Geodetic	CAC	Polar Stereographic			35	-75		3219632.897	862698.0346		n/a	n/a			 	 	 		 	 					 	 	-180	0	0	0
+72	CAC	Polar Stereographic	CAC	Geodetic			3219632.9	862698.03		35	-75.0000001		n/a	n/a			 	 	-180	0	0	0					 	 	 		 	 
+73	WGE	Geodetic	WGE	Polar Stereographic			-35	75		-1657667.158	4318370.586		n/a	n/a			 	 	 		 	 					 	 	96	-23	0	0
+74	WGE	Polar Stereographic	WGE	Geodetic			-1657667.16	4318370.59		-35	75		n/a	n/a			 	 	96	-23	0	0					 	 	 		 	 
+75	ADI-M	Geodetic	ADI-M	Polar Stereographic			-0.5	-0.5		-64691.69115	7412933.564		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+76	ADI-M	Polar Stereographic	ADI-M	Geodetic			-64691.69	7412933.56		-0.5	-0.5		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+77	ADI-M	Geodetic	ADI-M	Polar Stereographic			0	0		0	7477748.299		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+78	ADI-M	Polar Stereographic	ADI-M	Geodetic			0	7477748.3		0	0		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+79	NAR-A	Geodetic	NAR-A	Polar Stereographic			0	-180		0	-7477746.24		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+80	NAR-A	Polar Stereographic	NAR-A	Geodetic			0	-7477746.24		0	-180		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+81	WGC	Geodetic	WGC	Polar Stereographic			89.5	75		-17087.84785	-44515.36557		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+82	WGC	Polar Stereographic	WGC	Geodetic			-17087.85	-44515.37		89.4999999	74.9999995		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+83	WGE	Geodetic	WGE	Polar Stereographic			89	90		-9968.523867	-94844.16914		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+84	WGE	Polar Stereographic	WGE	Geodetic			-9968.52	-94844.17		89	90.0000024		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+85	NAR-A	Geodetic	NAR-A	Polar Stereographic			-85	-180		82849.62359	469863.564		n/a	n/a			 	 	 		 	 					 	 	170	-45	0	0
+86	NAR-A	Polar Stereographic	NAR-A	Geodetic			82849.62	469863.56		-85	179.9999997		n/a	n/a			 	 	170	-45	0	0					 	 	 		 	 
+87	CAC	Geodetic	CAC	Polyconic			35	-75		7915329.196	8465107.066		n/a	n/a			 	 	 		 	 					 	 	-180	0	0	0
+88	CAC	Polyconic	CAC	Geodetic			7915329.196	8465107.066		35	-75		n/a	n/a			 	 	-180	0	0	0					 	 	 		 	 
+89	ADI-M	Geodetic	ADI-M	Polyconic			0	0		0	1105754.605		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+90	ADI-M	Polyconic	ADI-M	Geodetic			0	1105754.61		0	0		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+91	NAR-A	Geodetic	NAR-A	Polyconic			0	-180		-20037508.34	1105854.833		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+92	NAR-A	Polyconic	NAR-A	Geodetic			-20037508.34	1105854.83		0	180		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+93	WGE	Geodetic	WGE	Polyconic			89	90		-11674.60183	4905939.233		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+94	WGE	Polyconic	WGE	Geodetic			-11674.6	4905939.23		89	90.0000011		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+95	NAR-A	Geodetic	NAR-A	Polyconic			-85	-180		96855.5032	-4467007.113		n/a	n/a			 	 	 		 	 					 	 	170	-45	0	0
+96	NAR-A	Polyconic	NAR-A	Geodetic			96855.5	-4467007.11		-85	179.9999996		n/a	n/a			 	 	170	-45	0	0					 	 	 		 	 
+97	CAC	Geodetic	CAC	Polyconic			40	-75		1776774.54	1319657.78		n/a	n/a															-96	30	0	0
+98	CAC	Polyconic	CAC	Geodetic			1776774.54	1319657.78		40	-75		n/a	n/a					-96	30	0	0										
+99	WGE	Geodetic	WGE	Polyconic			35	110		911357.7	600134.72		n/a	n/a															100	30	0	0
+100	WGE	Polyconic	WGE	Geodetic			911357.7	600134.72		35	110		n/a	n/a					100	30	0	0										
+101	WGE	Geodetic	WGE	Polyconic			40	90		-852148.41	1157266.07		n/a	n/a															100	30	0	0
+102	WGE	Polyconic	WGE	Geodetic			-852148.41	1157266.07		40	90		n/a	n/a					100	30	0	0										
+103	CAC	Geodetic	CAC	Polyconic			35	-75		1903005.97	1530776.86		n/a	n/a															-96	23	0	0
+104	CAC	Polyconic	CAC	Geodetic			1903005.97	1530776.86		35	-75		n/a	n/a					-96	23	0	0										
+105	WGE	Geodetic	WGE	Polyconic			-35	75		-1902961.96	-1530822.03		n/a	n/a															96	-23	0	0
+106	WGE	Polyconic	WGE	Geodetic			-1902961.96	-1530822.03		-35	75		n/a	n/a					96	-23	0	0										
+107	ADI-M	Geodetic	ADI-M	Polyconic			-0.5	-0.5		-55658.62	1050470.44		n/a	n/a															0	-10	0	0
+108	ADI-M	Polyconic	ADI-M	Geodetic			-55658.62	1050470.44		-0.5	-0.5		n/a	n/a					0	-10	0	0										
+109	ADI-M	Geodetic	ADI-M	Polyconic			0	0		0	1105754.61		n/a	n/a															0	-10	0	0
+110	ADI-M	Polyconic	ADI-M	Geodetic			0	1105754.61		0	0		n/a	n/a					0	-10	0	0										
+111	NAR-A	Geodetic	NAR-A	Polyconic			0	-180		1113194.91	1105854.83		n/a	n/a															170	-10	0	0
+112	NAR-A	Polyconic	NAR-A	Geodetic			1113194.91	1105854.83		0	-180		n/a	n/a					170	-10	0	0										
+113	WGC	Geodetic	WGC	Polyconic			89.5	75		-20013.54	4964881.9		n/a	n/a															96	45	0	0
+114	WGC	Polyconic	WGC	Geodetic			-20013.54	4964881.9		89.5	74.999999		n/a	n/a					96	45	0	0										
+115	WGE	Geodetic	WGE	Polyconic			90	90		0	5017021.35		n/a	n/a															96	45	0	0
+116	WGE	Polyconic	WGE	Geodetic			0	5017021.35		90	96		n/a	n/a					96	45	0	0										
+117	NAR-A	Geodetic	NAR-A	Polyconic			-90	-180		0	-5017021.35		n/a	n/a															170	-45	0	0
+118	NAR-A	Polyconic	NAR-A	Geodetic			0	-5017021.35		-90	170		n/a	n/a					170	-45	0	0										
+119	CAC	Geodetic	CAC	Transverse Mercator			40.5	-73.5		127106.4674	4484124.435		n/a	n/a				 	 		 	 					0.9996	 	-75	0	0	0
+120	CAC	Transverse Mercator	CAC	Geodetic			127106.5	4484124.4		40.4999997	-73.4999996		n/a	n/a			0.9996	 	-75	0	0	0					 	 	 		 	 
+121	WGE	Geodetic	WGE	Transverse Mercator			-35	73		-182516.0936	-3874870.635		n/a	n/a			 	 	 		 	 					0.9996	 	75	0	0	0
+122	WGE	Transverse Mercator	WGE	Geodetic			-182516.09	-3874870.63		-35	73		n/a	n/a			0.9996	 	75	0	0	0					 	 	 		 	 
+123	ADI-M	Geodetic	ADI-M	Transverse Mercator			-0.5	-0.5		-55637.06653	1050050.248		n/a	n/a			 	 	 		 	 					0.9996	 	0	-10	0	0
+124	ADI-M	Transverse Mercator	ADI-M	Geodetic			-55637.07	1050050.25		-0.5	-0.5		n/a	n/a			0.9996	 	0	-10	0	0					 	 	 		 	 
+125	ADI-M	Geodetic	ADI-M	Transverse Mercator			0	0		0	1105312.304		n/a	n/a			 	 	 		 	 					0.9996	 	0	-10	0	0
+126	ADI-M	Transverse Mercator	ADI-M	Geodetic			0	1105312.304		0	0		n/a	n/a			0.9996	 	0	-10	0	0					 	 	 		 	 
+127	NAR-A	Geodetic	NAR-A	Transverse Mercator			-10	-180		-1101254.953	-1122228.253		n/a	n/a			 	 	 		 	 					0.9996	 	-170	0	0	0
+128	NAR-A	Transverse Mercator	NAR-A	Geodetic			-1101254.95	-1122228.25		-9.9999995	179.9999981		n/a	n/a			0.9996	 	-170	0	0	0					 	 	 		 	 
+129	WGC	Geodetic	WGC	Transverse Mercator			89.5	90		-5835.189027	4959494.079		n/a	n/a			 	 	 		 	 					0.9996	 	96	45	0	0
+130	WGE	Transverse Mercator	WGE	Geodetic			-13606	4904197		89	89		n/a	n/a			0.9996	 	96	45	0	0					 	 	 		 	 
+131	WGE	Geodetic	WGE	Transverse Mercator			89	89		-13606	4904197		n/a	n/a			 	 	 		 	 					0.9996	 	96	45	0	0
+132	WGE	Transverse Mercator	WGE	Geodetic			0	5015014.54		90	96		n/a	n/a			0.9996	 	96	45	0	0					 	 	 		 	 
+133	NAR-A	Geodetic	NAR-A	Transverse Mercator			-85	-180		96820.41246	-4465221.116		n/a	n/a			 	 	 		 	 					0.9996	 	170	-45	0	0
+134	NAR-A	Transverse Mercator	NAR-A	Geodetic			96820.41	-4465221.11		-84.9999998	-179.9999584		n/a	n/a			0.9996	 	170	-45	0	0					 	 	 		 	 
+135	CAC	Geodetic	CAC	Stereographic			30	-75		2425581.223	-805167.7762		n/a	n/a			 	 	 	 	 	 					 	 	-100	40	0	0
+136	CAC	Stereographic	CAC	Geodetic			2425581.22	-805167.78		30	-75		n/a	n/a			 	 	-100	40	0	0					 	 	 	 	 	 
+137	CAC	Geodetic	CAC	Stereographic			-30	75		-2425581.223	805167.7762		n/a	n/a			 	 	 	 	 	 					 	 	100	-40	0	0
+138	CAC	Stereographic	CAC	Geodetic			-2425581.22	805167.78		-30	75		n/a	n/a			 	 	100	-40	0	0					 	 	 	 	 	 
+139	CAC	Geodetic	CAC	Stereographic			-0.5	-0.5		-56065.07308	-1170804.428		n/a	n/a			 	 	 	 	 	 					 	 	0	10	0	0
+140	CAC	Stereographic	CAC	Geodetic			-56065.07	-1170804.42		-0.4999999	-0.5		n/a	n/a			 	 	0	10	0	0					 	 	 	 	 	 
+141	CAC	Geodetic	CAC	Stereographic			0	0		0	1114780.026		n/a	n/a			 	 	 	 	 	 					 	 	0	-10	0	0
+142	CAC	Stereographic	CAC	Geodetic			0	1114780.03		0	0		n/a	n/a			 	 	0	-10	0	0					 	 	 	 	 	 
+143	CAC	Geodetic	CAC	Stereographic			-10	-180		-1106182.394	-1123247.04		n/a	n/a			 	 	 	 	 	 					 	 	-170	0	0	0
+144	CAC	Stereographic	CAC	Geodetic			-1106182.39	-1123247.04		-10	-180		n/a	n/a			 	 	-170	0	0	0					 	 	 	 	 	 
+145	CAC	Geodetic	CAC	Stereographic			89.5	90		-6784.245201	5213241.641		n/a	n/a			 	 	 	 	 	 					 	 	96	45	0	0
+146	CAC	Stereographic	CAC	Geodetic			-6784.25	5213241.64		89.5	89.9999959		n/a	n/a			 	 	96	45	0	0					 	 	 	 	 	 
+147	CAC	Geodetic	CAC	Stereographic			-80.5	-90		121218.6193	-4084674.478		n/a	n/a			 	 	 	 	 	 					 	 	-96	-45	0	0
+148	CAC	Stereographic	CAC	Geodetic			121218.62	-4084674.48		-80.5	-90		n/a	n/a			 	 	-96	-45	0	0					 	 	 	 	 	 
+149	CAC	Geodetic	CAC	Stereographic			-85	-180		109252.733	-4646925.333		n/a	n/a			 	 	 	 	 	 					 	 	170	-45	0	0
+150	CAC	Stereographic	CAC	Geodetic			109252.73	-4646925.33		-85	179.9999997		n/a	n/a			 	 	170	-45	0	0					 	 	 	 	 	 
+151	CAC	Geodetic	CAC	Azimuthal Equidistant			-20	100		-12383391.47	11774586.48		n/a	n/a			 	 	 		 	 					 	 	-100	40	0	0
+152	CAC	Azimuthal Equidistant	CAC	Geodetic			-12383391.47	11774586.48		-20	100		n/a	n/a			 	 	-100	40	0	0					 	 	 		 	 
+153	CAC	Geodetic	CAC	Azimuthal Equidistant			-20	75		-2643689.564	1900084.096		n/a	n/a			 	 	 		 	 					 	 	100	-40	0	0
+154	CAC	Azimuthal Equidistant	CAC	Geodetic			-2643689.56	1900084.1		-20	75		n/a	n/a			 	 	100	-40	0	0					 	 	 		 	 
+155	CAC	Geodetic	CAC	Azimuthal Equidistant			-0.5	-0.5		-55907.72466	-1167518.528		n/a	n/a			 	 	 		 	 					 	 	0	10	0	0
+156	CAC	Azimuthal Equidistant	CAC	Geodetic			-55907.72	-1167518.53		-0.5	-0.5		n/a	n/a			 	 	0	10	0	0					 	 	 		 	 
+157	CAC	Geodetic	CAC	Azimuthal Equidistant			0	0		0	1111948.743		n/a	n/a			 	 	 		 	 					 	 	0	-10	0	0
+158	CAC	Azimuthal Equidistant	CAC	Geodetic			0	1111948.74		0	0		n/a	n/a			 	 	0	-10	0	0					 	 	 		 	 
+159	CAC	Geodetic	CAC	Azimuthal Equidistant			-10	-180		-1100589.329	-1117567.693		n/a	n/a			 	 	 		 	 					 	 	-170	0	0	0
+160	CAC	Azimuthal Equidistant	CAC	Geodetic			-1100589.33	-1117567.69		-10	180		n/a	n/a			 	 	-170	0	0	0					 	 	 		 	 
+161	CAC	Geodetic	CAC	Azimuthal Equidistant			89.5	90		-6439.691433	4948474.966		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+162	CAC	Azimuthal Equidistant	CAC	Geodetic			-6439.69	4948474.97		89.5	90.0000009		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+163	CAC	Geodetic	CAC	Azimuthal Equidistant			-80.5	-90		117301.6902	-3952686.664		n/a	n/a			 	 	 		 	 					 	 	-96	-45	0	0
+164	CAC	Azimuthal Equidistant	CAC	Geodetic			117301.69	-3952686.66		-80.5	-90		n/a	n/a			 	 	-96	-45	0	0					 	 	 		 	 
+165	CAC	Geodetic	CAC	Azimuthal Equidistant			-85	-180		104760.0664	-4455835.502		n/a	n/a			 	 	 		 	 					 	 	170	-45	0	0
+166	CAC	Azimuthal Equidistant	CAC	Geodetic			104760.07	-4455835.5		-85	-179.9999997		n/a	n/a			 	 	170	-45	0	0					 	 	 		 	 
+167	CAC	Geodetic	CAC	Gnomonic			30	-110		-982934.0345	-1079717.562		n/a	n/a			 	 	 		 	 					 	 	-100	40	0	0
+168	CAC	Gnomonic	CAC	Geodetic			-982934.03	-1079717.56		30	-110		n/a	n/a			 	 	-100	40	0	0					 	 	 		 	 
+169	CAC	Geodetic	CAC	Gnomonic			89	110		19310.74812	-109516.6947		n/a	n/a			 	 	 		 	 					 	 	100	90	0	0
+170	CAC	Gnomonic	CAC	Geodetic			19310.75	-109516.69		89	110.0000014		n/a	n/a			 	 	100	90	0	0					 	 	 		 	 
+171	CAC	Geodetic	CAC	Gnomonic			30.5	-80.5		943973.7408	-1606531.7		n/a	n/a			 	 	 		 	 					 	 	-90	45	0	0
+172	CAC	Gnomonic	CAC	Geodetic			943973.74	-1606531.7		30.5	-80.5		n/a	n/a			 	 	-90	45	0	0					 	 	 		 	 
+173	CAC	Geodetic	CAC	Gnomonic			60.5	100.5		596904.0013	1816372.612		n/a	n/a			 	 	 		 	 					 	 	90	45	0	0
+174	CAC	Gnomonic	CAC	Geodetic			596904	1816372.61		60.5	100.5		n/a	n/a			 	 	90	45	0	0					 	 	 		 	 
+175	CAC	Geodetic	CAC	Gnomonic			60	180		-575871.5173	1752274.972		n/a	n/a			 	 	 		 	 					 	 	-170	45	0	0
+176	CAC	Gnomonic	CAC	Geodetic			-575871.52	1752274.97		60	180		n/a	n/a			 	 	-170	45	0	0					 	 	 		 	 
+177	CAC	Geodetic	CAC	Gnomonic			89.5	90		-8148.21266	6261360.002		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+178	CAC	Gnomonic	CAC	Geodetic			-8148.21	6261360		89.5	90.000002		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+179	CAC	Geodetic	CAC	Gnomonic			80.5	-90		135115.8662	4552966.642		n/a	n/a			 	 	 		 	 					 	 	-96	45	0	0
+180	CAC	Gnomonic	CAC	Geodetic			135115.87	4552966.64		80.5	-89.9999998		n/a	n/a			 	 	-96	45	0	0					 	 	 		 	 
+181	CAC	Geodetic	CAC	Gnomonic			85	-180		-126023.2862	5360239.374		n/a	n/a			 	 	 		 	 					 	 	-170	45	0	0
+182	CAC	Gnomonic	CAC	Geodetic			-126023.29	5360239.37		85	179.9999997		n/a	n/a			 	 	-170	45	0	0					 	 	 		 	 
+183	CAC	Geodetic	CAC	Orthographic			89	110		19307.807	-109500.0148		n/a	n/a			 	 	 		 	 					 	 	100	90	0	0
+184	CAC	Orthographic	CAC	Geodetic			19307.81	-109500.01		89	110.000002		n/a	n/a			 	 	100	90	0	0					 	 	 		 	 
+185	CAC	Geodetic	CAC	Orthographic			30.5	-80.5		906018.4008	-1541936.199		n/a	n/a			 	 	 		 	 					 	 	-90	45	0	0
+186	CAC	Orthographic	CAC	Geodetic			906018.4	-1541936.2		30.5	-80.5		n/a	n/a			 	 	-90	45	0	0					 	 	 		 	 
+187	CAC	Geodetic	CAC	Orthographic			60.5	100.5		571714.5798	1739721.467		n/a	n/a			 	 	 		 	 					 	 	90	45	0	0
+188	CAC	Orthographic	CAC	Geodetic			571714.58	1739721.47		60.5	100.5		n/a	n/a			 	 	90	45	0	0					 	 	 		 	 
+189	CAC	Geodetic	CAC	Orthographic			60	180		-553156.0095	1683155.708		n/a	n/a			 	 	 		 	 					 	 	-170	45	0	0
+190	CAC	Orthographic	CAC	Geodetic			-553156.01	1683155.71		60	180		n/a	n/a			 	 	-170	45	0	0					 	 	 		 	 
+191	CAC	Geodetic	CAC	Orthographic			89.5	90		-5811.440904	4465706.18		n/a	n/a			 	 	 		 	 					 	 	96	45	0	0
+192	CAC	Orthographic	CAC	Geodetic			-5811.44	4465706.18		89.5	90.0000009		n/a	n/a			 	 	96	45	0	0					 	 	 		 	 
+193	CAC	Geodetic	CAC	Orthographic			80.5	-90		109913.5399	3703729.953		n/a	n/a			 	 	 		 	 					 	 	-96	45	0	0
+194	CAC	Orthographic	CAC	Geodetic			109913.54	3703729.95		80.5	-90		n/a	n/a			 	 	-96	45	0	0					 	 	 		 	 
+195	CAC	Geodetic	CAC	Orthographic			85	-180		-96421.44572	4101162.933		n/a	n/a			 	 	 		 	 					 	 	-170	45	0	0
+196	CAC	Orthographic	CAC	Geodetic			-96421.45	4101162.93		85	179.9999996		n/a	n/a			 	 	-170	45	0	0					 	 	 		 	 
+197	CAC	Geodetic	CAC	Orthographic			5	-180		-1102102.168	-6250331.987		n/a	n/a			 	 	 		 	 					 	 	-170	90	0	0
+198	CAC	Orthographic	CAC	Geodetic			-1102102.17	-6250331.99		4.9999997	180		n/a	n/a			 	 	-170	90	0	0					 	 	 		 	 
+199	CAC	Geodetic	CAC	Orthographic			30	-110		-958094.35	-1052432.06		n/a	n/a															-100	40	0	0
+200	CAC	Orthographic	CAC	Geodetic			-958094.35	-1052432.06		30	-110		n/a	n/a					-100	40	0	0										
+201	WGE	Geodetic	WGE	Orthographic			35	110		906239.2	594912.69		n/a	n/a															100	30	0	0
+202	WGE	Orthographic	WGE	Geodetic			906239.2	594912.69		35	110		n/a	n/a					100	30	0	0										
+203	WGE	Geodetic	WGE	Orthographic			40	90		-847485.53	1143386.48		n/a	n/a															100	30	0	0
+204	WGE	Orthographic	WGE	Geodetic			-847485.53	1143386.48		40	90		n/a	n/a					100	30	0	0										
+205	CAC	Geodetic	CAC	Orthographic			35	-75		1870256.18	1460044.52		n/a	n/a															-96	23	0	0
+206	CAC	Orthographic	CAC	Geodetic			1870256.18	1460044.52		35	-75		n/a	n/a					-96	23	0	0										
+207	WGE	Geodetic	WGE	Orthographic			-35	75		-1870259.1	-1460046.8		n/a	n/a															96	-23	0	0
+208	WGE	Orthographic	WGE	Geodetic			-1870259.1	-1460046.8		-35	75		n/a	n/a					96	-23	0	0										
+209	ADI-M	Geodetic	ADI-M	Orthographic			-0.5	-0.5		-55594.66	1051476.63		n/a	n/a															0	-10	0	0
+210	ADI-M	Orthographic	ADI-M	Geodetic			-55594.66	1051476.63		-0.5	-0.5		n/a	n/a					0	-10	0	0										
+211	ADI-M	Geodetic	ADI-M	Orthographic			0	0		0	1106313.02		n/a	n/a															0	-10	0	0
+212	ADI-M	Orthographic	ADI-M	Geodetic			0	1106313.02		0	0		n/a	n/a					0	-10	0	0										
+213	NAR-A	Geodetic	NAR-A	Orthographic			0	-180		1106313.79	1089506.39		n/a	n/a															170	-10	0	0
+214	NAR-A	Orthographic	NAR-A	Geodetic			1106313.79	1089506.39		0	180		n/a	n/a					170	-10	0	0										
+215	WGC	Geodetic	WGC	Orthographic			89.5	75		-19924.11	4468107.75		n/a	n/a															96	45	0	0
+216	WGC	Orthographic	WGC	Geodetic			-19924.11	4468107.75		89.5	75.000001		n/a	n/a					96	45	0	0										
+217	WGE	Geodetic	WGE	Orthographic			90	90		0	4504982.38		n/a	n/a															96	45	0	0
+218	WGE	Orthographic	WGE	Geodetic			0	4504982.38		90	96		n/a	n/a					96	45	0	0										
+219	NAR-A	Geodetic	NAR-A	Orthographic			-90	-180		0	-4504982.38		n/a	n/a															170	-45	0	0
+220	NAR-A	Orthographic	NAR-A	Geodetic			0	-4504982.38		-90	170		n/a	n/a					170	-45	0	0										
+221	CAC	Sinusoidal	CAC	Geodetic			1072120.31	-5559743.71		-50	-75		n/a	n/a			 	 	-90		0	0					 	 	 		 	 
+222	CAC	Sinusoidal	CAC	Geodetic			-2407439.65	-3335846.23		-30	75		n/a	n/a			 	 	100		0	0					 	 	 		 	 
+223	CAC	Sinusoidal	CAC	Geodetic			-55595.32	-55597.44		-0.5	-0.5		n/a	n/a			 	 	0		0	0					 	 	 		 	 
+224	CAC	Sinusoidal	CAC	Geodetic			0	0		0	0		n/a	n/a			 	 	0		0	0					 	 	 		 	 
+225	CAC	Sinusoidal	CAC	Geodetic			-1095055.74	-1111948.74		-10	-180		n/a	n/a			 	 	-170		0	0					 	 	 		 	 
+226	CAC	Sinusoidal	CAC	Geodetic			-5822.08	9951941.25		89.5	89.9999958		n/a	n/a			 	 	96		0	0					 	 	 		 	 
+227	CAC	Sinusoidal	CAC	Geodetic			110114.69	-8951187.38		-80.5	-89.9999998		n/a	n/a			 	 	-96		0	0					 	 	 		 	 
+228	CAC	Sinusoidal	CAC	Geodetic			96912.72	-9451564.31		-85	-179.9999999		n/a	n/a			 	 	170		0	0					 	 	 		 	 
+229	CAC	Geodetic	CAC	Miller Cylindrical			-30	75		-2779871.857	-3437907.261		n/a	n/a			 	 	 		 	 					 	 	100		0	0
+230	CAC	Miller Cylindrical	CAC	Geodetic			-2779871.86	-3437907.26		-30	75		n/a	n/a			 	 	100		0	0					 	 	 		 	 
+231	CAC	Geodetic	CAC	Miller Cylindrical			-10	-180		-1111948.743	-1115579.455		n/a	n/a			 	 	 		 	 					 	 	-170		0	0
+232	CAC	Miller Cylindrical	CAC	Geodetic			-1111948.74	-1115579.45		-10	-180		n/a	n/a			 	 	-170		0	0					 	 	 		 	 
+233	CAC	Geodetic	CAC	Miller Cylindrical			89.5	90		-667169.2457	14497021.52		n/a	n/a			 	 	 		 	 					 	 	96		0	0
+234	CAC	Miller Cylindrical	CAC	Geodetic			-667169.25	14497021.52		89.5	90		n/a	n/a			 	 	96		0	0					 	 	 		 	 
+235	CAC	Geodetic	CAC	Miller Cylindrical			-80.5	-90		667169.2457	-11801866.8		n/a	n/a			 	 	 		 	 					 	 	-96		0	0
+236	CAC	Miller Cylindrical	CAC	Geodetic			667169.25	-11801866.8		-80.5	-90		n/a	n/a			 	 	-96		0	0					 	 	 		 	 
+237	CAC	Geodetic	CAC	Miller Cylindrical			-85	-180		1111948.743	-13044128.04		n/a	n/a			 	 	 		 	 					 	 	170		0	0
+238	CAC	Miller Cylindrical	CAC	Geodetic			1111948.74	-13044128.04		-85	180		n/a	n/a			 	 	170		0	0					 	 	 		 	 
+239	CAC	Geodetic	CAC	Miller Cylindrical			50	-75		-8339615.89	6075619.11		n/a	n/a															0		0	0
+240	CAC	Miller Cylindrical	CAC	Geodetic			-8339615.89	6075619.11		50	-75		n/a	n/a					0		0	0										
+241	WGE	Geodetic	WGE	Miller Cylindrical			35	110		1111950.52	4056677.39		n/a	n/a															100		0	0
+242	WGE	Miller Cylindrical	WGE	Geodetic			1111950.52	4056677.39		35	110		n/a	n/a					100		0	0										
+243	WGE	Geodetic	WGE	Miller Cylindrical			40	90		-1111950.52	4698879.75		n/a	n/a															100		0	0
+244	WGE	Miller Cylindrical	WGE	Geodetic			-1111950.52	4698879.75		40	90		n/a	n/a					100		0	0										
+245	CAC	Geodetic	CAC	Miller Cylindrical			35	-75		2335092.45	4056671.06		n/a	n/a															-96		0	0
+246	CAC	Miller Cylindrical	CAC	Geodetic			2335092.45	4056671.06		35	-75		n/a	n/a					-96		0	0										
+247	WGE	Geodetic	WGE	Miller Cylindrical			-35	75		-2335096.09	-4056677.39		n/a	n/a															96		0	0
+248	WGE	Miller Cylindrical	WGE	Geodetic			-2335096.09	-4056677.39		-35	75		n/a	n/a					96		0	0										
+249	ADI-M	Geodetic	ADI-M	Miller Cylindrical			-0.5	-0.5		-55597.43714	-55597.88877		n/a	n/a															0		0	0
+250	ADI-M	Miller Cylindrical	ADI-M	Geodetic			-55597.44	-55597.89		-0.5	-0.5		n/a	n/a					0		0	0										
+251	ADI-M	Geodetic	ADI-M	Miller Cylindrical			0	0		0	0		n/a	n/a															0		0	0
+252	ADI-M	Miller Cylindrical	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0		0	0										
+253	NAR-A	Geodetic	NAR-A	Miller Cylindrical			0	-180		1111950.52	0		n/a	n/a															170		0	0
+254	NAR-A	Miller Cylindrical	NAR-A	Geodetic			1111950.52	0		0	180		n/a	n/a					170		0	0										
+255	WGC	Geodetic	WGC	Miller Cylindrical			89.5	75		-2335095.38	14497040.29		n/a	n/a															96		0	0
+256	WGC	Miller Cylindrical	WGC	Geodetic			-2335095.38	14497040.29		89.5	75		n/a	n/a					96		0	0										
+257	WGE	Geodetic	WGE	Miller Cylindrical			90	90		-667170.31	14675057.85		n/a	n/a															96		0	0
+258	WGE	Miller Cylindrical	WGE	Geodetic			-667170.31	14675057.85		90	90		n/a	n/a					96		0	0										
+259	NAR-A	Geodetic	NAR-A	Miller Cylindrical			-90	-180		1111950.52	-14675057.85		n/a	n/a															170		0	0
+260	NAR-A	Miller Cylindrical	NAR-A	Geodetic			1111950.52	-14675057.85		-90	180		n/a	n/a					170		0	0										
+261	CAC	Geodetic	CAC	Van der Grinten			-30	75		-2699039.955	-3444813.104		n/a	n/a			 	 	 		 	 					 	 	100		0	0
+262	CAC	Van der Grinten	CAC	Geodetic			-2699039.95	-3444813.1		-30	75		n/a	n/a			 	 	100		0	0					 	 	 		 	 
+263	CAC	Geodetic	CAC	Van der Grinten			-10	-180		-1108504.868	-1115592.729		n/a	n/a			 	 	 		 	 					 	 	-170		0	0
+264	CAC	Van der Grinten	CAC	Geodetic			-1108504.87	-1115592.73		-10	180		n/a	n/a			 	 	-170		0	0					 	 	 		 	 
+265	CAC	Geodetic	CAC	Van der Grinten			89.5	90		-127049.475	18010685.49		n/a	n/a			 	 	 		 	 					 	 	96		0	0
+266	CAC	Van der Grinten	CAC	Geodetic			-127049.47	18010685.49		89.5	90.0000002		n/a	n/a			 	 	96		0	0					 	 	 		 	 
+267	CAC	Geodetic	CAC	Van der Grinten			-80.5	-90		412311.2307	-12374779.49		n/a	n/a			 	 	 		 	 					 	 	-96		0	0
+268	CAC	Van der Grinten	CAC	Geodetic			412311.23	-12374779.49		-80.5	-90		n/a	n/a			 	 	-96		0	0					 	 	 		 	 
+269	CAC	Geodetic	CAC	Van der Grinten			-85	-180		550037.5191	-14239017.22		n/a	n/a			 	 	 		 	 					 	 	170		0	0
+270	CAC	Van der Grinten	CAC	Geodetic			550037.52	-14239017.22		-85	-180		n/a	n/a			 	 	170		0	0					 	 	 		 	 
+271	CAC	Geodetic	CAC	Van der Grinten			-50	-160		-7615987.96	-6345980.47		n/a	n/a															-85		0	0
+272	CAC	Van der Grinten	CAC	Geodetic			-7615987.96	-6345980.47		-50	-160		n/a	n/a					-85		0	0										
+273	WGE	Geodetic	WGE	Van der Grinten			35	110		1066475.53	4053623.21		n/a	n/a															100		0	0
+274	WGE	Van der Grinten	WGE	Geodetic			1066475.53	4053623.21		35	110		n/a	n/a					100		0	0										
+275	WGE	Geodetic	WGE	Van der Grinten			40	90		-1050935.61	4695325.82		n/a	n/a															100		0	0
+276	WGE	Van der Grinten	WGE	Geodetic			-1050935.61	4695325.82		40	90		n/a	n/a					100		0	0										
+277	CAC	Geodetic	CAC	Van der Grinten			35	-75		2240172.93	4061627.81		n/a	n/a															-96		0	0
+278	CAC	Van der Grinten	CAC	Geodetic			2240172.93	4061627.81		35	-75		n/a	n/a					-96		0	0										
+279	WGE	Geodetic	WGE	Van der Grinten			-35	75		-2240176.43	-4061634.15		n/a	n/a															96		0	0
+280	WGE	Van der Grinten	WGE	Geodetic			-2240176.43	-4061634.15		-35	75		n/a	n/a					96		0	0										
+281	ADI-M	Geodetic	ADI-M	Van der Grinten			-0.5	-0.5		-55597.06	-55597.92		n/a	n/a															0		0	0
+282	ADI-M	Van der Grinten	ADI-M	Geodetic			-55597.06	-55597.92		-0.5	-0.5		n/a	n/a					0		0	0										
+283	ADI-M	Geodetic	ADI-M	Van der Grinten			0	0		0	0		n/a	n/a															0		0	0
+284	ADI-M	Van der Grinten	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0		0	0										
+285	NAR-A	Geodetic	NAR-A	Van der Grinten			0	-180		1111950.52	0		n/a	n/a															170		0	0
+286	NAR-A	Van der Grinten	NAR-A	Geodetic			1111950.52	0		0	180		n/a	n/a					170		0	0																
+287	WGC	Geodetic	WGC	Van der Grinten			89.5	75		-443488.39	18037718.04		n/a	n/a															96		0	0						
+288	WGC	Van der Grinten	WGC	Geodetic			-443488.39	18037718.04		89.5	75		n/a	n/a					96		0	0																
+289	WGE	Geodetic	WGE	Van der Grinten			90	90		0	20015109.36		n/a	n/a															96		0	0						
+290	WGE	Van der Grinten	WGE	Geodetic			0	20015109.36		90	96		n/a	n/a					96		0	0																
+291	NAR-A	Geodetic	NAR-A	Van der Grinten			-90	-180		0	-20015109.36		n/a	n/a															170		0	0						
+292	NAR-A	Van der Grinten	NAR-A	Geodetic			0	-20015109.36		-90	170		n/a	n/a					170		0	0																
+293	CAC	Geodetic	CAC	Oblique Mercator			40.8	-74		6269400.281	916375.3106		n/a	n/a				 	 	 		 	 	 	 	 	0.9996	 	 	40	4000000	500000	-122.3	47.5	-80.2	25.7		
+294	CAC	Oblique Mercator	CAC	Geodetic			6269400.281	916375.3106		40.7999999	-73.9999998		n/a	n/a			0.9996	 	 	40	4000000	500000	-122.3		47.5	-80.2	25.7	 	 	 		 	 	 	 	 		 
+295	CAC	Geodetic	CAC	Bonne			30	-85		-962915.09	-1056065.01		n/a	n/a															-75	40	0	0						
+296	CAC	Bonne	CAC	Geodetic			-962915.09	-1056065.01		30	-85		n/a	n/a					-75	40	0	0																
+297	WGE	Geodetic	WGE	Bonne			35	110		911732.53	594130.32		n/a	n/a															100	30	0	0						
+298	WGE	Bonne	WGE	Geodetic			911732.53	594130.32		35	110		n/a	n/a					100	30	0	0																
+299	WGE	Geodetic	WGE	Bonne			40	90		-852890.05	1146047.59		n/a	n/a															100	30	0	0						
+300	WGE	Bonne	WGE	Geodetic			-852890.05	1146047.59		40	90		n/a	n/a					100	30	0	0																
+301	CAC	Geodetic	CAC	Bonne			35	-75		1910848.94	1463882.47		n/a	n/a															-96	23	0	0						
+302	CAC	Bonne	CAC	Geodetic			1910848.94	1463882.47		35	-75		n/a	n/a					-96	23	0	0										
+303	WGE	Geodetic	WGE	Bonne			-35	75		-1910804.77	-1463929.01		n/a	n/a															96	-23	0	0
+304	WGE	Bonne	WGE	Geodetic			-1910804.77	-1463929.01		-35	75		n/a	n/a					96	-23	0	0										
+305	ADI-M	Geodetic	ADI-M	Bonne			-0.5	-0.5		-55658.6	1050430.95		n/a	n/a															0	-10	0	0
+306	ADI-M	Bonne	ADI-M	Geodetic			-55658.6	1050430.95		-0.5	-0.5		n/a	n/a					0	-10	0	0										
+307	ADI-M	Geodetic	ADI-M	Bonne			0	0		0	1105754.61		n/a	n/a															0	-10	0	0
+308	ADI-M	Bonne	ADI-M	Geodetic			0	1105754.61		0	0		n/a	n/a					0	-10	0	0										
+309	NAR-A	Geodetic	NAR-A	Bonne			0	-180		1113029.5	1089236.62		n/a	n/a															170	-10	0	0
+310	NAR-A	Bonne	NAR-A	Geodetic			1113029.5	1089236.62		0	180		n/a	n/a					170	-10	0	0										
+311	WGC	Geodetic	WGC	Bonne			89.5	75		-20468.02	4961319.48		n/a	n/a															96	45	0	0
+312	WGC	Bonne	WGC	Geodetic			-20468.02	4961319.48		89.5	74.999998		n/a	n/a					96	45	0	0										
+313	WGE	Geodetic	WGE	Bonne			90	90		0	5017021.35		n/a	n/a															96	45	0	0
+314	WGE	Bonne	WGE	Geodetic			0	5017021.35		90	96		n/a	n/a					96	45	0	0										
+315	NAR-A	Geodetic	NAR-A	Bonne			-90	-180		0	-5017021.35		n/a	n/a															170	-45	0	0
+316	NAR-A	Bonne	NAR-A	Geodetic			0	-5017021.35		-90	170		n/a	n/a					170	-45	0	0										
+317	CAC	Geodetic	CAC	Cassini			43	-73		163071.13	335127.59		n/a	n/a															-75	40	0	0
+318	CAC	Cassini	CAC	Geodetic			163071.13	335127.59		43	-73		n/a	n/a					-75	40	0	0										
+319	WGE	Geodetic	WGE	Cassini			35	110		911345.18	600525.98		n/a	n/a															100	30	0	0
+320	WGE	Cassini	WGE	Geodetic			911345.18	600525.98		35.000012	110.000002		n/a	n/a					100	30	0	0										
+321	WGE	Geodetic	WGE	Cassini			40	90		-852135.55	1157624.52		n/a	n/a															100	30	0	0
+322	WGE	Cassini	WGE	Geodetic			-852135.55	1157624.52		40.000026	89.999995		n/a	n/a					100	30	0	0										
+323	CAC	Geodetic	CAC	Cassini			35	-75		1902494.52	1538385.85		n/a	n/a															-96	23	0	0
+324	CAC	Cassini	CAC	Geodetic			1902494.52	1538385.85		35.000303	-74.999372		n/a	n/a					-96	23	0	0										
+325	WGE	Geodetic	WGE	Cassini			-35	75		-1902450.55	-1538430.39		n/a	n/a															96	-23	0	0
+326	WGE	Cassini	WGE	Geodetic			-1902450.55	-1538430.39		-35.0003	74.999372		n/a	n/a					96	-23	0	0										
+327	ADI-M	Geodetic	ADI-M	Cassini			-0.5	-0.5		-55658.62	1050470.44		n/a	n/a															0	-10	0	0
+328	ADI-M	Cassini	ADI-M	Geodetic			-55658.62	1050470.44		-0.5	-0.5		n/a	n/a					0	-10	0	0										
+329	ADI-M	Geodetic	ADI-M	Cassini			0	0		0	1105754.61		n/a	n/a															0	-10	0	0
+330	ADI-M	Cassini	ADI-M	Geodetic			0	1105754.61		0	0		n/a	n/a					0	-10	0	0										
+331	NAR-A	Geodetic	NAR-A	Cassini			0	-180		1113194.91	1105854.83		n/a	n/a															170	-10	0	0
+332	NAR-A	Cassini	NAR-A	Geodetic			1113194.91	1105854.83		0	-180		n/a	n/a					170	-10	0	0										
+333	WGC	Geodetic	WGC	Cassini			89.5	75		-20013.55	4964881.73		n/a	n/a															96	45	0	0
+334	WGC	Cassini	WGC	Geodetic			-20013.55	4964881.73		89.500084	74.991033		n/a	n/a					96	45	0	0										
+335	WGE	Geodetic	WGE	Cassini			90	90		0	5017021.35		n/a	n/a															96	45	0	0
+336	WGE	Cassini	WGE	Geodetic			0	5017021.35		90	96		n/a	n/a					96	45	0	0										
+337	NAR-A	Geodetic	NAR-A	Cassini			-90	-180		0	-5017021.35		n/a	n/a															170	-45	0	0
+338	NAR-A	Cassini	NAR-A	Geodetic			0	-5017021.35		-90	170		n/a	n/a					170	-45	0	0										
+339	CAC	Geodetic	CAC	Cylindrical Equal Area			5	-78		-332699.83	554248.45		n/a	n/a															-75	5	0	0
+340	CAC	Cylindrical Equal Area	CAC	Geodetic			-332699.83	554248.45		5	-78		n/a	n/a					-75	5	0	0										
+341	WGE	Geodetic	WGE	Cylindrical Equal Area			35	110		964862.8	4198673.82		n/a	n/a															100	30	0	0
+342	WGE	Cylindrical Equal Area	WGE	Geodetic			964862.8	4198673.82		35	110		n/a	n/a					100	30	0	0										
+343	WGE	Geodetic	WGE	Cylindrical Equal Area			40	90		-964862.8	4707084.17		n/a	n/a															100	30	0	0
+344	WGE	Cylindrical Equal Area	WGE	Geodetic			-964862.8	4707084.17		40	90		n/a	n/a					100	30	0	0										
+345	CAC	Geodetic	CAC	Cylindrical Equal Area			35	-75		2153008.9	3951256.63		n/a	n/a															-96	23	0	0
+346	CAC	Cylindrical Equal Area	CAC	Geodetic			2153008.9	3951256.63		35	-75		n/a	n/a					-96	23	0	0										
+347	WGE	Geodetic	WGE	Cylindrical Equal Area			-35	75		-2152973.25	-3951467.02		n/a	n/a															96	-23	0	0
+348	WGE	Cylindrical Equal Area	WGE	Geodetic			-2152973.25	-3951467.02		-35	75		n/a	n/a					96	-23	0	0										
+349	ADI-M	Geodetic	ADI-M	Cylindrical Equal Area			-0.5	-0.5		-54820.74	-56128.4		n/a	n/a															0	-10	0	0
+350	ADI-M	Cylindrical Equal Area	ADI-M	Geodetic			-54820.74	-56128.4		-0.5	-0.5		n/a	n/a					0	-10	0	0										
+351	ADI-M	Geodetic	ADI-M	Cylindrical Equal Area			0	0		0	0		n/a	n/a															0	-10	0	0
+352	ADI-M	Cylindrical Equal Area	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0	-10	0	0										
+353	NAR-A	Geodetic	NAR-A	Cylindrical Equal Area			0	-180		1096393.64	0		n/a	n/a															170	-10	0	0
+354	NAR-A	Cylindrical Equal Area	NAR-A	Geodetic			1096393.64	0		0	180		n/a	n/a					170	-10	0	0										
+355	WGC	Geodetic	WGC	Cylindrical Equal Area			89.5	75		-1655782.99	8984470.46		n/a	n/a															96	45	0	0
+356	WGC	Cylindrical Equal Area	WGC	Geodetic			-1655782.99	8984470.46		89.499997	75		n/a	n/a					96	45	0	0										
+357	WGE	Geodetic	WGE	Cylindrical Equal Area			90	90		-473081.01	8984818.14		n/a	n/a															96	45	0	0
+358	WGE	Cylindrical Equal Area	WGE	Geodetic			-473081.01	8984818.14		89.998125	90		n/a	n/a					96	45	0	0										
+359	NAR-A	Geodetic	NAR-A	Cylindrical Equal Area			-90	-180		788468.35	-8984818.14		n/a	n/a															170	-45	0	0
+360	NAR-A	Cylindrical Equal Area	NAR-A	Geodetic			788468.35	-8984818.14		-89.998158	180		n/a	n/a					170	-45	0	0										
+361	CAC	Geodetic	CAC	Eckert IV			-50	-75		1194733.95	-6064685.79		n/a	n/a															-90		0	0
+362	CAC	Eckert IV	CAC	Geodetic			1194733.95	-6064685.79		-50	-75		n/a	n/a					-90		0	0										
+363	WGE	Geodetic	WGE	Eckert IV			35	110		869218.23	4433611.04		n/a	n/a															100		0	0
+364	WGE	Eckert IV	WGE	Geodetic			869218.23	4433611.04		35	110		n/a	n/a					100		0	0										
+365	WGE	Geodetic	WGE	Eckert IV			40	90		-847844.02	5004504.79		n/a	n/a															100		0	0
+366	WGE	Eckert IV	WGE	Geodetic			-847844.02	5004504.79		40	90		n/a	n/a					100		0	0										
+367	CAC	Geodetic	CAC	Eckert IV			35	-75		1825355.44	4433604.13		n/a	n/a															-96		0	0
+368	CAC	Eckert IV	CAC	Geodetic			1825355.44	4433604.13		35	-75		n/a	n/a					-96		0	0										
+369	WGE	Geodetic	WGE	Eckert IV			-35	75		-1825358.29	-4433611.04		n/a	n/a															96		0	0
+370	WGE	Eckert IV	WGE	Geodetic			-1825358.29	-4433611.04		-35	75		n/a	n/a					96		0	0										
+371	ADI-M	Geodetic	ADI-M	Eckert IV			-0.5	-0.5		-46950.05	-65836.13		n/a	n/a															0		0	0
+372	ADI-M	Eckert IV	ADI-M	Geodetic			-46950.05	-65836.13		-0.5	-0.5		n/a	n/a					0		0	0										
+373	ADI-M	Geodetic	ADI-M	Eckert IV			0	0		0	0		n/a	n/a															0		0	0
+374	ADI-M	Eckert IV	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0		0	0										
+375	NAR-A	Geodetic	NAR-A	Eckert IV			0	-180		939015.97	0		n/a	n/a															170		0	0
+376	NAR-A	Eckert IV	NAR-A	Geodetic			939015.97	0		0	180		n/a	n/a					170		0	0										
+377	WGC	Geodetic	WGC	Eckert IV			89.5	75		-997418.79	8450570.9		n/a	n/a															96		0	0
+378	WGC	Eckert IV	WGC	Geodetic			-997418.79	8450570.9		89.500001	74.999999		n/a	n/a					96		0	0										
+379	WGE	Geodetic	WGE	Eckert IV			90	90		-281704.79	8451143.57		n/a	n/a															96		0	0
+380	WGE	Eckert IV	WGE	Geodetic			-281704.79	8451143.57		89.998663	90.000187		n/a	n/a					96		0	0										
+381	NAR-A	Geodetic	NAR-A	Eckert IV			-90	-180		469507.99	-8451143.57		n/a	n/a															170		0	0
+382	NAR-A	Eckert IV	NAR-A	Geodetic			469507.99	-8451143.57		-89.99867	179.99969		n/a	n/a					170		0	0										
+383	CAC	Geodetic	CAC	Eckert VI			-50	-75		1079006.83	-6097186.2		n/a	n/a															-90		0	0
+384	CAC	Eckert VI	CAC	Geodetic			1079006.83	-6097186.2		-50	-75		n/a	n/a					-90		0	0										
+385	WGE	Geodetic	WGE	Eckert VI			35	110		840758.89	4354477.83		n/a	n/a															100		0	0
+386	WGE	Eckert VI	WGE	Geodetic			840758.89	4354477.83		35	110		n/a	n/a					100		0	0										
+387	WGE	Geodetic	WGE	Eckert VI			40	90		-802432.03	4951028.25		n/a	n/a															100		0	0
+388	WGE	Eckert VI	WGE	Geodetic			-802432.03	4951028.25		40	90		n/a	n/a					100		0	0										
+389	CAC	Geodetic	CAC	Eckert VI			35	-75		1765590.92	4354471.03		n/a	n/a															-96		0	0
+390	CAC	Eckert VI	CAC	Geodetic			1765590.92	4354471.03		35	-75		n/a	n/a					-96		0	0										
+391	WGE	Geodetic	WGE	Eckert VI			-35	75		-1765593.68	-4354477.83		n/a	n/a															96		0	0
+392	WGE	Eckert VI	WGE	Geodetic			-1765593.68	-4354477.83		-35	75		n/a	n/a					96		0	0										
+393	ADI-M	Geodetic	ADI-M	Eckert VI			-0.5	-0.5		-49036.86	-63033.74		n/a	n/a															0		0	0
+394	ADI-M	Eckert VI	ADI-M	Geodetic			-49036.86	-63033.74		-0.5	-0.5		n/a	n/a					0		0	0										
+395	ADI-M	Geodetic	ADI-M	Eckert VI			0	0		0	0		n/a	n/a															0		0	0
+396	ADI-M	Eckert VI	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0		0	0										
+397	NAR-A	Geodetic	NAR-A	Eckert VI			0	-180		980768.76	0		n/a	n/a															170		0	0
+398	NAR-A	Eckert VI	NAR-A	Geodetic			980768.76	0		0	180		n/a	n/a					170		0	0										
+399	WGC	Geodetic	WGC	Eckert VI			89.5	75		-1029907.69	8826366.13		n/a	n/a															96		0	0
+400	WGC	Eckert VI	WGC	Geodetic			-1029907.69	8826366.13		89.499998	75		n/a	n/a					96		0	0										
+401	WGE	Geodetic	WGE	Eckert VI			90	90		-294230.63	8826918.85		n/a	n/a															96		0	0
+402	WGE	Eckert VI	WGE	Geodetic			-294230.63	8826918.85		89.998742	90		n/a	n/a					96		0	0										
+403	NAR-A	Geodetic	NAR-A	Eckert VI			-90	-180		490384.38	-8826918.85		n/a	n/a															170		0	0
+404	NAR-A	Eckert VI	NAR-A	Geodetic			490384.38	-8826918.85		-89.99875	180		n/a	n/a					170		0	0										
+405	WGE	Geodetic	WGE	Equidistant Cylindrical			35	110		962977.4	3891826.82		n/a	n/a															100	30	0	0
+406	WGE	Equidistant Cylindrical	WGE	Geodetic			962977.4	3891826.82		35	110		n/a	n/a					100	30	0	0										
+407	WGE	Geodetic	WGE	Equidistant Cylindrical			40	90		-962977.4	4447802.08		n/a	n/a															100	30	0	0
+408	WGE	Equidistant Cylindrical	WGE	Geodetic			-962977.4	4447802.08		40	90		n/a	n/a					100	30	0	0										
+409	CAC	Geodetic	CAC	Equidistant Cylindrical			35	-75		2149463.93	3891820.75		n/a	n/a															-96	23	0	0
+410	CAC	Equidistant Cylindrical	CAC	Geodetic			2149463.93	3891820.75		35	-75		n/a	n/a					-96	23	0	0										
+411	WGE	Geodetic	WGE	Equidistant Cylindrical			-35	75		-2149467.29	-3891826.82		n/a	n/a															96	-23	0	0
+412	WGE	Equidistant Cylindrical	WGE	Geodetic			-2149467.29	-3891826.82		-35	75		n/a	n/a					96	-23	0	0										
+413	ADI-M	Geodetic	ADI-M	Equidistant Cylindrical			-0.5	-0.5		-54752.84	-55597.49		n/a	n/a															0	-10	0	0
+414	ADI-M	Equidistant Cylindrical	ADI-M	Geodetic			-54752.84	-55597.49		-0.5	-0.5		n/a	n/a					0	-10	0	0										
+415	ADI-M	Geodetic	ADI-M	Equidistant Cylindrical			0	0		0	0		n/a	n/a															0	-10	0	0
+416	ADI-M	Equidistant Cylindrical	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0	-10	0	0										
+417	NAR-A	Geodetic	NAR-A	Equidistant Cylindrical			0	-180		1095057.49	0		n/a	n/a															170	-10	0	0
+418	NAR-A	Equidistant Cylindrical	NAR-A	Geodetic			1095057.49	0		0	180		n/a	n/a					170	-10	0	0										
+419	WGC	Geodetic	WGC	Equidistant Cylindrical			89.5	75		-1651161.78	9951954.14		n/a	n/a															96	45	0	0
+420	WGC	Equidistant Cylindrical	WGC	Geodetic			-1651161.78	9951954.14		89.5	75		n/a	n/a					96	45	0	0										
+421	WGE	Geodetic	WGE	Equidistant Cylindrical			90	90		-471760.65	10007554.68		n/a	n/a															96	45	0	0
+422	WGE	Equidistant Cylindrical	WGE	Geodetic			-471760.65	10007554.68		90	90		n/a	n/a					96	45	0	0										
+423	NAR-A	Geodetic	NAR-A	Equidistant Cylindrical			-90	-180		786267.75	-10007554.68		n/a	n/a															170	-45	0	0
+424	NAR-A	Equidistant Cylindrical	NAR-A	Geodetic			786267.75	-10007554.68		-90	180		n/a	n/a					170	-45	0	0										
+425	CAC	Geodetic	CAC	Mollweide			-50	-75		1139672.59	-5866897.12		n/a	n/a															-90		0	0
+426	CAC	Mollweide	CAC	Geodetic			1139672.59	-5866897.12		-50	-75		n/a	n/a					-90		0	0										
+427	WGE	Geodetic	WGE	Mollweide			35	110		884598.74	4218501.64		n/a	n/a															100		0	0
+428	WGE	Mollweide	WGE	Geodetic			884598.74	4218501.64		35	110		n/a	n/a					100		0	0										
+429	WGE	Geodetic	WGE	Mollweide			40	90		-848327.15	4784045.31		n/a	n/a															100		0	0
+430	WGE	Mollweide	WGE	Geodetic			-848327.15	4784045.31		40	90		n/a	n/a					100		0	0										
+431	CAC	Geodetic	CAC	Mollweide			35	-75		1857654.45	4218495.06		n/a	n/a															-96		0	0
+432	CAC	Mollweide	CAC	Geodetic			1857654.45	4218495.06		35	-75		n/a	n/a					-96		0	0										
+433	WGE	Geodetic	WGE	Mollweide			-35	75		-1857657.35	-4218501.64		n/a	n/a															96		0	0
+434	WGE	Mollweide	WGE	Geodetic			-1857657.35	-4218501.64		-35	75		n/a	n/a					96		0	0										
+435	ADI-M	Geodetic	ADI-M	Mollweide			-0.5	-0.5		-50054.15	-61752.98		n/a	n/a															0		0	0
+436	ADI-M	Mollweide	ADI-M	Geodetic			-50054.15	-61752.98		-0.5	-0.5		n/a	n/a					0		0	0										
+437	ADI-M	Geodetic	ADI-M	Mollweide			0	0		0	0		n/a	n/a															0		0	0
+438	ADI-M	Mollweide	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0		0	0										
+439	NAR-A	Geodetic	NAR-A	Mollweide			0	-180		1001107.2	0		n/a	n/a															170		0	0
+440	NAR-A	Mollweide	NAR-A	Geodetic			1001107.2	0		0	180		n/a	n/a					170		0	0										
+441	WGC	Geodetic	WGC	Mollweide			89.5	75		-94095.83	9000932.78		n/a	n/a															96		0	0
+442	WGC	Mollweide	WGC	Geodetic			-94095.83	9000932.78		89.5	74.999995		n/a	n/a					96		0	0										
+443	WGE	Geodetic	WGE	Mollweide			90	90		-2.71	9009964.76		n/a	n/a															96		0	0
+444	WGE	Mollweide	WGE	Geodetic			-2.71	9009964.76		89.999996	94.497929		n/a	n/a					96		0	0										
+445	NAR-A	Geodetic	NAR-A	Mollweide			-90	-180		4.52	-9009964.76		n/a	n/a															170		0	0
+446	NAR-A	Mollweide	NAR-A	Geodetic			4.52	-9009964.76		-89.999996	172.548726		n/a	n/a					170		0	0										
+447	CAC	Geodetic	CAC	Sinusoidal			-50	-75		1075471.54	-5540628.03		n/a	n/a															-90		0	0
+448	CAC	Sinusoidal	CAC	Geodetic			1075471.54	-5540628.03		-50	-75		n/a	n/a					-90		0	0										
+449	WGE	Geodetic	WGE	Sinusoidal			35	110		912881.7	3874592.9		n/a	n/a															100		0	0
+450	WGE	Sinusoidal	WGE	Geodetic			912881.7	3874592.9		35	110		n/a	n/a					100		0	0										
+451	WGE	Geodetic	WGE	Sinusoidal			40	90		-853938.57	4429529.03		n/a	n/a															100		0	0
+452	WGE	Sinusoidal	WGE	Geodetic			-853938.57	4429529.03		40	90		n/a	n/a					100		0	0										
+453	CAC	Geodetic	CAC	Sinusoidal			35	-75		1917095.9	3874395.26		n/a	n/a															-96		0	0
+454	CAC	Sinusoidal	CAC	Geodetic			1917095.9	3874395.26		35	-75		n/a	n/a					-96		0	0										
+455	WGE	Geodetic	WGE	Sinusoidal			-35	75		-1917051.56	-3874592.9		n/a	n/a															96		0	0
+456	WGE	Sinusoidal	WGE	Geodetic			-1917051.56	-3874592.9		-35	75		n/a	n/a					96		0	0										
+457	ADI-M	Geodetic	ADI-M	Sinusoidal			-0.5	-0.5		-55658.62	-55282.05		n/a	n/a															0		0	0
+458	ADI-M	Sinusoidal	ADI-M	Geodetic			-55658.62	-55282.05		-0.5	-0.5		n/a	n/a					0		0	0										
+459	ADI-M	Geodetic	ADI-M	Sinusoidal			0	0		0	0		n/a	n/a															0		0	0
+460	ADI-M	Sinusoidal	ADI-M	Geodetic			0	0		0	0		n/a	n/a					0		0	0										
+461	NAR-A	Geodetic	NAR-A	Sinusoidal			0	-180		1113194.91	0		n/a	n/a															170		0	0
+462	NAR-A	Sinusoidal	NAR-A	Geodetic			1113194.91	0		0	180		n/a	n/a					170		0	0										
+463	WGC	Geodetic	WGC	Sinusoidal			89.5	75		-20468.72	9946115.79		n/a	n/a															96		0	0
+464	WGC	Sinusoidal	WGC	Geodetic			-20468.72	9946115.79		89.5	75		n/a	n/a					96		0	0										
+465	WGE	Geodetic	WGE	Sinusoidal			90	90		0	10001965.73		n/a	n/a															96		0	0
+466	WGE	Sinusoidal	WGE	Geodetic			0	10001965.73		90	96		n/a	n/a					96		0	0										
+467	NAR-A	Geodetic	NAR-A	Sinusoidal			-90	-180		0	-10001965.73		n/a	n/a															170		0	0
+468	NAR-A	Sinusoidal	NAR-A	Geodetic			0	-10001965.73		-90	170		n/a	n/a					170		0	0										
+469	CAC	Transverse Cylindrical Equal Area	CAC	Geodetic			-687825.78	1128646.24		40	-83		n/a	n/a			1		-75	30	0	0										
+470	WGE	Geodetic	WGE	Transverse Cylindrical Equal Area			35	110		908247.2	600319.82		n/a	n/a													1		100	30	0	0
+471	WGE	Transverse Cylindrical Equal Area	WGE	Geodetic			908247.2	600319.82		35	110		n/a	n/a			1		100	30	0	0										
+472	WGE	Geodetic	WGE	Transverse Cylindrical Equal Area			40	90		-849602.69	1157435.52		n/a	n/a													1		100	30	0	0
+473	WGE	Transverse Cylindrical Equal Area	WGE	Geodetic			-849602.69	1157435.52		40	90		n/a	n/a			1		100	30	0	0										
+474	CAC	Geodetic	CAC	Transverse Cylindrical Equal Area			35	-75		1874395.03	1537576.57		n/a	n/a													1		-96	23	0	0
+475	CAC	Transverse Cylindrical Equal Area	CAC	Geodetic			1874395.03	1537576.57		35	-75		n/a	n/a			1		-96	23	0	0										
+476	WGE	Geodetic	WGE	Transverse Cylindrical Equal Area			-35	75		-1874352.4	-1537631.66		n/a	n/a													1		96	-23	0	0
+477	WGE	Transverse Cylindrical Equal Area	WGE	Geodetic			-1874352.4	-1537631.66		-35	75		n/a	n/a			1		96	-23	0	0										
+478	ADI-M	Geodetic	ADI-M	Transverse Cylindrical Equal Area			-0.5	-0.5		-55657.91	1050470.45		n/a	n/a													1		0	-10	0	0
+479	ADI-M	Transverse Cylindrical Equal Area	ADI-M	Geodetic			-55657.91	1050470.45		-0.5	-0.5		n/a	n/a			1		0	-10	0	0										
+480	ADI-M	Geodetic	ADI-M	Transverse Cylindrical Equal Area			0	0		0	1105754.61		n/a	n/a													1		0	-10	0	0
+481	ADI-M	Transverse Cylindrical Equal Area	ADI-M	Geodetic			0	1105754.61		0	0		n/a	n/a			1		0	-10	0	0										
+482	NAR-A	Geodetic	NAR-A	Transverse Cylindrical Equal Area			0	-180		1107551.87	1105854.83		n/a	n/a													1		170	-10	0	0
+483	NAR-A	Transverse Cylindrical Equal Area	NAR-A	Geodetic			1107551.87	1105854.83		0	180		n/a	n/a			1		170	-10	0	0										
+484	WGC	Geodetic	WGC	Transverse Cylindrical Equal Area			89.5	75		-20013.5	4964881.91		n/a	n/a													1		96	45	0	0
+485	WGC	Transverse Cylindrical Equal Area	WGC	Geodetic			-20013.5	4964881.91		89.5	75.000005		n/a	n/a			1		96	45	0	0										
+486	WGE	Geodetic	WGE	Transverse Cylindrical Equal Area			90	90		0	5017021.35		n/a	n/a													1		96	45	0	0
+487	WGE	Transverse Cylindrical Equal Area	WGE	Geodetic			0	5017021.35		90	96		n/a	n/a			1		96	45	0	0										
+488	NAR-A	Geodetic	NAR-A	Transverse Cylindrical Equal Area			-90	-180		0.05	-5017021.07		n/a	n/a													1		170	-45	0	0
+489	NAR-A	Transverse Cylindrical Equal Area	NAR-A	Geodetic			0.05	-5017021.07		-89.999998	180.077644		n/a	n/a			1		170	-45	0	0										
+490	OGB-7	BNG	OGB-7	Geodetic			SV 0000000000			49.76619	-7.55645		n/a	n/a																		
+491	OGB-7	Geodetic	OGB-7	BNG			49.76619	-7.55645		SV 0000000000			n/a	n/a																		
+492	EUR-7	NZMG	EUR-7	Geodetic			2510000	6023150		-41	173		n/a	n/a																		
+493	EUR-7	Geodetic	EUR-7	NZMG			-41	173		2510000	6023150		n/a	n/a																		
+494	WGE	Neys	WGE	Geodetic			8050247	26775888		-41	173		n/a	n/a			71		10	80	0	0										
+495	WGE	Geodetic	WGE	Neys			-41	173		8050247	26775888		n/a	n/a													71		10	80	0	0
+496	WGE	Local Cartesian	WGE	Geodetic			2904699	4862789	-3473438	50	45		n/a	n/a					0	0	0	0										
+497	WGE	Geodetic	WGE	Local Cartesian			50	45		2904699	4862789	-3473438	n/a	n/a	-3473438														0	0	0	0

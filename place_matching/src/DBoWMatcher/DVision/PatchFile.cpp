@@ -21,7 +21,7 @@
  *
  */
 
-#include "PatchFile.h"
+#include <place_matching/DBoWMatcher/DVision/PatchFile.h>
 #include <fstream>
 #include <iostream>
 #include <vector>

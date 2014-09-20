@@ -29,7 +29,7 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include "GUI.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/GUI.h>
 
 #include <iostream>
 

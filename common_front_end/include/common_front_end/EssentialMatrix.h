@@ -4,8 +4,8 @@
 #pragma once
 
 #include <random>
-#include <Utils/MathTypes.h>
-#include <CommonFrontEnd/FundamentalMatrix.h>
+#include <utils/MathTypes.h>
+#include <common_front_end/FundamentalMatrix.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 Eigen::Vector4t Get3DPoint(

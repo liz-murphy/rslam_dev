@@ -23,8 +23,8 @@
 
 #include <vector>
 #include <fstream>
-#include "PixelPointFile.h"
-#include "DUtils.h"
+#include <place_matching/DBoWMatcher/DVision/PixelPointFile.h>
+#include <place_matching/DBoWMatcher/DUtils/DUtils.h>
 
 using namespace std;
 using namespace DVision;

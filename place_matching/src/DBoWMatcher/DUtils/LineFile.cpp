@@ -21,9 +21,9 @@
  *
  */
 
-#include "LineFile.h"
-#include "DException.h"
-#include "FileModes.h"
+#include <place_matching/DBoWMatcher/DUtils/LineFile.h>
+#include <place_matching/DBoWMatcher/DUtils/DException.h>
+#include <place_matching/DBoWMatcher/DUtils/FileModes.h>
 #include <vector>
 #include <string>
 using namespace std;

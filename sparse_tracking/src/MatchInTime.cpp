@@ -7,8 +7,11 @@
 #include <miniglog/logging.h>
 
 #include <slam_map/SlamMap.h>
-#include <sparse_tracking/LocalMap.h>
+#include <local_map/LocalMap.h>
+
 //#include <sparse_tracking/TrackingCVars.h>
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <sparse_tracking/TrackingConfig.h>
 #include <sparse_tracking/MatchInTime.h>
 
 #include <utils/PatchUtils.h>
@@ -68,7 +71,7 @@ inline bool  _MatchLandmarkInTime(
     // if predicted outside the image try next camera (if any)
     if (H.GetState() ==
         PatchHomography<CANONICAL_PATCH_SIZE>::eOutsideFOV) {
-      LOG(g_tracking_cvars.matchintime_debug_level) <<  "\tOut of Bounds";
+      LOG(TrackingConfig::getConfig()->matchintime_debug_level) <<  "\tOut of Bounds";
       z.SetFlag( cam_id, OutsideFOV );
       continue;
     }
@@ -91,7 +94,7 @@ inline bool  _MatchLandmarkInTime(
     matches[cam_id] = pMIT;
 
     if (pMIT) {
-      LOG(g_tracking_cvars.matchintime_debug_level)
+      LOG(TrackingConfig::getConfig()->matchintime_debug_level)
           << "\tMIT: Initial match " <<  MatchStr(match_flag)
           << " [ " << pMIT->x << ", " << pMIT->y << ", " << pMIT->scale << "] "
           << "(predicted [" << hx[0] << ", " << hx[1] << "]) "
@@ -112,10 +115,10 @@ inline bool  _MatchLandmarkInTime(
     if (match_flag != GoodMatch) {
       if (pMIT == nullptr) {
         // In this case no match was found
-        LOG(g_tracking_cvars.matchintime_debug_level)
+        LOG(TrackingConfig::getConfig()->matchintime_debug_level)
             << "\tNo match found int camera: " << cam_id;
       } else {
-        PrintMessage(g_tracking_cvars.matchintime_debug_level,
+        PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                      "    Bad temporal-match [%.2f %.2f] in camera: %d "
                      "score: %.2f [%s], skipping\n",
                      pMIT->x, pMIT->y, cam_id, match_score,
@@ -129,13 +132,13 @@ inline bool  _MatchLandmarkInTime(
     float refined_y = pMIT->y;
     float scale     = H.scale();
 
-    if (g_common_cvars.do_subpixel_refinement) {
+    if (CommonFrontEndConfig::getConfig()->do_subpixel_refinement) {
 
       double error =
           search_image.RefineSubPixelXY(landmark.patch(), H,
                                         refined_x, refined_y);
 
-      PrintMessage(g_tracking_cvars.matchintime_debug_level,
+      PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                    "    MIT: ESM (error %f) match refined by [%.2f, %.2f] "
                    "from [%.2f, %.2f] to [%.2f, %.2f]\n",
                    error, pMIT->x - refined_x, pMIT->y - refined_y,
@@ -150,22 +153,22 @@ inline bool  _MatchLandmarkInTime(
       z.SetMatchingError(cam_id , error);
 
       // ESM error can help to spot bad matches
-      Scalar scaled_error = g_common_cvars.esm_subpixel_threshold*scale;
+      Scalar scaled_error = CommonFrontEndConfig::getConfig()->esm_subpixel_threshold*scale;
       if (fabs(refined_x - pMIT->x) > scaled_error ||
           fabs(refined_y - pMIT->y) > scaled_error) {
-        PrintMessage(g_tracking_cvars.matchintime_debug_level,
+        PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                      "    ESM Error above threshold, skipping\n");
         z.SetFlag(cam_id, LowSubPixInRegion);
         continue; // try next camera (if any)
       }
-      if (error > g_common_cvars.esm_threshold) {
+      if (error > CommonFrontEndConfig::getConfig()->esm_threshold) {
         z.SetFlag(cam_id, BadScoreAfterESM);
         continue; // try next camera (if any)
       }
     }
 
     // good
-    PrintMessage(g_tracking_cvars.matchintime_debug_level,
+    PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                  "    MIT: SUCCESS -- LM '%s' match at [%.2f, %.2f] "
                  "(predicted [%.2f, %.2f]) in camera-%d\n",
                  landmark.id(), refined_x, refined_y, hx[0], hx[1], cam_id);
@@ -286,7 +289,7 @@ int MatchInTime(const ReferenceFrameId                &frame_id,
                 std::vector<MultiViewMeasurement>     &new_measurements,
                 std::vector< std::vector<Feature*> >  &feature_matches,
                 float                                 search_radius) {
-  PrintMessage( g_tracking_cvars.matchintime_debug_level, "<MatchInTime>\n" );
+  PrintMessage( TrackingConfig::getConfig()->matchintime_debug_level, "<MatchInTime>\n" );
 
   // Reset output vars
   new_measurements.clear();
@@ -321,7 +324,7 @@ int MatchInTime(const ReferenceFrameId                &frame_id,
       continue;
     }
 
-    PrintMessage(g_tracking_cvars.matchintime_debug_level,
+    PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                  "\n    -------------------------------------\n"
                  "    Matching LM %s\n", lm.id());
 
@@ -332,16 +335,16 @@ int MatchInTime(const ReferenceFrameId                &frame_id,
     feature_matches.push_back(matches);
 
     if (!success) {
-      PrintMessage(g_tracking_cvars.matchintime_debug_level,
+      PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                    "    MIT: FAILED\n");
       continue;
     }
     num_matches++;
   }
 
-  PrintMessage(g_tracking_cvars.matchintime_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                "    Tracked %d features\n", num_matches);
-  PrintMessage(g_tracking_cvars.matchintime_debug_level, "</MatchInTime>\n\n");
+  PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level, "</MatchInTime>\n\n");
 
   return num_matches;
 }

@@ -1,0 +1,66 @@
+package pb;
+
+import "rslam.proto";
+import "frontend.proto";
+import "template.proto";
+import "dbow.proto";
+import "Camera.proto";
+
+enum PlaceMatcherType {
+    DBOW = 1;
+    TEMPLATE = 2;
+    MULTI_DBOW = 3;
+}
+
+message PlaceMapMsg {
+    optional SlamMapMsg map = 1;
+
+    // The edges of the downloaded map. Can be used to download more
+    // of the map.
+    repeated ReferenceFrameIdMsg leaf = 2;
+
+    optional PlaceMatcherType place_type = 3;
+    repeated TemplateMsg templates = 4;
+    repeated DBoWPlaceMsg dbow_places = 5;
+}
+
+message ServerUploadRequest {
+    optional PlaceMapMsg map = 1;
+}
+
+message ServerUploadResponse {
+    optional bool success = 1;
+}
+
+message ServerQueryRequest {
+    optional CameraMsg images = 1;
+    optional CameraRigMsg rig = 2;
+    optional ReferenceFrameMsg frame = 3;
+}
+
+message ServerQueryResponse {
+    optional bool success = 1;
+    optional TransformEdgeMsg edge = 2;
+
+    // Measurements made between query frame and server-side map
+    repeated MultiViewMeasurementMsg measurements = 3;
+}
+
+message ServerDownloadRequest {
+    optional ReferenceFrameIdMsg frame_id = 1;
+    optional uint64 depth = 2;
+
+    // The last time messages were downloaded. Used to ignore messages
+    // which haven't been updated since the last download.
+    optional double last_download_time = 3;
+
+    // An optional way to exclude frames and edges from a map the
+    // caller isn't interested in.
+    optional SessionIdMsg excluding_map = 4;
+}
+
+message ServerDownloadResponse {
+    optional bool success = 1;
+    optional double timestamp = 2;
+    optional PlaceMapMsg map = 3;
+}

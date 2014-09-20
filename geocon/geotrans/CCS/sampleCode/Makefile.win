@@ -1,0 +1,41 @@
+###############################################################################
+#
+#     CLASSIFICATION:  UNCLASSIFIED
+#
+#     FILENAME:   Makefile.win
+#
+#     DESCRIPTION:
+#
+#     This Makefile is used by make to build the CoordinateConversionSample
+#     test driver on Windows using the Visual Studio 2003 compiler.
+#
+#     NOTES:
+#
+###############################################################################
+
+COMPILE_CPP = cl.exe
+LINK_CPP    = link.exe
+
+CPP_FLAGS	= -c -MD -GX -DWIN32 \
+	        -D_USRDLL \
+		-I../src/CoordinateConversion \
+                -I../src/dtcc/CoordinateSystemParameters \
+                -I../src/dtcc/CoordinateSystems \
+                -I../src/dtcc/CoordinateTuples \
+                -I../src/dtcc/Enumerations \
+                -I../src/dtcc/Exception \
+                -I../src/dtcc
+
+LDFLAGS     = /libpath:../win
+
+all:	testCoordinateConversionSample.exe
+
+testCoordinateConversionSample.exe: testCoordinateConversionSample.obj
+	$(LINK_CPP) testCoordinateConversionSample.obj $(LDFLAGS) /out:"$@" \
+	MSPdtcc.lib MSPCoordinateConversionService.lib
+
+.cpp.obj:
+	$(COMPILE_CPP) $(CPP_FLAGS) $< -o $@
+
+clean:
+	del -f testCoordinateConversionSample.obj testCoordinateConversionSample.exe

@@ -10,7 +10,8 @@
 #include <iostream>
 #include <slam_map/SlamMapFwd.h>
 #include <slam_map/ReferenceFrameId.h>
-#include <sparse_tracking/LocalMap.h>
+#include <unordered_map>
+#include <local_map/LocalMap.h>
 #include <ba/InterpolationBuffer.h>
 
 enum OptimizationStatus {

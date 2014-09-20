@@ -27,7 +27,7 @@
 #include <sstream>
 #include <iomanip>
 #include <opencv/cv.h>
-#include "BundleCamera.h"
+#include <place_matching/DBoWMatcher/DVision/BundleCamera.h>
 
 using namespace DVision::Bundle;
 using namespace std;

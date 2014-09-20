@@ -26,9 +26,9 @@
 #include <string>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
-#include "Matches.h"
+#include <place_matching/DBoWMatcher/DVision/Matches.h>
 
-#include "DUtilsCV.h" // defines macros CVXX
+#include <place_matching/DBoWMatcher/DUtilsCV/DUtilsCV.h> // defines macros CVXX
 
 
 // ---------------------------------------------------------------------------

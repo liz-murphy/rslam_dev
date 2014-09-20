@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(back_end)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set( CMAKE_CXX_FLAGS "-std=c++0x -Wall ${CMAKE_CXX_FLAGS}" )
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,7 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   ba
   utils
   slam_map
-  sparse_tracking
+  common_front_end
+  local_map 
 )
 
 ## System dependencies are found with CMake's conventions
@@ -87,7 +88,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES back_end
-  CATKIN_DEPENDS roscpp sophus ba slam_map miniglog
+  CATKIN_DEPENDS roscpp sophus ba slam_map miniglog common_front_end
 #  DEPENDS system_lib
 )
 

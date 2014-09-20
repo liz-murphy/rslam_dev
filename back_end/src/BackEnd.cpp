@@ -801,7 +801,7 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
   }
 
   if (pose_ids_.empty()) {
-    LOG(BackEndConfig::getConfig()->g_debug_level) << "pose_ids_ is empty. Returning false.";
+    LOG(BackEndConfig::getConfig()->debug_level) << "pose_ids_ is empty. Returning false.";
     return false;
   }
 
@@ -836,7 +836,7 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
         LOG(BackEndConfig::getConfig()->debug_level) << "Attempting to add imu residual to edge id "
                            << edge_id;
 
-        if (!_AddImuResidualToEdge(edge, local_map, g_dImuWeight,
+        if (!_AddImuResidualToEdge(edge, local_map, BackEndConfig::getConfig()->imu_weight,
                                    &pair.second.id)) {
           LOG(FATAL) << "Failed to add IMU residual to edge " << edge_id;
         }
@@ -882,7 +882,7 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
           unsigned int id = 0;
           if (!_AddImuResidualToEdge(edge, local_map,
                                      imu_ba_.IsTranslationEnabled() ?
-                                     BackEndConfig::getConfig()->g_dImuPrior : BackEndConfig::getConfig()->g_dImuPrior/100.0, &id)) {
+                                     BackEndConfig::getConfig()->imu_prior : BackEndConfig::getConfig()->imu_prior/100.0, &id)) {
             LOG(FATAL) << "Failed to add prior IMU residual " << edge->id();
             return false;
           }
@@ -940,8 +940,8 @@ inline void LiftMap(uint32_t depth,
       &results->root_pose_id);
   parent_visitor.set_depth(depth);
   parent_visitor.set_root_id(root_id);
-  parent_visitor.set_imu_weight(BackEndConfig::getConfig()->g_dImuWeight);
-  parent_visitor.set_imu_prior_weight(BackEndConfig::getConfig()->g_dImuPrior);
+  parent_visitor.set_imu_weight(BackEndConfig::getConfig()->imu_weight);
+  parent_visitor.set_imu_prior_weight(BackEndConfig::getConfig()->imu_prior);
   parent_visitor.set_disable_poses(do_landmark_init);
   parent_visitor.set_should_ignore_broken(imu_buffer != nullptr);
   map->ParentTraverse(&parent_visitor);
@@ -1065,7 +1065,7 @@ bool BackEnd::RefineMap(unsigned int depth,
 
     // No dogleg for landmark initialization.
     ba_.options().use_dogleg = false;
-    ba_.Solve(100, 1.0, BackEndConfig::getConfig()->error_increase_allowd);
+    ba_.Solve(100, 1.0, BackEndConfig::getConfig()->error_increase_allowed);
     ba_.options().use_dogleg = BackEndConfig::getConfig()->do_dogleg;
 
     if (!PushMap(false, results, callbacks)) return false;
@@ -1089,10 +1089,10 @@ bool BackEnd::RefineMap(unsigned int depth,
     if (is_using_imu) {
       imu_ba_.options().use_dogleg = BackEndConfig::getConfig()->do_dogleg;
       imu_ba_.Solve(max_iter, BackEndConfig::getConfig()->damping_factor,
-                    BackEndConfig::getConfig()->error_increase_allowd);
+                    BackEndConfig::getConfig()->error_increase_allowed);
     } else {
       ba_.options().use_dogleg = BackEndConfig::getConfig()->do_dogleg;
-      ba_.Solve(max_iter, BackEndConfig::getConfig()->damping_factor, BackEndConfig::getConfig()->error_increase_allowd);
+      ba_.Solve(max_iter, BackEndConfig::getConfig()->damping_factor, BackEndConfig::getConfig()->error_increase_allowed);
     }
     if (!PushMap(is_using_imu, results, callbacks)) return false;
 

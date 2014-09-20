@@ -5,6 +5,7 @@
 
 #include <common_front_end/PatchMatch.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
+#include <common_front_end/CommonFrontEndConfig.h>
 #include <common_front_end/FeatureMatch.h>
 #include <slam_map/PatchHomography.h>
 #include <utils/PrintMessage.h>
@@ -132,13 +133,11 @@ inline Feature* FindBestMatchInRegion(
     const FeatureHandler::Options    &feature_options,
     float                            &match_score,
     MatchFlag                        &match_flag
-    )
-{
-  if (!g_common_cvars.feature_detector.compare("TRACK_2D") ||
-      !g_common_cvars.feature_detector.compare("FLYBY")) {
+    ) {
+  if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D) {
     return GetBestTrack2dMatch( feature_id, search_image, match_score, match_flag );
   } 
-  if( CommonFrontEnd::getConfig()->feature_detector("SIMULATION") ) {
+  if( CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_SIMULATION ) {
 
     int search_col  = round( H.CenterPixel()[0] );
     int search_row  = round( H.CenterPixel()[1] );
@@ -163,7 +162,7 @@ inline Feature* FindBestMatchInRegion(
                             match_flag);
 
 
-  } else if( !g_common_cvars.feature_descriptor.compare("PATCH") ) {
+  } else if(CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_PATCH ) {
     return FindBestPatchInRegion<PatchSize>( H,
                                              pPatch,
                                              search_width,
@@ -202,7 +201,7 @@ inline Feature* FindBestMatchInRow(
     MatchFlag& eFlag                //< Output: Match flag [GOOD, BAD or NO match]
     )
 {
-  if( !g_common_cvars.feature_descriptor.compare("PATCH") ){
+  if(CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_PATCH ){
     return FindBestPatchInRow( x, y, pPatch, patchsize,
                                nSearchWidth, SearchImage, fMatchScore, eFlag );
   }
@@ -387,10 +386,10 @@ inline Feature* FindBestPatchOnEpipolarLine(
   if( best_score == FLT_MAX ){
     match_flag = NoFeaturesToMatch;
   }
-  else if( best_score > g_common_cvars.match_error_threshold ) {
+  else if( best_score > CommonFrontEndConfig::getConfig()->match_error_threshold ) {
     match_flag  = NoMatchInRegion;
   }
-  else if( best_score*g_common_cvars.match_error_factor >= second_best ) {
+  else if( best_score*CommonFrontEndConfig::getConfig()->match_error_factor >= second_best ) {
     match_flag  = AmbiguousMatch;
   }
   else{
@@ -492,7 +491,7 @@ inline Feature* FindEpipolarMatch(
   //    printf( "    Starting from [%.0f,%.0f], hoping to reverse match to [%.0f,%.0f]\n",
   //            pMatch->x, pMatch->y, rRefFeature.x, rRefFeature.y ); fflush(stdout);
 
-  if (g_common_cvars.do_jealous_matching) {
+  if (CommonFrontEndConfig::getConfig()->do_jealous_matching) {
     // re-compute H that we found in first epi-polar search:
     pt << match->x, match->y;
     search_image.LoadPatch( match_homography, match_patch );
@@ -545,7 +544,7 @@ inline Feature* FindEpipolarMatch(
                 search_cam_id, match->x, match->y, match_score);
 
   // now do subpixel refinement if active
-  if( g_common_cvars.do_subpixel_refinement ){
+  if( CommonFrontEndConfig::getConfig()->do_subpixel_refinement ){
     float fRefinedX = match->x;
     float fRefinedY = match->y;
     double dError = search_image.RefineSubPixelXY((unsigned char*)ref_patch,
@@ -557,8 +556,8 @@ inline Feature* FindEpipolarMatch(
                   "    ESM RMS error %f, refined match location in cam[%d] from u=%.3f to u=%.3f and v=%.3f to v=%.3f\n",
                   dError, search_cam_id, match->x, fRefinedX,match->y, fRefinedY );
 
-    if( fabs(fRefinedX - match->x) > g_common_cvars.esm_subpixel_threshold*match->scale ||
-        fabs(fRefinedY - match->y) > g_common_cvars.esm_subpixel_threshold*match->scale) {
+    if( fabs(fRefinedX - match->x) > CommonFrontEndConfig::getConfig()->esm_subpixel_threshold*match->scale ||
+        fabs(fRefinedY - match->y) > CommonFrontEndConfig::getConfig()->esm_subpixel_threshold*match->scale) {
       ref_feature.used = true;
       match->used = true;
       match_flag = LowSubPixOnLine;
@@ -566,7 +565,7 @@ inline Feature* FindEpipolarMatch(
       return NULL;
     }
 
-    if( dError > g_common_cvars.esm_threshold ){
+    if( dError > CommonFrontEndConfig::getConfig()->esm_threshold ){
       ref_feature.used = true;
       match->used = true;
       PrintMessage( verb,"    ESM error above threshold, skipping\n" );

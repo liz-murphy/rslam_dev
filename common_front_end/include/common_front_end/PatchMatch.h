@@ -9,8 +9,8 @@
 #include <vector>
 #include <slam_map/Measurement.h>
 
-typedef std::pair<uint8_t,uint8_t>  ImagePoint;
-typedef std::pair<uint8_t,uint8_t>  RegionSize;
+//typedef std::pair<uint8_t,uint8_t>  ImagePoint;
+//typedef std::pair<uint8_t,uint8_t>  RegionSize;
 
 
 ///////////////////////////////////////////////////////////////////////////////

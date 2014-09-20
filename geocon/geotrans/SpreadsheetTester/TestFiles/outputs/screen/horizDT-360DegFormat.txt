@@ -1,0 +1,40 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\horizDT-360DegFormat.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\horizDT-360DegFormat.txt'
+Display Warnings: '1'
+
+Test Case Id: 4 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 5 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 9 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 11 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 12 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 13 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 14 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 15 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+
+
+Results: 
+
+	Successful
+		Equivalent Results	12 
+		Different Results	0 
+	Warnings
+		Equivalent Results	8 
+		Different Results	0 
+	Errors (No Results)		0 
+	Total Test Cases		20 

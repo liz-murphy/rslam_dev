@@ -1,0 +1,70 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\combHorizVertTrans.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\combHorizVertTrans.txt'
+Display Warnings: '1'
+
+Test Case Id: 10 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 36 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 46 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 47 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 48 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 63 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 115 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 126 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 134 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 138 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 173 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 175 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 177 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 201 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 205 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 209 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 232 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 252 - Warning: Output Geodetic: 
+Location is not within valid domain for current datum
+
+
+
+Results: 
+
+	Successful
+		Equivalent Results	239 
+		Different Results	0 
+	Warnings
+		Equivalent Results	18 
+		Different Results	0 
+	Errors (No Results)		0 
+	Total Test Cases		257 

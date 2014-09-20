@@ -1,0 +1,35 @@
+/* CLASSIFICATION: UNCLASSIFIED
+ * 
+ * This file was created by Ned Ferris on 6/3/2009
+ *
+ * This style sheet is used to turn the classification banner on
+ * or off.
+ *
+ * If the banner needs to be on, set the attributes so the banner 
+ * is in a large font and black as follows:
+ *
+ * font-size:   16pt;
+ * color:       #000000;
+ *
+ * If the banner needs to be off, set the attributes so the banner 
+ * is in a a negligible font size and white (as the background) as follows:
+ *
+ * font-size:   0pt;
+ * color:       #FFFFFF;
+ * 
+ * 
+ */
+
+
+h1.classification_banner{
+margin-top:     6.0pt;
+margin-right:   0in;
+margin-bottom:  0in;
+margin-left:    0in;
+margin-bottom:  0.0001pt;
+text-align:     center
+font-weight:    bold;
+font-size:      16pt;
+color:          #000000;
+}
+

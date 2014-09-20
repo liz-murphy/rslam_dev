@@ -21,8 +21,8 @@
  *
  */
 
-#include "Random.h"
-#include "Timestamp.h"
+#include <place_matching/DBoWMatcher/DUtils/Random.h>
+#include <place_matching/DBoWMatcher/DUtils/Timestamp.h>
 #include <cstdlib>
 using namespace std;
 

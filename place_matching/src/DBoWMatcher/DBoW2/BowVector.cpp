@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "BowVector.h"
+#include <place_matching/DBoWMatcher/DBoW2/BowVector.h>
 
 namespace DBoW2 {
 

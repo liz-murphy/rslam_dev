@@ -23,11 +23,11 @@
  *
  */
 
-#include "DException.h"
-#include "FileModes.h"
-#include "LineFile.h"
-#include "ConfigFile.h"
-#include "StringFunctions.h"
+#include <place_matching/DBoWMatcher/DUtils/DException.h>
+#include <place_matching/DBoWMatcher/DUtils/FileModes.h>
+#include <place_matching/DBoWMatcher/DUtils/LineFile.h>
+#include <place_matching/DBoWMatcher/DUtils/ConfigFile.h>
+#include <place_matching/DBoWMatcher/DUtils/StringFunctions.h>
 #include <vector>
 #include <fstream>
 #include <iostream>

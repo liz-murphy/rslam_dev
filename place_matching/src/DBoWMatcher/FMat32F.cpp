@@ -1,5 +1,5 @@
-#include <DUtils.h>
-#include "FMat32F.h"
+#include <place_matching/DBoWMatcher/DUtils/DUtils.h>
+#include <place_matching/DBoWMatcher/FMat32F.h>
 
 void FMat32F::meanValue(
     const std::vector<FMat32F::pDescriptor> &descriptors,

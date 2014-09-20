@@ -22,8 +22,8 @@
  */
 
 #include <opencv/cv.h>
-#include "ImageFunctions.h"
-#include "DUtils.h"
+#include <place_matching/DBoWMatcher/DVision/ImageFunctions.h>
+#include <place_matching/DBoWMatcher/DUtils/DUtils.h>
 
 using namespace DVision;
 

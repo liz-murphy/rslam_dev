@@ -22,8 +22,8 @@
  */
 
 #include <opencv/cv.h>
-#include "Geometry.h"
-#include "Types.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/Geometry.h>
+#include <place_matching/DBoWMatcher/DUtilsCV/Types.h>
 
 using namespace DUtilsCV;
 

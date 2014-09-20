@@ -24,7 +24,7 @@
 #include <vector>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
-#include "Drawing.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/Drawing.h>
 
 using namespace std;
 using namespace DUtilsCV;

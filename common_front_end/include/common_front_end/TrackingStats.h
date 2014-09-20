@@ -2,7 +2,7 @@
 
 #include <map>
 #include <vector>
-#include <SlamMap/Measurement.h>
+#include <slam_map/Measurement.h>
 
 namespace rslam {
 namespace common {

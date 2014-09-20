@@ -33,4 +33,3 @@ private:
    };
    static TrackingConfig * m_configInstance;
 };
-~                   

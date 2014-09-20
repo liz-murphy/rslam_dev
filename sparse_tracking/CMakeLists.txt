@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
   slam_map
   sophus
   common_front_end
+  back_end
+  local_map
 )
 
 ## System dependencies are found with CMake's conventions
@@ -89,7 +91,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sparse_tracking
-  CATKIN_DEPENDS common pb_msgs roscpp slam_map sophus common_front_end 
+  CATKIN_DEPENDS common pb_msgs roscpp slam_map sophus common_front_end back_end local_map
 #  DEPENDS system_lib
 )
 
@@ -110,7 +112,6 @@ add_library(sparse_tracking
   src/MatchInTime.cpp
   src/StartNewLandmarks.cpp
   src/EstimateRelativePose.cpp
-  src/LandmarkContainer.cpp
 )
 
 ## Declare a cpp executable

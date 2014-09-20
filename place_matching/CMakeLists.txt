@@ -15,13 +15,16 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 find_package(OpenCV REQUIRED)
 
+set(PLACEMATCH_SRCS src/PlaceMatcher.cpp src/PlaceMatcherFactory.cpp)
+
 add_subdirectory(src/TemplateMatcher)
+add_subdirectory(src/DBoWMatcher)
+add_subdirectory(src/MultiDBoWMatcher)
 
-
-option(BUILD_DBoWMatcher "Build DBoWMatcher loop detector" OFF)
-if(BUILD_DBoWMatcher)
-    add_subdirectory(src/DBoWMatcher)      # DBM_ vars
-  endif()
+#option(BUILD_DBoWMatcher "Build DBoWMatcher loop detector" OFF)
+#if(BUILD_DBoWMatcher)
+#    add_subdirectory(src/DBoWMatcher)      # DBM_ vars
+#  endif()
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
@@ -29,8 +32,7 @@ include_directories(
 )
 
 add_library(place_matching
-  src/PlaceMatcher.cpp
-  src/PlaceMatcherFactory.cpp
+  ${PLACEMATCH_SRCS}
 )
 
 target_link_libraries(place_matching ${OpenCV2_LIBRARIES})

@@ -47,6 +47,8 @@ set( PROTO_IN
     src/rslam.proto
     src/template.proto
     src/frontend.proto
+    src/dbow.proto
+    src/SlamServer.proto
 )
 
 set(arguments

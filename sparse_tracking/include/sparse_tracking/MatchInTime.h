@@ -10,7 +10,7 @@
 
 #include <common_front_end/FeatureImage.h>
 #include <slam_map/SlamMapFwd.h>
-#include <sparse_tracking/LocalMap.h>
+#include <local_map/LocalMap.h>
 
 ///
 /// \brief MatchInTime - Find 3D to 2D matches

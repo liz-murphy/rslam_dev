@@ -1,5 +1,5 @@
-#include <DUtils.h>
-#include "FMat8UBinary.h"
+#include <place_matching/DBoWMatcher/DUtils/DUtils.h>
+#include <place_matching/DBoWMatcher/FMat8UBinary.h>
 
 void FMat8UBinary::meanValue(
     const std::vector<FMat8UBinary::pDescriptor> &descriptors,

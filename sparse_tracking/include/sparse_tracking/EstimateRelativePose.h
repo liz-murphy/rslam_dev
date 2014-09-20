@@ -8,14 +8,14 @@
 //#include <sparse_tracking/TrackingCVars.h>
 #include <sparse_tracking/MatchInTime.h>
 
-#include <sparse_tracking/LocalMap.h>
+#include <local_map/LocalMap.h>
 #include <slam_map/SlamMapFwd.h>
 
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
 #include <utils/Timer.h>
 
-//#include <back_end/BackEnd.h>
+#include <back_end/BackEnd.h>
 
 namespace rslam {
 namespace sparse {
@@ -102,7 +102,7 @@ void LiftTrackingData(const CameraRigPtr& rig,
 bool EstimateRelativePose(const ReferenceFrameId &frame_id,
     const FeatureHandler::Options         &options,
     LocalMap                              &working_set,
-    BackEnd                               &backend,
+    //BackEnd                               &backend,
     const FeatureImageVector              &images,
     std::vector<MultiViewMeasurement>  &new_measurements,
     std::vector< std::vector<Feature*> >  &feature_matches,

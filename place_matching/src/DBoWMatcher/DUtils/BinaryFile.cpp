@@ -22,8 +22,8 @@
  *
  */
 
-#include "FileModes.h"
-#include "BinaryFile.h"
+#include <place_matching/DBoWMatcher/DUtils/FileModes.h>
+#include <place_matching/DBoWMatcher/DUtils/BinaryFile.h>
 
 #ifdef _WIN32
 #ifndef WIN32

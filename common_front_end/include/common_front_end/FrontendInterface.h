@@ -1,11 +1,11 @@
 #pragma once
-#include <PbMsgs/ImageArray.h>
-#include <PlaceMatching/PlaceMatcher.h>
-#include <SlamMap/SlamMapFwd.h>
-#include <SlamServer/SlamServerFwd.h>
-#include <Utils/MathTypes.h>
-#include <Utils/Timer.h>
-#include <CommonFrontEnd/common_front_end_fwd.h>
+#include <pb_msgs/ImageArray.h>
+#include <place_matching/PlaceMatcher.h>
+#include <slam_map/SlamMapFwd.h>
+#include <slam_server/SlamServerFwd.h>
+#include <utils/MathTypes.h>
+#include <utils/Timer.h>
+#include <common_front_end/common_front_end_fwd.h>
 
 namespace rslam {
 class FrontEndInterface {

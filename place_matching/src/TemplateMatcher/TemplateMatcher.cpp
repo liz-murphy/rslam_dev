@@ -1,5 +1,5 @@
-#include <PlaceMatching/TemplateMatcher/TemplateMatcher.h>
-#include <SlamMap/ProtobufIO.h>
+#include <place_matching/TemplateMatcher/TemplateMatcher.h>
+#include <slam_map/ProtobufIO.h>
 
 void TemplateMatcher::AddPlace(const ReferenceFrameId& frame_id,
                                const cv::Mat &new_place) {

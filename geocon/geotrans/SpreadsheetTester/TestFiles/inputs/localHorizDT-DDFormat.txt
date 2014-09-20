@@ -1,0 +1,23 @@
+TEST CASE ID	INPUT DATUM(Code)	INPUT PROJECTION	OUTPUT DATUM(Code)	OUTPUT PROJECTION	INPUT ZONE	OUTPUT ZONE	INPUT_COORDS			OUTPUT_COORDS			CALCULATED_OUTPUT_COORDS				INPUT_SYSTEM_PARAMETERS										OUTPUT_SYSTEM_PARAMETERS										RESULTS
+					OR HEMISPHERE	OR HEMISPHERE	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	Calculated Zone or Hemisphere	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	
+
+1	AUA	Geodetic	AUG	Geodetic			-25	140		-25.000011	139.999994		-25.000011	139.999994																							
+2	AUA	Geodetic	AUG	Geodetic			-20	125		-20.00001	124.999992		-20.00001	124.999992																							
+3	AUA	Geodetic	AUG	Geodetic			-30	130		-30.000011	129.999993		-30.000011	129.999992																							
+4	AUA	Geodetic	AUG	Geodetic			-35	150		-35.000012	149.999995		-35.000012	149.999995																							
+5	AUA	Geodetic	AUG	Geodetic			-15	130		-15.000011	129.999993		-15.00001	129.999993																							
+6	EUR-G	Geodetic	OGB-A	Geodetic			51.27441417	-0.7725283		51.273016	-0.772387		51.273016	-0.772388																							
+7	EUR-G	Geodetic	OGB-A	Geodetic			50	-5		49.998442	-5.000333		49.998441	-5.000333																							
+8	EUR-K	Geodetic	OGB-A	Geodetic			53	0		52.998817	0.000238		52.998818	0.000238																							
+9	EUR-K	Geodetic	OGB-A	Geodetic			53	0.03492		52.998818	0.035163		52.998818	0.035162																							
+10	EUR-K	Geodetic	OGB-A	Geodetic			53	-0.03492		52.998818	-0.034686		52.998818	-0.034686																							
+11	HIT	Geodetic	SAN-D	Geodetic			-55	-70		-54.999661	-69.997611		-54.99966	-69.997611																							
+12	HIT	Geodetic	SAN-D	Geodetic			-50	-75		-49.999553	-74.998063		-49.999553	-74.998063																							
+13	HIT	Geodetic	SAN-D	Geodetic			-53	-73		-52.999636	-72.997847		-52.999635	-72.997846																							
+14	HIT	Geodetic	SAN-D	Geodetic			-52	-70		-51.999541	-69.997774		-51.99954	-69.997774
+15	NAR-H	Geodetic	OHA-M	Geodetic			21.5	-158		21.503145	-158.002776		21.503145	-158.002776
+16	NAR-H	Geodetic	OHA-M	Geodetic			19	-155.5		19.003045	-155.502708		19.003046	-155.502708
+17	NAR-H	Geodetic	OHA-M	Geodetic			20	-156		20.003096	-156.00273		20.003096	-156.00273
+18	NAR-H	Geodetic	OHA-M	Geodetic			20.7	-156.3		20.70313	-156.302745		20.70313	-156.302745
+19	NAR-H	Geodetic	OHA-M	Geodetic			22	-159.5		22.003145	-159.502798		22.003145	-159.502798
+20	OHA-D	Geodetic	NAR-H	Geodetic			21.5	-158		21.49684	-157.997253		21.49684	-157.997253

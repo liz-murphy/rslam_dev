@@ -21,7 +21,7 @@
  *
  */
 
-#include "Mat.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/Mat.h>
 #include <opencv/cv.h>
 #include <vector>
 

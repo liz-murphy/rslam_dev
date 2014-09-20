@@ -25,7 +25,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "DebugFunctions.h"
+#include <place_matching/DBoWMatcher/DUtils/DebugFunctions.h>
 
 using namespace std;
 using namespace DUtils;

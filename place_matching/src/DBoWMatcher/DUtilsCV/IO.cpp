@@ -26,8 +26,8 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <string>
-#include "IO.h"
-#include "Types.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/IO.h>
+#include <place_matching/DBoWMatcher/DUtilsCV/Types.h>
 
 using namespace std;
 using namespace DUtilsCV;

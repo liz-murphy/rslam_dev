@@ -9,14 +9,14 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <miniglog/logging.h>
-#include <SlamMap/ProtobufIO.h>
+#include <slam_map/ProtobufIO.h>
 
-#include "dbow_protobuf.h"
-#include "DBoW2.h"
-#include "DLoopDetector.h"
+#include <place_matching/DBoWMatcher/dbow_protobuf.h>
+#include <place_matching/DBoWMatcher/DBoW2/DBoW2.h>
+#include <place_matching/DBoWMatcher/DLoopDetector/DLoopDetector.h>
 
-#include "FMat8UBinary.h"
-#include "DBoWMatcher.h"
+#include <place_matching/DBoWMatcher/FMat8UBinary.h>
+#include <place_matching/DBoWMatcher/DBoWMatcher.h>
 
 DBoWMatcher::DBoWMatcher()
 {

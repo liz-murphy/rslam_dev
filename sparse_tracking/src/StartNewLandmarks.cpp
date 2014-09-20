@@ -14,7 +14,8 @@
 #include <sparse_tracking/StartNewLandmarks.h>
 //#include <sparse_tracking/TrackingCVars.h>
 #include <sparse_tracking/TrackingConfig.h>
-
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <common_front_end/CommonFrontEndParamsConfig.h>
 #include <common_front_end/MatchHelpers.h>
 #include <common_front_end/PatchMatch.h>
 #include <common_front_end/Triangulation.h>
@@ -150,7 +151,7 @@ bool FillQuadTreesWithMeasurementsOfTrackedLandmarks(
     }
   }
 
-  if (TrackingConfig::getConfig()->.startnewlandmarks_debug_level == 0) {
+  if (TrackingConfig::getConfig()->startnewlandmarks_debug_level == 0) {
     printf(" QuadTrees after adding tracked landmarks \n");
     for(size_t cam=0; cam < images.size(); ++cam) {
       printf(" QuadTree camera [%lu]: \n",cam);
@@ -215,9 +216,8 @@ inline bool InitLandmark(
   lmId.landmark_index = frame->NumLandmarks();
   lmId.ref_frame_id    = frame->id();
 
-  if (!g_common_cvars.feature_detector.compare("TRACK_2D") ||
-      !g_common_cvars.feature_detector.compare("FLYBY") ||
-      !g_common_cvars.feature_detector.compare("SIMULATION")) {
+  if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D || CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_SIMULATION)
+  {
     lmId.track2d_id = matches.vFeatures[ref_camera_id]->id;
   } else {
     lmId.track2d_id = 0;
@@ -249,7 +249,7 @@ inline bool InitLandmark(
           images[cam_id]->LoadPatch<CANONICAL_PATCH_SIZE>(
             z.GetPatchHomography(cam_id),&(z.PatchVector(cam_id)[0]));
       if (!bSuccess && cam_id == ref_camera_id) {
-        PrintMessage( g_tracking_cvars.startnewlandmarks_debug_level,
+        PrintMessage( TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                       "  WARNING: Couldn't load Reference Patch! \n");
         return false;
       }
@@ -273,7 +273,7 @@ inline bool InitLandmark(
   frame->AddMeasurement(z);
   frame->AddLandmark(lm);
 
-  StreamMessage( g_tracking_cvars.startnewlandmarks_debug_level) <<
+  StreamMessage( TrackingConfig::getConfig()->startnewlandmarks_debug_level) <<
                 "    StartNewLandmark::_InitLandmark() -- "
       "added new landmark " << lm.id() << "," << lm.id() << " at" <<
                 lm.xrp().transpose() << std::endl;
@@ -300,8 +300,8 @@ void StartNewLandmarks(
   FeatureMatches<> matches;
   const size_t num_cameras = rig.cameras.size();
   const unsigned int desired_num_landmarks =
-      g_common_cvars.num_features_to_track;
-  unsigned int ref_camera_id = g_tracking_cvars.ref_cam_id;
+      CommonFrontEndConfig::getConfig()->num_features_to_track;
+  unsigned int ref_camera_id = TrackingConfig::getConfig()->ref_cam_id;
   unsigned int num_feat_tested = 0;
   bool use_frustrum   = false;
   num_new_landmarks = 0;
@@ -320,7 +320,7 @@ void StartNewLandmarks(
   static int roi[] = {(int)frustum[0],(int)frustum[1],
                       (int)frustum[2],(int)frustum[3]};
 
-  PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                "<StartNewLandmarks>\n");
 
   //===========================================================
@@ -331,7 +331,7 @@ void StartNewLandmarks(
         current_frame, images, num_tracked_landmarks,
         num_tracked_multiview_landmarks );
 
-  PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                "    Attempting to add %u new features\n",
                desired_num_landmarks - num_tracked_landmarks);
 
@@ -346,7 +346,7 @@ void StartNewLandmarks(
     ref_camera_id = ref_camera_id % num_cameras;
     num_feat_tested++;
 
-    PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+    PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                  "    -----------------------------------------------------\n");
 
     // get reference to a feature image
@@ -359,7 +359,7 @@ void StartNewLandmarks(
 
     // if we ran out of features exit
     if (!feature) {
-      PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+      PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                    "    ERROR: No more features to test.\n");
       break;
     }
@@ -371,7 +371,7 @@ void StartNewLandmarks(
     }
 
     feature_mask.SetMask(ref_camera_id, feature->x, feature->y);
-    PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+    PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                  "    Next best feature in camera-%d : [%.3f %.3f]  "
                  "scale: %0.3f\n",
                  ref_camera_id, feature->x, feature->y, feature->scale);
@@ -402,7 +402,7 @@ void StartNewLandmarks(
     // for the moment we need a minimum number of stereo matches
     if (num_cameras > 1 && num_matches < 2) {
       if(num_tracked_multiview_landmarks < 16 ||
-         !g_tracking_cvars.init_mono_landmarks) {
+         !TrackingConfig::getConfig()->init_mono_landmarks) {
         continue;
       } else {
         use_frustrum = false;
@@ -438,10 +438,10 @@ void StartNewLandmarks(
     }
   }
 
-  PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                "    Num new features tested: %u \n", num_feat_tested);
 
-  if (g_tracking_cvars.startnewlandmarks_debug_level == 0) {
+  if (TrackingConfig::getConfig()->startnewlandmarks_debug_level == 0) {
     printf(" QuadTrees after adding NEW landmarks \n");
     for (size_t cam_id = 0; cam_id < rig.cameras.size(); ++cam_id) {
       printf(" QuadTree camera [%lu]: \n", cam_id );
@@ -449,11 +449,11 @@ void StartNewLandmarks(
     }
   }
 
-  PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                "    Tracked %d\n", num_tracked_landmarks);
-  PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                "    Added %d\n", num_new_landmarks);
-  PrintMessage(g_tracking_cvars.startnewlandmarks_debug_level,
+  PrintMessage(TrackingConfig::getConfig()->startnewlandmarks_debug_level,
                "</StartNewLandmarks>\n\n");
 }
 

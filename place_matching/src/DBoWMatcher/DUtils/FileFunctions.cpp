@@ -20,7 +20,7 @@
  *
  */
 
-#include "FileFunctions.h"
+#include <place_matching/DBoWMatcher/DUtils/FileFunctions.h>
 #include <vector>
 #include <string>
 #include <fstream>

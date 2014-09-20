@@ -26,9 +26,9 @@
 #include <string>
 #include <algorithm>
 
-#include "Timestamp.h"
-#include "Profiler.h"
-#include "Math.hpp"
+#include <place_matching/DBoWMatcher/DUtils/Timestamp.h>
+#include <place_matching/DBoWMatcher/DUtils/Profiler.h>
+#include <place_matching/DBoWMatcher/DUtils/Math.hpp>
 
 using namespace DUtils;
 using namespace std;

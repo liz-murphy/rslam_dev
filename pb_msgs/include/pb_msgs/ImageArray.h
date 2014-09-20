@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <memory>
-#include <PbMsgs/Messages.pb.h>
-#include <PbMsgs/Image.h>
+#include <pb_msgs/Messages.pb.h>
+#include <pb_msgs/Image.h>
 
 namespace pb {
 

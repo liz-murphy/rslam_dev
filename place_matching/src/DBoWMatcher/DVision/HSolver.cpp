@@ -24,10 +24,10 @@
 #include <vector>
 #include <cmath>
 #include <opencv/cv.h>
-#include "HSolver.h"
+#include <place_matching/DBoWMatcher/DVision/HSolver.h>
 
-#include "DUtils.h"
-#include "DUtilsCV.h"
+#include <place_matching/DBoWMatcher/DUtils/DUtils.h>
+#include <place_matching/DBoWMatcher/DUtilsCV/DUtilsCV.h>
 
 using namespace std;
 using namespace DUtils;

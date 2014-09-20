@@ -1,0 +1,34 @@
+TEST CASE ID	INPUT DATUM(Code)	INPUT PROJECTION	OUTPUT DATUM(Code)	OUTPUT PROJECTION	INPUT ZONE	OUTPUT ZONE	INPUT_COORDS			OUTPUT_COORDS			CALCULATED_OUTPUT_COORDS				INPUT_SYSTEM_PARAMETERS										OUTPUT_SYSTEM_PARAMETERS										RESULTS
+					OR HEMISPHERE	OR HEMISPHERE	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	Calculated Zone or Hemisphere	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	
+
+1	WGE	Geodetic	WGE	MGRS			84.23734	-38.65981		YUC0000100001 			n/a																								
+2	WGE	Geodetic	WGE	MGRS			84.75156	-30.96376		YXC0000100001 			n/a																								
+3	WGE	Geodetic	WGE	MGRS			85.15233	-21.80141		YYC0000100001 			n/a																								
+4	WGE	Geodetic	WGE	MGRS			85.40965	-11.30993		YZC0000000001 			n/a																								
+5	WGE	Geodetic	WGE	MGRS			85.4987	0		ZAC0000000001 			n/a																								
+6	WGE	Geodetic	WGE	MGRS			85.40965	11.30993		ZBC0000000001 			n/a																								
+7	WGE	Geodetic	WGE	MGRS			85.15233	21.80135		ZBC9999900001 			n/a																								
+8	WGE	Geodetic	WGE	MGRS			84.75156	30.96376		ZCC9999900001 			n/a																								
+9	WGE	Geodetic	WGE	MGRS			84.23734	38.65981		ZFC9999900001 			n/a																								
+10	WGE	Geodetic	WGE	MGRS			84.59961	-90		YSH0000200000 			n/a																								
+11	WGE	Geodetic	WGE	MGRS			85.4987	-90		YTH0000100000 			n/a																								
+12	WGE	Geodetic	WGE	MGRS			86.39832	-90		YUH0000100000 			n/a																								
+13	WGE	Geodetic	WGE	MGRS			87.29837	-90		YXH0000100000 			n/a																								
+14	WGE	Geodetic	WGE	MGRS			88.19873	-90		YYH0000100000 			n/a
+15	WGE	Geodetic	WGE	MGRS			89.09931	-90		YZH0000000000 			n/a
+16	WGE	Geodetic	WGE	MGRS			90	0		ZAH0000000000 			n/a
+17	WGE	Geodetic	WGE	MGRS			89.09931	90		ZBH0000000000 			n/a
+18	WGE	Geodetic	WGE	MGRS			88.19874	90		ZBH9999900000 			n/a
+19	WGE	Geodetic	WGE	MGRS			87.29837	90		ZCH9999900000 			n/a
+20	WGE	Geodetic	WGE	MGRS			86.39832	90		ZFH9999900000 			n/a
+21	WGE	Geodetic	WGE	MGRS			85.4987	90		ZGH9999900000 			n/a
+22	WGE	Geodetic	WGE	MGRS			84.59961	90		ZHH9999800000 			n/a
+23	WGE	Geodetic	WGE	MGRS			84.23734	-141.34019		YUM0000199999 			n/a
+24	WGE	Geodetic	WGE	MGRS			84.75156	-149.03624		YXM0000199999 			n/a
+25	WGE	Geodetic	WGE	MGRS			85.15233	-158.19859		YYM0000199999 			n/a
+26	WGE	Geodetic	WGE	MGRS			85.40965	-168.69007		YZM0000099999 			n/a
+27	WGE	Geodetic	WGE	MGRS			85.4987	180		ZAM0000099999 			n/a
+28	WGE	Geodetic	WGE	MGRS			85.40965	168.69007		ZBM0000099999 			n/a
+29	WGE	Geodetic	WGE	MGRS			85.15233	158.19865		ZBM9999999999 			n/a
+30	WGE	Geodetic	WGE	MGRS			84.75156	149.03624		ZCM9999999999 			n/a
+31	WGE	Geodetic	WGE	MGRS			84.23734	141.34019		ZFM9999999999 			n/a

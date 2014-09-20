@@ -21,8 +21,8 @@
  *
  */
 
-#include "Transformations.h"
-#include "Types.h"
+#include <place_matching/DBoWMatcher/DUtilsCV/Transformations.h>
+#include <place_matching/DBoWMatcher/DUtilsCV/Types.h>
 #include <opencv/cv.h>
 
 using namespace DUtilsCV;

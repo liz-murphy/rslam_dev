@@ -1,0 +1,67 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\cartesianCombos.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\cartesianCombos.txt'
+Display Warnings: '1'
+
+Test Case Id: 1 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 3 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 4 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 6 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 8 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 10 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 11 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 13 - Warning: Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 14 - Warning: Input Geocentric: 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+
+
+Results: 
+
+	Successful
+		Equivalent Results	11 
+		Different Results	0 
+	Warnings
+		Equivalent Results	9 
+		Different Results	0 
+	Errors (No Results)		0 
+	Total Test Cases		20 

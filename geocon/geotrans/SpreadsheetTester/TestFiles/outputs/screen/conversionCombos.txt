@@ -1,0 +1,409 @@
+Source File: 'C:\MSP\Test_Drivers\inputs\conversionCombos.txt'
+Output File: 'C:\MSP\Test_Drivers\outputs\output\conversionCombos.txt'
+Display Warnings: '1'
+
+Test Case Id: 2 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 3 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 6 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 7 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 9 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 10 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 11 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 12 - Warning: Input Oblique Mercator: 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 13 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 15 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 16 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 17 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 20 - Expected: 500000.000000, 6126958.000000   Calculated: 500000.000000, 6126956.931316 
+Test Case Id: 22 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 23 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 26 - Warning: Input Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 27 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output Universal Polar Stereographic (UPS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 28 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output Universal Polar Stereographic (UPS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 30 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 31 - Expected: 500000.000000, 6681396.000000   Calculated: 500000.088637, 6681394.793659 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 32 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Universal Polar Stereographic (UPS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 33 - Warning: Input Oblique Mercator: 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 34 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 35 - Expected: 500000.000000, 6126958.000000   Calculated: 500000.002283, 6126956.934369 
+Test Case Id: 36 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 37 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 38 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 43 - Warning: Input Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 44 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 47 - Warning: Input Transverse Mercator: 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 48 - Warning: Input Stereographic (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 49 - Warning: Input Azimuthal Equidistant (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 51 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 52 - Warning: Input Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 53 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 54 - Warning: Input Oblique Mercator: 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 55 - Warning: Input Bonne: 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 57 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 58 - Warning: Input Eckert VI (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 59 - Warning: Input Equidistant Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 65 - Expected: 443016.000000, 1094751.000000   Calculated: 443016.095223, 1094749.889942 - Warning: Input Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 73 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Lambert Conformal Conic (2 Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 74 - Warning: Input Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 75 - Warning: Input Transverse Mercator: 
+Longitude is too far from Central Meridian, distortion may be significant
+Location is not within valid domain for current datum
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 76 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 79 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 80 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 88 - Warning: Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 89 - Warning: Input Transverse Mercator: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 90 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 92 - Expected: -853589.820000, 4429248.910000   Calculated: -853590.689067, 4429250.626060 - Warning: Input Transverse Cylindrical Equal Area: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 93 - Warning: Input Orthographic (S): 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 94 - Warning: Input Van der Grinten: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 95 - Warning: Input Eckert IV (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 100 - Warning: Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 101 - Warning: Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 103 - Warning: Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 105 - Warning: Input Military Grid Reference System (MGRS): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 106 - Warning: Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 107 - Warning: Input Universal Polar Stereographic (UPS): 
+Location is not within valid domain for current datum
+
+Test Case Id: 109 - Warning: Input Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 110 - Expected: 413650.000000, 1674638.000000   Calculated: 413650.182170, 1674636.741402 - Warning: Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 114 - Warning: Output Mercator (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 115 - Warning: Output Polar Stereographic (Standard Parallel): 
+Location is not within valid domain for current datum
+
+Test Case Id: 116 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 118 - Warning: Output Cassini: 
+Longitude is too far from Central Meridian, distortion may be significant
+
+Test Case Id: 120 - Expected: -853589.820000, 4429248.910000   Calculated: -853590.692604, 4429250.629544 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Sinusoidal: 
+Location is not within valid domain for current datum
+
+Test Case Id: 121 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Gnomonic (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 123 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Miller Cylindrical (S): 
+Location is not within valid domain for current datum
+
+Test Case Id: 124 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Test Case Id: 129 - Warning: Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 130 - Warning: Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 132 - Warning: Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 133 - Warning: Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 134 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+Test Case Id: 135 - Warning: Output GEOREF: 
+Location is not within valid domain for current datum
+
+Test Case Id: 136 - Warning: Input Geodetic: 
+Location is not within valid domain for current datum
+
+Output Universal Transverse Mercator (UTM): 
+Location is not within valid domain for current datum
+
+
+
+Results: 
+
+	Successful
+		Equivalent Results	59 
+		Different Results	2 
+	Warnings
+		Equivalent Results	70 
+		Different Results	5 
+	Errors (No Results)		0 
+	Total Test Cases		136 

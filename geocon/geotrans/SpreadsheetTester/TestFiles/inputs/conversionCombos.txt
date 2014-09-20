@@ -1,0 +1,139 @@
+TEST CASE ID	INPUT DATUM(Code)	INPUT PROJECTION	OUTPUT DATUM(Code)	OUTPUT PROJECTION	INPUT ZONE	OUTPUT ZONE	INPUT_COORDS			OUTPUT_COORDS			CALCULATED_OUTPUT_COORDS				INPUT_SYSTEM_PARAMETERS										OUTPUT_SYSTEM_PARAMETERS										RESULTS
+					OR HEMISPHERE	OR HEMISPHERE	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	"Lat, Easting, String or X"	"Lon, Northing or Y"	Height or Z	Calculated Zone or Hemisphere	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	1st Standard Parallel or Scale Factor	2nd Standard Parallel	Central Meridian	Origin Latitude	False Easting or Origin Height	False Northing or Orientation	Longitude 1	Latitude 1	Longitude 2	Latitude 2	
+
+1	WGE	Albers Equal Area	WGE	MGRS			-1885428.39	-1535969.29		43HEB0000026958			n/a				-29.5	-45.5	96	-23	0	0															
+2	ADI-M	Lambert Conformal Conic	ADI-M	MGRS			-55869.18	553512.776		30MYQ7827144687			n/a				-5.5	-5.5	0	-5.5	0	0															
+3	NAR-A	Mercator	NAR-A	MGRS			-19735085.53	0		01NAA6602100000			n/a				 	 	0	-10	0	0															
+4	EUR-7	Polar Stereographic	EUR-7	MGRS			-1540033.61	-560526.39		56CMB1335873968			n/a				 	 	-100	-71	0	0															
+5	WGC	Polyconic	WGC	MGRS			-20013.54	4964881.9		ZAG5362185632			n/a						96	45	0	0															
+6	CAC	Stereographic	CAC	MGRS			109252.73	-4646925.33		BAG0000044516			n/a				 	 	170	-45	0	0															
+7	CAC	Azimuthal Equidistant	CAC	MGRS			-6439.69	4948474.97		ZAH5551500000			n/a				 	 	96	45	0	0															
+8	CAC	Gnomonic	CAC	MGRS			943973.74	-1606531.7		17RND4798274115			n/a				 	 	-90	45	0	0															
+9	CAC	Orthographic	CAC	MGRS			-1102102.179	-6250332.17		01NAR6728253389			n/a				 	 	-170	90	0	0															
+10	CAC	Miller Cylindrical	CAC	MGRS			-2779871.86	-3437907.26		43JES0000081396			n/a					 	100		0	0															
+11	CAC	Van der Grinten	CAC	MGRS			550037.52	-14239017.22		BAG0000044516			n/a				 	 	170		0	0															
+12	CAC	Oblique Mercator	CAC	MGRS			6269400.3	916375.3		18TWA8435816825			n/a				0.9996	 	 	40	4000000	500000	-122.3	47.5	-80.2	25.7											
+13	NAR-A	Bonne	NAR-A	MGRS			1113029.51	1089236.63		01NAA6602100000			n/a						170	-10	0	0															
+14	WGE	Cylindrical Equal Area	WGE	MGRS			-2152973.25	-3951467.02		43HEB0000026958			n/a						96	-23	0	0
+15	CAC	Eckert IV	CAC	MGRS			1194733.95	-6064685.79		18FWV0000061588			n/a						-90		0	0
+16	ADI-M	Eckert VI	ADI-M	MGRS			0	0		31NAL6601600000			n/a						0		0	0
+17	NAR-A	Equidistant Cylindrical	NAR-A	MGRS			1095057.493	0		01NAA6602100000			n/a						170	-10	0	0
+18	WGC	Mollweide	WGC	MGRS			-94095.83	9000932.78		ZAG5362185632			n/a						96		0	0
+19	WGE	Sinusoidal	WGE	MGRS			0	10001965.73		ZAH0000000000			n/a						96		0	0
+20	WGE	Albers Equal Area	WGE	UTM		-43	-1885428.39	-1535969.29		500000	6126958		n/a	n/a		n/a	-29.5	-45.5	96	-23	0	0
+21	CAC	Lambert Conformal Conic	CAC	UTM		18	1894410.9	1564649.48		500000	3872845		n/a	n/a		n/a	33	45	-96	23	0	0
+22	ADI-M	Lambert Conformal Conic	ADI-M	UTM		-30	-55869.18	553512.776		778271	9944687		n/a	n/a		n/a	-5.5	-5.5	0	-5.5	0	0
+23	NAR-A	Mercator	NAR-A	UTM		1	-19735085.53	0		166021	0		n/a	n/a		n/a	 	 	0	-10	0	0
+24	EUR-7	Polar Stereographic	EUR-7	UTM		-56	-1540033.6	-560526.4		413358	1673968		n/a	n/a		n/a	 	 	-100	-71	0	0
+25	WGC	Polyconic	WGC	UPS		N	-20013.54	4964881.9		2053621	1985632		n/a	n/a		n/a			96	45	0	0
+26	CAC	Transverse Mercator	CAC	UTM		18	127106.5	4484124.4		627106	4484124		n/a	n/a		n/a	0.9996	 	-75	0	0	0
+27	CAC	Stereographic	CAC	UPS		S	109252.73	-4646925.33		2000000	1444516		n/a	n/a		n/a	 	 	170	-45	0	0
+28	CAC	Azimuthal Equidistant	CAC	UPS		N	-6439.69	4948474.97		2055515	2000000		n/a	n/a		n/a	 	 	96	45	0	0
+29	CAC	Gnomonic	CAC	UTM		17	943973.74	-1606531.7		547982	3374115		n/a	n/a		n/a	 	 	-90	45	0	0
+30	CAC	Orthographic	CAC	UTM		1	-1102102.179	-6250332.17		167282	553389		n/a	n/a		n/a	 	 	-170	90	0	0				
+31	CAC	Miller Cylindrical	CAC	UTM		-43	-2779871.86	-3437907.26		500000	6681396		n/a	n/a		n/a	 	 	100		0	0				
+32	CAC	Van der Grinten	CAC	UPS		S	550037.52	-14239017.22		2000000	1444516		n/a	n/a		n/a	 	 	170		0	0				
+33	CAC	Oblique Mercator	CAC	UTM		18	6269400.3	916375.3		584358	4516825		n/a	n/a		n/a	0.9996	 	 	40	4000000	500000	-122.3	47.5	-80.2	25.7
+34	NAR-A	Bonne	NAR-A	UTM		1	1113029.5	1089236.62		166021	0		n/a	n/a		n/a			170	-10	0	0				
+35	WGE	Cylindrical Equal Area	WGE	UTM		-43	-2152973.25	-3951467.02		500000	6126958		n/a	n/a		n/a			96	-23	0	0				
+36	CAC	Eckert IV	CAC	UTM		-18	1194733.95	-6064685.79		500000	4461588		n/a	n/a		n/a			-90		0	0				
+37	ADI-M	Eckert VI	ADI-M	UTM		31	0	0		166016	0		n/a	n/a		n/a			0		0	0				
+38	NAR-A	Equidistant Cylindrical	NAR-A	UTM		1	1095057.49	0		166021	0		n/a	n/a		n/a			170	-10	0	0				
+39	WGC	Mollweide	WGC	UPS		N	-94095.83	9000932.78		2053621	1985632		n/a	n/a		n/a			96		0	0				
+40	WGE	Sinusoidal	WGE	UPS		N	0	10001965.73		2000000	2000000		n/a	n/a		n/a			0		0	0				
+41	WGE	Albers Equal Area	WGE	GEOREF			-1885428.39	-1535969.29		TDAL0000000000			n/a				-29.5	-45.5	96	-23	0	0				
+42	CAC	Lambert Conformal Conic	CAC	GEOREF			1894410.9	1564649.48		HJAF0000000000			n/a				33	45	-96	23	0	0				
+43	ADI-M	Lambert Conformal Conic	ADI-M	GEOREF			-55869.18	553512.776		MFQQ3000030000			n/a				-5.5	-5.5	0	-5.5	0	0				
+44	NAR-A	Mercator	NAR-A	GEOREF			19735085.53	0		ZGQA5999900000			n/a				 	 	0	-10	0	0				
+45	EUR-7	Polar Stereographic	EUR-7	GEOREF			-1540033.6	-560526.4		YBAA0000000000			n/a				 	 	-100	-71	0	0				
+46	WGC	Polyconic	WGC	GEOREF			-20013.54	4964881.9		TMAQ0000030000			n/a						96	45	0	0				
+47	CAC	Transverse Mercator	CAC	GEOREF			127106.5	4484124.4		HJBL3000030000			n/a				0.9996	 	-75	0	0	0				
+48	CAC	Stereographic	CAC	GEOREF			109252.73	-4646925.33		ZAQF5999900000			n/a				 	 	170	-45	0	0				
+49	CAC	Azimuthal Equidistant	CAC	GEOREF			-6439.69	4948474.97		UMAQ0000030000			n/a				 	 	96	45	0	0				
+50	CAC	Gnomonic	CAC	GEOREF			943973.74	-1606531.7		GJKA3000030000			n/a				 	 	-90	45	0	0				
+51	CAC	Orthographic	CAC	GEOREF			-1102102.179	-6250332.17		AGAF0000000000			n/a				 	 	-170	90	0	0				
+52	CAC	Miller Cylindrical	CAC	GEOREF			-2779871.86	-3437907.26		TEAA0000000000			n/a				 	 	100		0	0				
+53	CAC	Van der Grinten	CAC	GEOREF			550037.54	-14239017.76		AAAF0000000000			n/a				 	 	170		0	0				
+54	CAC	Oblique Mercator	CAC	GEOREF			6269400.3	916375.3		HJBL0000048000			n/a				0.9996	 	 	40	4000000	500000	-122.3	47.5	-80.2	25.7
+55	NAR-A	Bonne	NAR-A	GEOREF			1113029.51	1089236.63		AGAA0000000000			n/a						170	-10	0	0				
+56	WGE	Cylindrical Equal Area	WGE	GEOREF			-2152973.25	-3951467.02		TDAL0000000000			n/a						96	-23	0	0				
+57	CAC	Eckert IV	CAC	GEOREF			1194733.95	-6064685.79		HCAL0000000000			n/a						-90		0	0				
+58	ADI-M	Eckert VI	ADI-M	GEOREF			0	0		NGAA0000000000			n/a						0		0	0				
+59	NAR-A	Equidistant Cylindrical	NAR-A	GEOREF			1095057.493	0		AGAA0000000000			n/a						170	-10	0	0				
+60	WGC	Mollweide	WGC	GEOREF			-94095.83	9000932.78		TMAQ0000030000			n/a						96		0	0				
+61	WGE	Sinusoidal	WGE	GEOREF			0	10001965.73		UMAQ0000059999			n/a						90		0	0				
+62	WGE	UPS	WGE	MGRS	N		1999999	2000000		YZH9999900000			n/a																			
+63	WGE	UPS	WGE	MGRS	S		2000001	2000000		BAN0000100000			n/a																			
+64	WGE	MGRS	WGE	UTM		1	01TBE4390032069			243900.352	4432069.057		n/a	n/a		n/a																
+65	CAC	MGRS	CAC	UTM		-1	BAB0000009362			443016	1094751		n/a	n/a		n/a																
+66	WGE	MGRS	WGE	GEOREF			30NZF3397700000			MGQA5999900000			n/a																			
+67	WGE	UPS	WGE	GEOREF	S		2000000	2000000		NAAA0000000000			n/a																			
+68	WGE	UPS	WGE	GEOREF	N		1999999	2000000		GMAQ0000059999			n/a																			
+69	WGE	UTM	WGE	GEOREF	30		833978.5568	0		NGAA0000000000			n/a																			
+70	WGE	UPS	WGE	UTM	N	31	2000000	1355534		466167.7178	9351302.705		n/a	n/a		n/a																
+71	WGE	UPS	WGE	UTM	S	-60	2000000	909413		556981.2139	1094620.642		n/a	n/a		n/a																
+72	WGE	Lambert Conformal Conic	WGE	Lambert Conformal Conic			0	5268240.13		0	5395427.571		n/a	n/a			50.5	50.5	96	50.5	0	0					50.5	65.5	96	45	0	0
+73	NAR-A	Mercator	NAR-A	Lambert Conformal Conic			788468.3509	-14115743.96		139338.1608	-4239869.004		n/a	n/a			 	 	170	-45	0	0					-50.5	-50.5	170	-50.5	0	0
+74	NAR-A	Polar Stereographic	NAR-A	Mercator			82849.62359	469863.564		788468.3509	-14115743.96		n/a	n/a			 	 	170	-45	0	0					 	 	170	-45	0	0
+75	NAR-A	Transverse Mercator	NAR-A	Polar Stereographic			96820.41246	-4465221.116		82849.62359	469863.564		n/a	n/a			0.9996	 	170	-45	0	0							170	-45	0	0
+76	WGE	Cylindrical Equal Area	WGE	Cassini			-964862.8	4707084.17		-852135.55	1157624.52		n/a	n/a					100	30	0	0							100	30	0	0
+77	WGE	Sinusoidal	WGE	Cylindrical Equal Area			-853938.57	4429529.03		-964862.8	4707084.17		n/a	n/a					100		0	0							100	30	0	0
+78	WGE	Transverse Cylindrical Equal Area	WGE	Sinusoidal			-849602.69	1157435.52		-853938.57	4429529.03		n/a	n/a			1		100	30	0	0							100		0	0
+79	CAC	Orthographic	CAC	Gnomonic			-553156.01	1683155.71		-575871.52	1752274.97		n/a	n/a					-170	45	0	0							-170	45	0	0
+80	CAC	Van der Grinten	CAC	Miller Cylindrical			-2699039.95	-3444813.1		-2779871.86	-3437907.26		n/a	n/a					100		0	0							100		0	0
+81	CAC	Eckert IV	CAC	Van der Grinten			1825355.44	4433604.13		2240172.93	4061627.81		n/a	n/a					-96		0	0							-96		0	0
+82	CAC	Eckert VI	CAC	Eckert IV			1765590.92	4354471.03		1825355.44	4433604.13		n/a	n/a					-96		0	0							-96		0	0
+83	CAC	Equidistant Cylindrical	CAC	Eckert VI			2149463.93	3891820.75		1765590.92	4354471.03		n/a	n/a					-96	23	0	0							-96		0	0
+84	CAC	Mollweide	CAC	Equidistant Cylindrical			1857654.45	4218495.06		2149463.93	3891820.75		n/a	n/a					-96		0	0							-96	23	0	0
+85	WGE	Lambert Conformal Conic	WGC	Albers Equal Area			0	5395427.571		-896119.217	6064188.303		n/a	n/a			50.5	65.5	96	45	0	0					50.5	65.5	96	45	0	0
+86	WGE	Lambert Conformal Conic	WGC	Lambert Conformal Conic			0	5268240.13		0	5395425.8		n/a	n/a			50.5	50.5	96	50.5	0	0					50.5	65.5	96	45	0	0
+87	WGC	Mercator	CAZ	Lambert Conformal Conic			-558000	-6461697		-300709.57	-1718553.41		n/a	n/a					180	-60	0	0					-60	-60	180	-60	0	0
+88	WGE	Polar Stereographic	DID	Mercator			82849.62359	469863.564		788601.02	-14114177.55		n/a	n/a			 	 	170	-45	0	0					 	 	170	-45	0	0
+89	WGE	Transverse Mercator	CAZ	Polar Stereographic			96820.41246	-4465221.116		82724.65	469790.14		n/a	n/a			0.9996	 	170	-45	0	0							170	-45	0	0
+90	NAR-C	Cylindrical Equal Area	NAS-B	Cassini			964862.8	4707084.17		852166.15	1157594.58		n/a	n/a					-100	30	0	0							-100	30	0	0
+91	WGE	Sinusoidal	NAS-C	Cylindrical Equal Area			853938.57	4429529.03		964891.34	4706833.08		n/a	n/a					-100		0	0							-100	30	0	0
+92	INF-A	Transverse Cylindrical Equal Area	INH-A	Sinusoidal			-849251.21	1157407.28		-853589.82	4429248.91		n/a	n/a			1		100	30	0	0							100		0	0
+93	NAS-W	Orthographic	NAS-V	Gnomonic			-553156.01	1683155.71		-575927.71	1752263.6		n/a	n/a					-170	45	0	0							-170	45	0	0
+94	REU	Van der Grinten	IST	Miller Cylindrical			-2699137.59	-3444937.72		-2779998.54	-3439302.34		n/a	n/a					100		0	0							100		0	0
+95	BER	Eckert IV	CAC	Van der Grinten			1825355.44	4433604.13		2240103.96	4061785.39		n/a	n/a					-96		0	0							-96		0	0
+96	CAC	Eckert VI	NAS-A	Eckert IV			1765590.92	4354471.03		1825359.81	4433598.88		n/a	n/a					-96		0	0							-96		0	0
+97	EUR-G	Equidistant Cylindrical	OGB-A	Eckert VI			-7.86	6115939.55		10.15	6635371.84		n/a	n/a					0	45	0	0							0		0	0
+98	AUA	Mollweide	AUG	Equidistant Cylindrical			-1326902.85	-4218516.74		-1179406.48	-3891841.97		n/a	n/a					145		0	0							145	-45	0	0
+99	WGE	UPS	WGC	MGRS	N		1999999	2000000		YZH9999900000			n/a																			
+100	WGE	MGRS	NAS-W	UTM		1	01TBE4390032069			244103	4432004		n/a	n/a		n/a																
+101	WGE	MGRS	ADI-F	GEOREF			30NZF3397700000			NFAQ0000059886			n/a																			
+102	WGE	UPS	WGC	GEOREF	N		1999999	2000000		FMQQ5999159999			n/a																			
+103	WGE	UTM	MPO	GEOREF	30		833978.5568	0		NFAQ0007059977			n/a																			
+104	WGE	UPS	CAZ	UTM	S	-60	2000000	909413		556847	1094190		n/a	n/a		n/a																
+105	NAS-V	MGRS	NAS-W	UTM		1	01TBQ4405031975			244103	4432004		n/a	n/a		n/a																
+106	MIN-B	UTM	MPO	GEOREF	-31		166109	9999878		NFAQ0007059977			n/a																			
+107	DID	UPS	CAZ	UTM	S	-60	1999988	909172		556847	1094190		n/a	n/a		n/a																
+108	NAS-A	Lambert Conformal Conic	CAC	MGRS			1894410.9	1564649.48		18SVP9999672850			n/a				33	45	-96	23	0	0										
+109	NAR-H	Mercator	OHA-M	UTM		60	-19735085.53	0		833696	180		n/a	n/a		n/a	 	 	0	-10	0	0										
+110	CAZ	Polar Stereographic	DID	UTM		-56	-1540033.6	-560526.4		413650	1674638		n/a	n/a		n/a	 	 	-100	-71	0	0										
+111	WGE	Geodetic	WGC	Albers Equal Area			90	90		-95913.33	4356030.62		n/a	n/a													50.5	65.5	96	45	0	0
+112	WGE	Geodetic	WGC	Lambert Conformal Conic			90	90		0	5395425.8		n/a	n/a													50.5	65.5	96	45	0	0
+113	WGC	Geodetic	CAZ	Lambert Conformal Conic			-75	170		-300709.57	-1718553.41		n/a	n/a													-60	-60	180	-60	0	0
+114	WGE	Geodetic	DID	Mercator			-85	-180		788601.02	-14114177.55		n/a	n/a													 	 	170	-45	0	0
+115	WGE	Geodetic	CAZ	Polar Stereographic			-85	-180		82724.65	469790.14		n/a	n/a															170	-45	0	0
+116	ADI-F	Geodetic	MIN-B	Transverse Mercator			0	0		91.02	1105400.28		n/a	n/a													0.9996	 	0	-10	0	0
+117	WGE	Geodetic	NAS-A	Bonne			40	-90		852922.11	1146012.93		n/a	n/a															-100	30	0	0
+118	NAR-C	Geodetic	NAS-B	Cassini			40	-90		852166.15	1157594.58		n/a	n/a															-100	30	0	0
+119	WGE	Geodetic	NAS-C	Cylindrical Equal Area			40	-90		964891.34	4706833.08		n/a	n/a															-100	30	0	0
+120	INF-A	Geodetic	INH-A	Sinusoidal			40.001073	90.002541		-853589.82	4429248.91		n/a	n/a															100		0	0
+121	NAS-W	Geodetic	NAS-V	Gnomonic			60	180		-575927.71	1752263.6		n/a	n/a															-170	45	0	0
+122	HIT	Geodetic	SAN-D	Sinusoidal			-50	-75		1075589.08	-5540816.69		n/a	n/a															-90		0	0
+123	REU	Geodetic	IST	Miller Cylindrical			-30	75		-2779998.54	-3439302.34		n/a	n/a															100		0	0
+124	BER	Geodetic	CAC	Van der Grinten			35	-75		2240103.96	4061785.39		n/a	n/a															-96		0	0
+125	CAC	Geodetic	NAS-A	Eckert IV			35	-75		1825359.81	4433598.88		n/a	n/a															-96		0	0
+126	EUR-G	Geodetic	OGB-A	Eckert VI			55	-0.0001		10.15	6635371.84		n/a	n/a															0		0	0
+127	AUA	Geodetic	AUG	Equidistant Cylindrical			-35	130		-1179406.48	-3891841.97		n/a	n/a															145	-45	0	0
+128	WGE	Geodetic	WGC	MGRS			89.99999	-90		YZH9999900000			n/a																			
+129	WGE	Geodetic	NAS-W	UTM		1	40	-180		244103	4432004		n/a	n/a		n/a																
+130	WGE	Geodetic	ADI-F	GEOREF			0	-0.00001		NFAQ0000059886			n/a																			
+131	WGE	Geodetic	WGC	GEOREF			89.99999	-90		FMQQ5999159999			n/a																			
+132	WGE	Geodetic	MPO	GEOREF			0	0		NFAQ0007059977			n/a																			
+133	WGE	Geodetic	CAZ	UTM		-60	-80.2	-180		556847	1094190		n/a	n/a		n/a																
+134	NAS-V	Geodetic	NAS-W	UTM		1	40.001093	-179.99822		244103	4432004		n/a	n/a		n/a																
+135	MIN-B	Geodetic	MPO	GEOREF			-0.001103	0.000836		NFAQ0007059977			n/a																			
+136	DID	Geodetic	CAZ	UTM		-60	-80.198535	-179.999369		556847	1094190		n/a	n/a		n/a																
