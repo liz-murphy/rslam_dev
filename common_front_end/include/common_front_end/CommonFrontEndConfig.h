@@ -2,6 +2,7 @@
 #define COMMON_FRONT_END_CONFIG_H
 
 #include <common_front_end/CommonFrontEndParamsConfig.h>
+#include <string>
 
 class CommonFrontEndConfig
 {
@@ -50,6 +51,7 @@ class CommonFrontEndConfig
     int dog_octaves;
     double dog_sigma;
     double fast_harris_score_threshold;
+    std::string peanut_name;
   private:
     CommonFrontEndConfig(){
       initial_search_radius=20;
@@ -95,6 +97,7 @@ class CommonFrontEndConfig
       dog_octaves=3;
       dog_sigma=1.6;
       fast_harris_score_threshold=10000;
+      peanut_name = "jimmy";
 
     };
     static CommonFrontEndConfig * m_configInstance;

@@ -22,7 +22,14 @@ find_package(catkin REQUIRED COMPONENTS
   sparse_front_end
   utils
   geocon
+  sensor_msgs
+  camera_calibration_parsers
+  image_transport
+  message_filters
+  image_geometry
 )
+
+#find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -100,8 +107,8 @@ configure_file(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rslam_engine
-  CATKIN_DEPENDS ba back_end calibu common_front_end features miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils
-#  DEPENDS system_lib
+  CATKIN_DEPENDS ba back_end calibu common_front_end features miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils geocon
+  #DEPENDS opencv 
 )
 
 ###########
@@ -116,6 +123,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+message("rslam_engine includes: ${catkin_INCLUDE_DIRS}")
+
 ## Declare a cpp library
 add_library(rslam_engine
   src/RslamEngine.cpp
@@ -123,16 +132,16 @@ add_library(rslam_engine
 )
 
 ## Declare a cpp executable
-# add_executable(rslam_engine_node src/rslam_engine_node.cpp)
+add_executable(rslam_engine_node src/main.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(rslam_engine_node rslam_engine_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(rslam_engine_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(rslam_engine_node
+  ${catkin_LIBRARIES} ${OpenCV_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -149,18 +158,18 @@ add_library(rslam_engine
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS rslam_engine rslam_engine_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS rslam_engine 
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
-# )
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

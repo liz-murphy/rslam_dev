@@ -27,6 +27,7 @@ set(PLACEMATCH_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/DUtils/LUT.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DUtils/Profiler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DUtils/Random.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/DUtils/StringFunctions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DUtils/TimeManager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/DUtils/Timestamp.cpp
 
@@ -89,7 +90,7 @@ if(DOWNLOAD_DBoWMatcher_ORB_Voc)
 endif()
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/dbow_config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/dbow_config.h
+ ${CMAKE_CURRENT_SOURCE_DIR}/dbow_config.h.in
+ ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/place_matching/DBoWMatcher/dbow_config.h
   @ONLY
   )

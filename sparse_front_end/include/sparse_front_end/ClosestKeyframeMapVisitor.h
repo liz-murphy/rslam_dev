@@ -4,6 +4,7 @@
 #pragma once
 
 #include <slam_map/MapVisitor/TransformMapVisitor.h>
+#include <sparse_front_end/FrontEndConfig.h>
 //#include <sparse_front_end/FrontEndCVars.h>
 
 /**
@@ -25,8 +26,8 @@ class ClosestKeyframeMapVisitor : public TransformMapVisitor {
     Scalar dist_traveled = cur_pose.translation().norm();
     Scalar angle_difference = cur_pose.so3().log().maxCoeff() * 180 / M_PI;
 
-    Scalar angle_score = angle_difference / g_frontend_cvars.keyframe_max_angle;
-    Scalar dist_score = dist_traveled / g_frontend_cvars.keyframe_max_distance;
+    Scalar angle_score = angle_difference / FrontEndConfig::getConfig()->keyframe_max_angle;
+    Scalar dist_score = dist_traveled / FrontEndConfig::getConfig()->keyframe_max_distance;
 
     Scalar total = angle_score + dist_score;
     if (total < closest_total_) {

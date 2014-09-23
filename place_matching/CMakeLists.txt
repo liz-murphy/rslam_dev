@@ -21,6 +21,9 @@ add_subdirectory(src/TemplateMatcher)
 add_subdirectory(src/DBoWMatcher)
 add_subdirectory(src/MultiDBoWMatcher)
 
+#configure_file ("${PROJECT_SOURCE_DIR}/include/place_matching/DBoWMatcher/dbow_config.h.in"
+#  "${PROJECT_SOURCE_DIR}/include/place_matching/DBoWMatcher/dbow_config.h" )
+
 #option(BUILD_DBoWMatcher "Build DBoWMatcher loop detector" OFF)
 #if(BUILD_DBoWMatcher)
 #    add_subdirectory(src/DBoWMatcher)      # DBM_ vars
@@ -35,7 +38,7 @@ add_library(place_matching
   ${PLACEMATCH_SRCS}
 )
 
-target_link_libraries(place_matching ${OpenCV2_LIBRARIES})
+target_link_libraries(place_matching ${OpenCV_LIBRARIES})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -105,8 +108,8 @@ target_link_libraries(place_matching ${OpenCV2_LIBRARIES})
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES place_matching
-  CATKIN_DEPENDS roscpp ${OpenCV2_LIBRARIES} 
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp  
+  DEPENDS ${OpenCV2_LIBRARIES}
 )
 
 ###########
@@ -153,18 +156,18 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS place_matching place_matching_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS place_matching 
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
-# )
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

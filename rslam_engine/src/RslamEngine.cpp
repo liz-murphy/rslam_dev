@@ -16,12 +16,14 @@
 #include <slam_server/NodeSlamClient.h>
 #include <slam_server/SlamServer.h>
 #include <sparse_front_end/FrontEnd.h>
-#include <sparse_front_end/FrontEndCVars.h>
+//#include <sparse_front_end/FrontEndCVars.h>
+#include <sparse_front_end/FrontEndConfig.h>
 #include <sparse_front_end/LiftLocalMap.h>
 //#include <rhirdParty/CameraDrivers.h>
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
 #include <utils/Utils.h>
+#include <common_front_end/CommonFrontEndConfig.h>
 
 #ifdef HAVE_SEMIDENSE_FRONTEND
 #include <semidense_front_end/semi_dense_frontend.h>
@@ -51,9 +53,9 @@ RslamEngine::RslamEngine() : images_(pb::ImageArray::Create()),
                              active_camera_id_(-1),
   frame_number_(0),
   last_used_frame_number_(-1) {
-  CVarUtils::AttachCVar<unsigned int>("SkipNFrames", &g_skip_nframes );
-  CVarUtils::AttachCVar<int>("ErrorLevel", &google::log_severity_global);
-  CVarUtils::AttachCVar<int>("debug.RslamEngine", &g_debug_level );
+ // CVarUtils::AttachCVar<unsigned int>("SkipNFrames", &g_skip_nframes );
+ // CVarUtils::AttachCVar<int>("ErrorLevel", &google::log_severity_global);
+ // CVarUtils::AttachCVar<int>("debug.RslamEngine", &g_debug_level );
 }
 
 RslamEngine::~RslamEngine() {}
@@ -99,9 +101,9 @@ void RslamEngine::SetupSimulator(const RslamEngineOptions& options) {
     if (options.simulation_mono) {
       is_mono_tracking_ = true;
       active_camera_id_ = 0;
-      g_frontend_cvars.use_only_camera_id = 0;
+      FrontEndConfig::getConfig()->use_only_camera_id = 0;
     } else {
-      g_frontend_cvars.use_only_camera_id = -1;
+      FrontEndConfig::getConfig()->use_only_camera_id = -1;
     }
   }
 }
@@ -111,7 +113,7 @@ void RslamEngine::PrintAppInfo() {
   LOG(INFO) << "==============================================";
   LOG(INFO) << "RslamEngine - Initial State.";
   LOG(INFO) << "==============================================";
-  LOG(INFO) << "Feat detector: "   << g_common_cvars.feature_detector;
+  LOG(INFO) << "Feat detector: "   << CommonFrontEndConfig::getConfig()->feature_detector;
   LOG(INFO) << "Work dir: "        << working_directory_;
   LOG(INFO) << "Map persistence: " << (persist_map_ ? "true." : "false.");
   LOG(INFO) << "Using imu: "       << (have_imu_ ? "true." : "false.");
@@ -127,10 +129,10 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   // Cleanup and initialization of config variables
   ResetVars();
   // If we are using TRACK_2D, we only need the first camera.
-  if (!g_common_cvars.feature_detector.compare("TRACK_2D")) {
+  if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D) {
     active_camera_id_ = 0;
   } else {
-    active_camera_id_ = g_frontend_cvars.use_only_camera_id;
+    active_camera_id_ = FrontEndConfig::getConfig()->use_only_camera_id;
   }
 
   working_directory_ = options.working_dir;

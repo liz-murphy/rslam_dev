@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 #include <locale>
-#include "StringFunctions.h"
+#include <place_matching/DBoWMatcher/DUtils/StringFunctions.h>
 
 using namespace std;
 using namespace DUtils;

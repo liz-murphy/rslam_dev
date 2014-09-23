@@ -84,9 +84,15 @@ add_subdirectory(geotrans)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES geocon
-#  CATKIN_DEPENDS miniglog roscpp
+  INCLUDE_DIRS include
+    ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/CoordinateTuples
+    ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc
+    ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/Enumerations
+    ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/Exception
+    ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/CoordinateSystemParameters
+    ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/CoordinateConversion
+  LIBRARIES geocon
+  CATKIN_DEPENDS miniglog roscpp
 #  DEPENDS system_lib
 )
 
@@ -140,18 +146,24 @@ add_library(geocon
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS geocon geocon_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS geocon 
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
+ install(DIRECTORY include/${PROJECT_NAME}/
+  ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/CoordinateTuples
+  ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc
+  ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/Enumerations
+  ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/Exception
+  ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/dtcc/CoordinateSystemParameters
+  ${PROJECT_SOURCE_DIR}/geotrans/CCS/src/CoordinateConversion
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
-# )
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

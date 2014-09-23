@@ -158,7 +158,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES pb_msgs
   CATKIN_DEPENDS roscpp sophus cmake_modules
-#  DEPENDS system_lib
+  DEPENDS PROTOBUF 
 )
 
 ###########
@@ -182,9 +182,9 @@ add_library(pb_msgs
 # add_dependencies(pb_msgs_node pb_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(pb_msgs_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(pb_msgs
+  ${catkin_LIBRARIES} ${PROTOBUF_LIBRARIES}
+)
 
 #############
 ## Install ##

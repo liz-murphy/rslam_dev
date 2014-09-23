@@ -9,27 +9,28 @@
 
 #include <features/Features.h>
 #include <pb_msgs/ImagePyramid.h>
+#include <common_front_end/CommonFrontEndParamsConfig.h>
 
 enum DetectorType
 {
 
-  DET_UNDEFINED = 0,
-  FAST          = 1,
-  AGAST         = 2,
-  DOG           = 3,
-  TRACK_2D      = 4,
-  SIMULATION    = 5,
-  FLYBY         = 6,
+  DET_UNDEFINED = common_front_end::CommonFrontEndParams_UNDEFINED,
+  FAST          = common_front_end::CommonFrontEndParams_FAST,
+  AGAST         = common_front_end::CommonFrontEndParams_AGAST,
+  DOG           = common_front_end::CommonFrontEndParams_DOG,
+  TRACK_2D      = common_front_end::CommonFrontEndParams_TRACK_2D,
+  SIMULATION    = common_front_end::CommonFrontEndParams_SIMULATION,
+  FLYBY         = common_front_end::CommonFrontEndParams_FLYBY
 };
 
 enum DescriptorType
 {
-  DES_UNDEFINED = 0,
-  PATCH         = 1,
-  FREAK         = 2,
-  BRISK         = 3,
-  SURF          = 4,
-  SIFT          = 5
+  DES_UNDEFINED = common_front_end::CommonFrontEndParams_UNDEFINED,
+  PATCH         = common_front_end::CommonFrontEndParams_PATCH,
+  FREAK         = common_front_end::CommonFrontEndParams_FREAK,
+  BRISK         = common_front_end::CommonFrontEndParams_BRISK,
+  SURF          = common_front_end::CommonFrontEndParams_SURF,
+  SIFT          = common_front_end::CommonFrontEndParams_SIFT
 };
 
 class FeatureHandler
@@ -42,6 +43,8 @@ public:
     Options() :
       feature_detector(FAST),
       feature_descriptor(PATCH),
+      ifeature_detector(common_front_end::CommonFrontEndParams_FAST),
+      ifeature_descriptor(common_front_end::CommonFrontEndParams_PATCH),
       sim_camera_id(0),
       fast_threshold(15),
       fast_do_nms(true),
@@ -73,6 +76,9 @@ public:
 
     DetectorType    feature_detector;
     DescriptorType  feature_descriptor;
+
+    int ifeature_detector;
+    int ifeature_descriptor;
 
     // simulation parameters
     unsigned int sim_camera_id;
