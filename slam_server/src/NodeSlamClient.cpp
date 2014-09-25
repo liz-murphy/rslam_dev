@@ -7,7 +7,8 @@
 #include <thread>
 #include <SlamServer.pb.h>
 #include <SlamServer/NodeDefinitions.h>
-#include <SlamServer/ServerCVars.h>
+//#include <SlamServer/ServerCVars.h>
+#include <slam_server/ServerConfig.h>
 
 #ifdef ANDROID
 static const bool kUseAutoDiscovery = false;
@@ -22,8 +23,8 @@ NodeSlamClient::NodeSlamClient() : node_(kUseAutoDiscovery) {
 
     // Keep trying to connect in case the server eventually comes
     // online or we connect to the internet
-    while (!node_.ConnectNode(g_server_cvars.client_connect_ip,
-                              g_server_cvars.client_connect_port,
+    while (!node_.ConnectNode(ServerConfig::getConfig()->client_connect_ip,
+                              ServerConfig::getConfig()->client_connect_port,
                               &response_msg)) {
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }

@@ -13,39 +13,39 @@
 #include <place_matching/MultiDBoWMatcher/MultiDBoWMatcher.h>
 #include <slam_map/ProtobufIO.h>
 #include <slam_map/SlamMap.h>
-#include <slam_server/ServerCVars.h>
-
+//#include <slam_server/ServerCVars.h>
+#include <slam_server/ServerConfig.h>
 void LoadSlamMapMsg(const pb::SlamMapMsg& map_msg,
                     SlamMap* slam_map,
                     bool zero_modified_time) {
 
-  LOG(g_server_cvars.debug_level) << "Server: Loading rigs...";
+  LOG(ServerConfig::getConfig()->debug_level) << "Server: Loading rigs...";
   SessionId session_id;
   for (int i = 0; i < map_msg.session_ids_size(); ++i) {
     pb::parse_message(map_msg.session_ids(i), &session_id);
     _CameraRigPtr rig = std::make_shared<calibu::CameraRigT<Scalar> >();
     pb::parse_message(map_msg.rigs(i), rig.get());
-    LOG(g_server_cvars.debug_level) << "Loading rig for " << session_id;
+    LOG(ServerConfig::getConfig()->debug_level) << "Loading rig for " << session_id;
     slam_map->AddCamera(session_id, rig);
   }
 
-  LOG(g_server_cvars.debug_level) << "Server: Loading nodes...";
+  LOG(ServerConfig::getConfig()->debug_level) << "Server: Loading nodes...";
   for (const pb::ReferenceFrameMsg& fmsg : map_msg.nodes()) {
     SlamFramePtr frame = std::make_shared<ReferenceFrame>();
     pb::parse_message(fmsg, frame.get());
     slam_map->AddFrame(frame);
-    LOG(g_server_cvars.debug_level) << "Loading " << frame->id();
+    LOG(ServerConfig::getConfig()->debug_level) << "Loading " << frame->id();
     if (zero_modified_time) {
       frame->set_last_modified_time(0.0);
     }
   }
 
-  LOG(g_server_cvars.debug_level) << "Server: Loading edges...";
+  LOG(ServerConfig::getConfig()->debug_level) << "Server: Loading edges...";
   for (const pb::TransformEdgeMsg& emsg : map_msg.edges()) {
     SlamEdgePtr edge = std::make_shared<TransformEdge>();
     pb::parse_message(emsg, edge.get());
     slam_map->AddEdge(edge);
-    LOG(g_server_cvars.debug_level) << "Loading " << edge->id();
+    LOG(ServerConfig::getConfig()->debug_level) << "Loading " << edge->id();
     if (zero_modified_time) {
       edge->set_last_modified_time(0.0);
     }
@@ -101,7 +101,7 @@ void LoadDBoWMsg(
   CHECK(matcher);
   CHECK_EQ(place_map.place_type(), pb::DBOW);
 
-  LOG(g_server_cvars.debug_level) << "Loading DBoW places...";
+  LOG(ServerConfig::getConfig()->debug_level) << "Loading DBoW places...";
 
   // @todo: check if this is correct
   // ReferenceFrameId frame_id;
@@ -134,7 +134,7 @@ void LoadDBoWMsg(
     // Don't reinsert places we've already gathered
     if (frame_to_place &&
         frame_to_place->count(mappings[place.index()])) {
-      LOG(g_server_cvars.debug_level)
+      LOG(ServerConfig::getConfig()->debug_level)
           << "Skipping " << mappings[place.index()]
           << " since we have a place for it already";
       continue;
@@ -150,7 +150,7 @@ void LoadDBoWMsg(
     pb::parse_message(place.keypoint_vector(), &image_keys);
     pb::parse_message(place.descriptor_vector(), &image_descriptors);
     matcher->AddPlace(new_place_id, image_keys, image_descriptors);
-    LOG(g_server_cvars.debug_level) << "Adding DBoW place #" << new_place_id;
+    LOG(ServerConfig::getConfig()->debug_level) << "Adding DBoW place #" << new_place_id;
 
     ReferenceFrameId frame_id = mappings[place.index()];
     if (place_to_frame) {
@@ -159,12 +159,12 @@ void LoadDBoWMsg(
 
     if (frame_to_place) {
       frame_to_place->insert({frame_id, new_place_id});
-      LOG(g_server_cvars.debug_level) << "Added " << frame_id
+      LOG(ServerConfig::getConfig()->debug_level) << "Added " << frame_id
                                       << " as place #" << new_place_id;
     }
   }
   */
-  LOG(g_server_cvars.debug_level) << "Done loading DBoW places.";
+  LOG(ServerConfig::getConfig()->debug_level) << "Done loading DBoW places.";
 }
 
 void LoadMultiDBoWMsg(const pb::PlaceMapMsg& place_map,
@@ -173,7 +173,7 @@ void LoadMultiDBoWMsg(const pb::PlaceMapMsg& place_map,
   CHECK(matcher);
   CHECK_EQ(place_map.place_type(), pb::MULTI_DBOW);
 
-  LOG(g_server_cvars.debug_level)
+  LOG(ServerConfig::getConfig()->debug_level)
       << "Loading " << place_map.dbow_places_size() << " DBoW places...";
 
   ReferenceFrameId frame_id;

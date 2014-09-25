@@ -3,6 +3,8 @@ project(common_front_end)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -mavx ${CMAKE_CXX_FLAGS}")
 
+#list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules/")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -19,10 +21,10 @@ find_package(catkin REQUIRED COMPONENTS
   slam_map
 )
 
-message("\n\nCatkin includes: ${catkin_INCLUDE_DIRS}")
-
 find_package(Eigen REQUIRED)
+find_package(OpenCV REQUIRED)
 
+message("\n\n common_front_end opencv: ${OpenCV_LIBRARIES} \n\n")
 generate_dynamic_reconfigure_options(
   cfg/CommonFrontEndParams.cfg
 )
@@ -135,7 +137,7 @@ add_library(common_front_end
   ${SRCS}
 )
 
-target_link_libraries(common_front_end)
+target_link_libraries(common_front_end ${OpenCV_LIBRARIES})
 
 ## Declare a cpp executable
 # add_executable(common_front_end_node src/common_front_end_node.cpp)

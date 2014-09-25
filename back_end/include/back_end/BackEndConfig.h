@@ -3,9 +3,32 @@
 
 class BackEndConfig
 {
+   BackEndConfig() :
+      adaptive_threshold(0.1),
+      damping_factor(1.0),
+      error_increase_allowed(false),
+      do_dogleg(true),
+      imu_weight(1e3),
+      imu_prior(10.0),
+      trust_region_init_size(5.0),
+      debug_level(1),
+      min_frames_for_imu(15.0),
+      gyro_sigma(IMU_GYRO_SIGMA),
+      gyro_bias_sigma(IMU_GYRO_BIAS_SIGMA),
+      do_imu_conditioning(true),
+      accel_sigma(IMU_ACCEL_SIGMA),
+      min_lm_observations(3),
+      adaptive_depth_increase(30),
+      imu_visualization_time_extra(0.3)
+  {
+  };
   public:
-    static BackEndConfig * getConfig();
-    double adaptive_threshold;
+    static BackEndConfig* getConfig(){
+      if(!s_instance)
+        s_instance = new BackEndConfig;
+      return s_instance;
+    }
+   double adaptive_threshold;
     double damping_factor;
     bool error_increase_allowed;
     bool do_dogleg;
@@ -22,27 +45,8 @@ class BackEndConfig
     int min_lm_observations;
     int adaptive_depth_increase;
     double imu_visualization_time_extra;
-  private:
-    BackEndConfig()
-    {
-      adaptive_threshold = 0.1;
-      damping_factor = 1.0;
-      error_increase_allowed = false;
-      do_dogleg = true;
-      imu_weight = 1e3;
-      imu_prior = 10.0;
-      trust_region_init_size = 5.0;
-      debug_level = 1;
-      min_frames_for_imu = 15.0;
-      gyro_sigma = IMU_GYRO_SIGMA;
-      gyro_bias_sigma = IMU_GYRO_BIAS_SIGMA;
-      do_imu_conditioning = true;
-      accel_sigma = IMU_ACCEL_SIGMA;
-      min_lm_observations = 3;
-      adaptive_depth_increase = 30;
-      imu_visualization_time_extra = 0.3;
-    };
-    static BackEndConfig * m_configInstance;
+    static BackEndConfig *s_instance;
+    
 };
 
 #endif

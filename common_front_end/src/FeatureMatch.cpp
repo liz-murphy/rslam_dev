@@ -6,7 +6,7 @@
 //#include <common_front_end/CommonFrontEndCVars.h>
 #include <common_front_end/CommonFrontEndConfig.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
-
+#include <opencv2/features2d/features2d.hpp>
 #include <assert.h>
 #include <math.h>
 #include <float.h>
@@ -79,7 +79,7 @@ Feature*  FindBestFeatureInRow(const float           x,
   */
 
 #ifndef ANDROID
-  cv::HammingSse hsse;
+  cv::Hamming hsse;
   cv::L2<float> sl2;
 #endif
   for (int nRow = top_boudnary;  nRow <= bot_boundary; ++nRow ) {
@@ -184,7 +184,7 @@ Feature* FindBestFeatureInRegion(
   if( bot_boundary   >= image_height ) bot_boundary    = image_height - 1;
 
 #ifndef ANDROID
-  cv::HammingSse hsse; // TODO
+  cv::Hamming hsse; // TODO
 #endif
   cv::L2<float> sl2;
 

@@ -7,7 +7,12 @@
 class CommonFrontEndConfig
 {
   public:
-    static CommonFrontEndConfig * getConfig();
+    static CommonFrontEndConfig * getConfig()
+    {
+      if(!m_configInstance)
+        m_configInstance = new CommonFrontEndConfig;
+      return m_configInstance;
+    }
     int initial_search_radius;
     double search_radius_grow_rate;
     int num_match_in_time_attempts;

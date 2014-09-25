@@ -69,14 +69,7 @@ configure_file(
   "${PROJECT_SOURCE_DIR}/include/pb_msgs/config.h"
 )
 
-
-
-message("Generating protobuf cpp files ...")
-message("Args: ${arguments}")
-message("Module path: ${CMAKE_MODULE_PATH}")
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${arguments})
-message("Generated protobuf cpp files ${PROTO_HDRS}")
-message("Version ${PBMSGS_VERSION}")
 
 set(SRCS
     ${PROTO_SRCS}

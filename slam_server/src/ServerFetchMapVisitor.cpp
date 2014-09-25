@@ -10,7 +10,8 @@
 #include <slam_map/MapVisitor/MapVisitor.h>
 #include <slam_map/ProtobufIO.h>
 #include <slam_map/SlamMap.h>
-#include <slam_server/ServerCVars.h>
+//#include <slam_server/ServerCVars.h>
+#include <slam_server/ServerConfig.h>
 #include <slam_server/SlamServerInterface.h>
 
 ServerFetchMapVisitor::ServerFetchMapVisitor(
@@ -60,13 +61,13 @@ ServerFetchMapVisitor::~ServerFetchMapVisitor() {
 }
 
 void ServerFetchMapVisitor::CheckMessageSize() {
-  if (num_frames_ % g_server_cvars.fetch_check_msg_size_skip != 0 ||
+  if (num_frames_ % ServerConfig::getConfig()->fetch_check_msg_size_skip != 0 ||
       !CurrentMessageTooLarge()) {
     return;
   }
 
   if (server_) {
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Uploading map with " << current_msg_->map().nodes_size()
         << " nodes, " << current_msg_->map().edges_size() << " edges, "
         << current_msg_->dbow_places_size() << "dbow places and "
@@ -105,14 +106,14 @@ void ServerFetchMapVisitor::ExploreEdge(const SlamFramePtr& parent,
                                         const SlamFramePtr& child) {
   if ((has_excluding_id_ && edge->id().session_id == excluding_id_) ||
       edge->last_modified_time() < last_map_fetch_time_) {
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Ignoring edge " << edge->id()
         << " last modified at " << edge->last_modified_time()
         << " which was before last fetch at " << last_map_fetch_time_;
     return;
   }
 
-  LOG(g_server_cvars.debug_level) << "Adding edge " << edge->id();
+  LOG(ServerConfig::getConfig()->debug_level) << "Adding edge " << edge->id();
   pb::fill_message(*edge, current_msg_->mutable_map()->add_edges());
 
   explored_.insert(child->id());
@@ -122,20 +123,20 @@ void ServerFetchMapVisitor::ExploreEdge(const SlamFramePtr& parent,
 bool ServerFetchMapVisitor::Visit(const SlamFramePtr& cur_node) {
   explored_.erase(cur_node->id());
   if ((has_excluding_id_ && cur_node->id().session_id == excluding_id_)) {
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Ignoring node " << cur_node->id()
         << " last modified at "
         << cur_node->last_modified_time()
         << " which was before last fetch at " << last_map_fetch_time_;
     return true;
   } else if (cur_node->last_modified_time() < last_map_fetch_time_) {
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Node " << cur_node->id() << " modification time @ "
         << cur_node->last_modified_time() << " before last fetch @ "
         << last_map_fetch_time_;
     return false;
   }
-  LOG(g_server_cvars.debug_level) << "Adding node " << cur_node->id();
+  LOG(ServerConfig::getConfig()->debug_level) << "Adding node " << cur_node->id();
   auto* node = current_msg_->mutable_map()->add_nodes();
   pb::fill_message(*cur_node, node);
 
@@ -192,7 +193,7 @@ bool ServerFetchMapVisitor::Visit(const SlamFramePtr& cur_node) {
 
 void ServerFetchMapVisitor::Finished() {
   if (server_ && current_msg_) {
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Uploading map with " << current_msg_->map().nodes_size()
         << " nodes, " << current_msg_->map().edges_size() << " edges, "
         << current_msg_->dbow_places_size() << "dbow places and "

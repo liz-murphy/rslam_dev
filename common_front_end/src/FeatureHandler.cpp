@@ -8,6 +8,8 @@
 #include <common_front_end/PatchMatch.h>
 #include <common_front_end/SparseSimData.h>
 #include <miniglog/logging.h>
+#include <opencv2/nonfree/features2d.hpp>
+
 //#include <HAL/config.h>
 //#include <ThirdParty/FeatureHandler.h>
 //#include <common_front_end/FlybyPyramidFeatureDetector.h>

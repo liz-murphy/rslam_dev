@@ -11,11 +11,12 @@
 
 #include <utils/TicToc.h>
 #include <place_matching/TemplateMatcher/TemplateMatcher.h>
-//#include <PlaceMatching/DBoWMatcher/DBoWMatcher.h>
+#include <place_matching/DBoWMatcher/DBoWMatcher.h>
 #include <slam_map/ProtobufIO.h>
 #include <slam_map/SlamMap.h>
 #include <slam_server/LoadPlaceMap.h>
-#include <slam_server/ServerCVars.h>
+//#include <slam_server/ServerCVars.h>
+#include <slam_server/ServerConfig.h>
 #include <slam_server/ServerFetchMapVisitor.h>
 #include <slam_server/SlamServerInterface.h>
 #include <utils/PrintMessage.h>
@@ -33,7 +34,7 @@ void SlamServerProxy::UploadMap(
     const SlamMap& map,
     const std::shared_ptr<PlaceMatcher>& place_matcher,
     const ReferenceFrameId& root_id) {
-  LOG(g_server_cvars.debug_level) << "Uploading map from " << root_id
+  LOG(ServerConfig::getConfig()->debug_level) << "Uploading map from " << root_id
                                   << " since " << last_upload_time_;
 
   double upload_time = hal::Tic();
@@ -84,7 +85,7 @@ SlamServerProxy::QueryPlace(const std::vector<cv::Mat>& images,
       pb::parse_message(z, &meas->back());
     }
 
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Query successful with edge " << (*edge)->id()
         << " and " << meas->size() << " new measurements";
     return true;
@@ -115,7 +116,7 @@ void SlamServerProxy::FetchToDepth(
     if (excluding) {
       pb::fill_message(*excluding, request.mutable_excluding_map());
     }
-    LOG(g_server_cvars.debug_level) << "Fetching map to depth of " << depth
+    LOG(ServerConfig::getConfig()->debug_level) << "Fetching map to depth of " << depth
                                     << " from root " << to_fetch.front()
                                     << ", IsExcluding " << (!!excluding);
     to_fetch.pop();
@@ -123,17 +124,17 @@ void SlamServerProxy::FetchToDepth(
     server_->DownloadMap(request, &response);
 
     if (!response.success()) {
-      LOG(g_server_cvars.debug_level) << "Map download failed.\n";
+      LOG(ServerConfig::getConfig()->debug_level) << "Map download failed.\n";
       return;
     }
 
     last_fetch_time_ = response.timestamp();
-    LOG(g_server_cvars.debug_level)
+    LOG(ServerConfig::getConfig()->debug_level)
         << "Done fetching map. Loading." << std::endl;
 
     const pb::PlaceMapMsg& place_map = response.map();
     if (place_map.has_map()) {
-      LOG(g_server_cvars.debug_level)
+      LOG(ServerConfig::getConfig()->debug_level)
           << "Fetched map stats: "
           << "\n\t" << response.map().map().nodes_size() << " nodes, "
           << "\n\t" << response.map().map().edges_size() << " edges,  "
@@ -143,10 +144,10 @@ void SlamServerProxy::FetchToDepth(
       num_fetched += response.map().map().nodes_size();
 
       LoadSlamMapMsg(place_map.map(), map, true);
-      LOG(g_server_cvars.debug_level) << "Done loading SlamMap.";
+      LOG(ServerConfig::getConfig()->debug_level) << "Done loading SlamMap.";
     }
 
-    LOG(g_server_cvars.debug_level) << " Loading places.";
+    LOG(ServerConfig::getConfig()->debug_level) << " Loading places.";
     LoadPlacesFromMsg(place_map, matcher);
 
     ReferenceFrameId leaf_id;
@@ -154,12 +155,12 @@ void SlamServerProxy::FetchToDepth(
       pb::parse_message(id_msg, &leaf_id);
       if (map->GetFramePtr(leaf_id)) continue;
       to_fetch.push(leaf_id);
-      LOG(g_server_cvars.debug_level) << "Adding leaf to download " << leaf_id;
+      LOG(ServerConfig::getConfig()->debug_level) << "Adding leaf to download " << leaf_id;
     }
 
   } while (num_fetched < depth && !to_fetch.empty());
 
-  LOG(g_server_cvars.debug_level)
+  LOG(ServerConfig::getConfig()->debug_level)
       << "Done loading fetched map." << std::endl;
 }
 

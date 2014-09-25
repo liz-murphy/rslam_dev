@@ -19,12 +19,25 @@
 
 #include <string>
 
+#include <calibu/cam/CameraRig.h>
+#include <back_end/BackEndConfig.h>
+#include <slam_server/ServerConfig.h>
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <sparse_front_end/FrontEndConfig.h>
+#include <sparse_tracking/TrackingConfig.h>
+
 using namespace rslam;
 using namespace sensor_msgs;
 using namespace message_filters;
 
 //typedef ExactTime<Image, CameraInfo, Image, CameraInfo> ExactPolicy;
 //typedef message_filters::Synchronizer<ExactPolicy> ExactSync;
+
+BackEndConfig *BackEndConfig::s_instance = 0;
+ServerConfig *ServerConfig::m_configInstance = 0;
+CommonFrontEndConfig *CommonFrontEndConfig::m_configInstance = 0;
+FrontEndConfig *FrontEndConfig::m_configInstance = 0;
+TrackingConfig *TrackingConfig::m_configInstance = 0;
 
 class RslamApp
 {
@@ -43,9 +56,13 @@ class RslamApp
     message_filters::Subscriber<CameraInfo> *left_info_sub, *right_info_sub;
     TimeSynchronizer<Image, CameraInfo, Image, CameraInfo> *sync;
 
+    calibu::CameraRigT<Scalar> rig;
+    std::shared_ptr<pb::ImageArray> images;
+    bool engine_initialized;
   public:
     RslamApp(std::string &image_topic)
     {
+      engine_initialized = false;
       left_image_sub = new message_filters::Subscriber<Image>(nh_, "camera/left/image", 10);
       left_info_sub = new message_filters::Subscriber<CameraInfo>(nh_, "camera/left/camera_info", 10);
       right_image_sub = new message_filters::Subscriber<Image>(nh_, "camera/right/image", 10);
@@ -54,14 +71,30 @@ class RslamApp
       sync = new TimeSynchronizer<Image, CameraInfo, Image, CameraInfo>(*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub, 100);
       sync->registerCallback(boost::bind(&RslamApp::stereo_callback, this, _1, _2, _3, _4));
 
-      std::shared_ptr<pb::ImageArray> images = pb::ImageArray::Create();
+      //std::shared_ptr<pb::ImageArray> images = pb::ImageArray::Create();
+      // quick hack to read in camera models
+      std::string filename = "/home/liz/Data/GWU/cameras.xml";
+      rig = calibu::ReadXmlRig(filename);
+      if(rig.cameras.empty())
+        ROS_ERROR("Camera rig is empty");
+      else
+        ROS_INFO("Loaded camera rig");
 
+      images = pb::ImageArray::Create();
     }
 
     void stereo_callback(const ImageConstPtr& left_image, const CameraInfoConstPtr& left_cam_info, const ImageConstPtr& right_image, const CameraInfoConstPtr& right_cam_info)
     {
       ROS_INFO("Got stereo images and info");
+      // Add image to pb
+      // Call iterate
+      if(!engine_initialized) {
+        engine->Init(images);
+        engine_initialized = true;
+      }
     }
+
+
 };
 int main(int argc, char **argv)
 {

@@ -3,6 +3,7 @@ project(rslam_engine)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mavx")
 
+#list(APPEND CMAKE_MODULE_PATH "{$PROJECT_SOURCE_DIR}/CMakeModules/")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -123,8 +124,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-message("rslam_engine includes: ${catkin_INCLUDE_DIRS}")
-
 ## Declare a cpp library
 add_library(rslam_engine
   src/RslamEngine.cpp
@@ -140,7 +139,7 @@ add_executable(rslam_engine_node src/main.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(rslam_engine_node
-  ${catkin_LIBRARIES} ${OpenCV_LIBRARIES}
+  rslam_engine ${catkin_LIBRARIES} 
 )
 
 #############

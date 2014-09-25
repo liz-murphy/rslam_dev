@@ -5,7 +5,4 @@
 
 #include <opencv/cv.h>
 #include <opencv2/nonfree/features2d.hpp>
-
-#ifndef ANDROID
-    #include <features/brisk/brisk.h>
-#endif
+//#include <opencv2/features2d.hpp> // brisk is now in here

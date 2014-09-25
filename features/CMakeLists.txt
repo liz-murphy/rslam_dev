@@ -16,19 +16,19 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Eigen REQUIRED)
 
 set(SRCS src/Features.cpp)
-list(APPEND SRCS
-  src/brisk/brisk.cpp
-  src/brisk/agast/AstDetector.cc
-  src/brisk/agast/agast5_8.cc
-  src/brisk/agast/agast5_8_nms.cc
-  src/brisk/agast/agast7_12d.cc
-  src/brisk/agast/agast7_12d_nms.cc
-  src/brisk/agast/agast7_12s.cc
-  src/brisk/agast/agast7_12s_nms.cc
-  src/brisk/agast/nonMaximumSuppression.cc
-  src/brisk/agast/oast9_16.cc
-  src/brisk/agast/oast9_16_nms.cc
-)
+#list(APPEND SRCS
+#  src/brisk/brisk.cpp
+#  src/brisk/agast/AstDetector.cc
+#  src/brisk/agast/agast5_8.cc
+#  src/brisk/agast/agast5_8_nms.cc
+#  src/brisk/agast/agast7_12d.cc
+#  src/brisk/agast/agast7_12d_nms.cc
+#  src/brisk/agast/agast7_12s.cc
+#  src/brisk/agast/agast7_12s_nms.cc
+#  src/brisk/agast/nonMaximumSuppression.cc
+#  src/brisk/agast/oast9_16.cc
+#  src/brisk/agast/oast9_16_nms.cc
+#)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
