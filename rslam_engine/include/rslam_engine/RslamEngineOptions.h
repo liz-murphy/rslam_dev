@@ -66,6 +66,6 @@ struct RslamEngineOptions {
   // Options for loop closure detection
   PlaceMatcherFactory::Options place_matcher_options;
 
-  RslamTracker tracker_type_;
+  RslamTracker tracker_type_ = Tracker_Sparse;
 };
 }  // namespace rslam

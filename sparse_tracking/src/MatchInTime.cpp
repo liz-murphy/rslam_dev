@@ -168,11 +168,12 @@ inline bool  _MatchLandmarkInTime(
     }
 
     // good
-    PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
+    // THIS IS SEGFAULTING
+    /*PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                  "    MIT: SUCCESS -- LM '%s' match at [%.2f, %.2f] "
                  "(predicted [%.2f, %.2f]) in camera-%d\n",
                  landmark.id(), refined_x, refined_y, hx[0], hx[1], cam_id);
-
+*/
     z.SetScale(cam_id, H.scale());
     z.PatchVector(cam_id).resize(powi(CANONICAL_PATCH_SIZE,2));
     search_image.LoadPatch(z.GetPatchHomography(cam_id),

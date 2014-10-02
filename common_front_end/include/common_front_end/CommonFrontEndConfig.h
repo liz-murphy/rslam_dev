@@ -62,7 +62,7 @@ class CommonFrontEndConfig
       initial_search_radius=20;
       search_radius_grow_rate=1.2;
       num_match_in_time_attempts=3;
-      num_features_to_track=128;
+      num_features_to_track=500;
       feature_matching_threshold=100;
       match_error_threshold=30.0;
       match_error_factor=1.2;

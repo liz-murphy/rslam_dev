@@ -28,6 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   message_filters
   image_geometry
+  cv_bridge
 )
 
 #find_package(OpenCV REQUIRED)

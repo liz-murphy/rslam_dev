@@ -60,6 +60,7 @@
   <build_depend>image_transport</build_depend>
   <build_depend>message_filters</build_depend>
   <build_depend>image_geometry</build_depend>
+  <build_depend>cv_bridge</build_depend>
 
   <run_depend>ba</run_depend>
   <run_depend>back_end</run_depend>
@@ -81,6 +82,7 @@
   <run_depend>image_transport</run_depend>
   <run_depend>message_filters</run_depend>
   <run_depend>image_geometry</run_depend>
+  <run_depend>cv_bridge</run_depend>
 
 
 

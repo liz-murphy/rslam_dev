@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(pb_msgs)
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules/")
+
 set(VERSION_MAJOR 2)
 set(VERSION_MINOR 0)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})

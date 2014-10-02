@@ -31,6 +31,10 @@
 #include <utils/Timer.h>
 #include <common_front_end/FrontendInterface.h>
 
+#include <ros/ros.h>
+
+#include <image_transport/image_transport.h>
+
 namespace rslam {
 namespace sparse {
 struct PoseAnalytics {
@@ -151,6 +155,7 @@ class FrontEnd : public FrontEndInterface{
   bool IsInitialized() const;
 
 protected:
+ 
   ///
   /// \brief Pushes the start time of a segment given the name
   /// \param[in] name the name of the element to time

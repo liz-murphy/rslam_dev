@@ -112,9 +112,9 @@ add_library(local_map
 # add_dependencies(local_map_node local_map_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(local_map_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(local_map
+   ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

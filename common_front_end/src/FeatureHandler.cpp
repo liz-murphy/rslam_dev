@@ -51,10 +51,12 @@ bool FeatureHandler::Init(const Options& options) {
   // Initialize the feature detector
   switch(options.feature_detector) {
     case DOG:
+      ROS_INFO("Using DOG feature detector");
       m_pFeatureDetector = std::shared_ptr<cv::FeatureDetector>(
           new cv::SurfFeatureDetector(400));
       break;
     case FAST:
+      ROS_INFO("Using FAST feature detector");
       m_pFeatureDetector =
           std::shared_ptr<cv::FeatureDetector>(
               new FastPyramidDetector(options.fast_threshold,

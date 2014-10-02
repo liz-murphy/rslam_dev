@@ -588,6 +588,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
 
   Tic("ProcessImages");
   ExtractFeatures(frames, current_feature_images_);
+  ROS_INFO("frame 0: %d features, frame 1: %d features", current_feature_images_[0]->GetKeypoints().size(),current_feature_images_[1]->GetKeypoints().size());
   Toc("ProcessImages");
 
   //=========================================================
@@ -612,6 +613,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
                  reference_frame_->id(), work_set_,
                  has_imu_, false, false);
   }
+  ROS_INFO("Working set size is %d", work_set_.num_measurements);
   Toc("ComputeWorkingSet");
 
   //=========================================================

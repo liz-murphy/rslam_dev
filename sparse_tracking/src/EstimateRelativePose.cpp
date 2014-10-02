@@ -290,6 +290,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   // Predict landmark positions and patch homography
   // in the current images
   //=================================================================
+  std::cout << "t_ab is: " << t_ab.data()[0] << ", " << t_ab.data()[1] << ", " << t_ab.data()[2] << "\n";
   LiftTrackingData(current_rig, t_ab, map, working_set);
 
   //=================================================================
@@ -472,6 +473,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
       if (!no_tic) timer->Toc("Rethreading");
     }
   }
+  std::cout << "FINAL t_ab is: " << t_ab.data()[0] << ", " << t_ab.data()[1] << ", " << t_ab.data()[2] << "\n";
   return true;
 }
 

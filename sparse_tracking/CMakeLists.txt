@@ -122,9 +122,9 @@ add_library(sparse_tracking
 # add_dependencies(sparse_tracking_node sparse_tracking_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(sparse_tracking_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(sparse_tracking
+   ${catkin_LIBRARIES} local_map
+)
 
 #############
 ## Install ##
