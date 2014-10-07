@@ -49,7 +49,7 @@ inline bool  _MatchLandmarkInTime(
 {
   bool success = false;
   MatchFlag match_flag;
-  float match_score;
+  float match_score = 99.0;
 
   // Try to find the landmark in each image:
   for (size_t cam_id = 0; cam_id < images.size(); cam_id++) {
@@ -327,7 +327,7 @@ int MatchInTime(const ReferenceFrameId                &frame_id,
 
     PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
                  "\n    -------------------------------------\n"
-                 "    Matching LM %s\n", lm.id());
+                 "    Matching LM %d:%d\n", lm.id().ref_frame_id, lm.id().landmark_index);
 
     bool success = _MatchLandmarkInTime(lm, lm_container->tracking_homographies,
                                         images, feature_options, z,  matches,

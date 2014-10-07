@@ -94,11 +94,11 @@ public:
      server_query_spread = 15.0;
      debug_map = false;
      debug_feature_detection = false;
-     ceres_debug_level = -1;
-     iterate_debug_level = -1;
-     initialization_debug_level = -1;
-     relocalizer_debug_level = -1;
-     server_debug_level=-1;
+     ceres_debug_level = 1;
+     iterate_debug_level = 0;
+     initialization_debug_level = 1;
+     relocalizer_debug_level = 1;
+     server_debug_level=1;
 
    };
    static FrontEndConfig * m_configInstance;

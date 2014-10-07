@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+#include <ros/ros.h>
+
 //#define DEBUG_HELPERS 0
 
 template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
@@ -134,10 +136,10 @@ inline Feature* FindBestMatchInRegion(
     float                            &match_score,
     MatchFlag                        &match_flag
     ) {
-  if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D) {
+  if (CommonFrontEndConfig::getConfig()->feature_descriptor== common_front_end::CommonFrontEndParams_TRACK_2D) {
     return GetBestTrack2dMatch( feature_id, search_image, match_score, match_flag );
   } 
-  if( CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_SIMULATION ) {
+  if( CommonFrontEndConfig::getConfig()->feature_descriptor== common_front_end::CommonFrontEndParams_SIMULATION ) {
 
     int search_col  = round( H.CenterPixel()[0] );
     int search_row  = round( H.CenterPixel()[1] );
@@ -162,7 +164,7 @@ inline Feature* FindBestMatchInRegion(
                             match_flag);
 
 
-  } else if(CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_PATCH ) {
+  } else if(CommonFrontEndConfig::getConfig()->feature_descriptor== common_front_end::CommonFrontEndParams_PATCH ) {
     return FindBestPatchInRegion<PatchSize>( H,
                                              pPatch,
                                              search_width,

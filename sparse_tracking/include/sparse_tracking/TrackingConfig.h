@@ -33,8 +33,8 @@ private:
     min_tracked_features = 15;
     gn_max_num_iter = 10;
     matchintime_window_size = 5;
-    startnewlandmarks_debug_level = -1;
-    matchintime_debug_level = -1;
+    startnewlandmarks_debug_level = 1;
+    matchintime_debug_level = 1;
     flagoutliers_debug_level = 1;
     estimate_debug_level = 1;
    };

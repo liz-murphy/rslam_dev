@@ -44,7 +44,7 @@ class CommonFrontEndConfig
     bool is_rotation_invariant;
     int fast_threshold;
     int fast_levels;
-    int fast_level_factor;
+    double fast_level_factor;
     bool fast_skip_level0;
     int brisk_threshold;
     int brisk_octaves;
@@ -62,7 +62,7 @@ class CommonFrontEndConfig
       initial_search_radius=20;
       search_radius_grow_rate=1.2;
       num_match_in_time_attempts=3;
-      num_features_to_track=500;
+      num_features_to_track=128;
       feature_matching_threshold=100;
       match_error_threshold=30.0;
       match_error_factor=1.2;
@@ -86,11 +86,11 @@ class CommonFrontEndConfig
       ransac_probability=0.99;
       use_feature_buckets=true;
       feature_detector=common_front_end::CommonFrontEndParams_FAST;
-      feature_descriptor=common_front_end::CommonFrontEndParams_FREAK;
+      feature_descriptor=common_front_end::CommonFrontEndParams_PATCH;
       is_rotation_invariant=false;
       fast_threshold=20;
       fast_levels=4;
-      fast_level_factor=4;
+      fast_level_factor=0.8;
       fast_skip_level0=false;
       brisk_threshold=15;
       brisk_octaves=3;

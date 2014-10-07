@@ -34,6 +34,14 @@
 #include <rslam_engine/TrackView.h>
 #include <rslam_engine/Gui.h>
 
+#include <slam_map/PointerSlamMapProxy.h>
+
+#include <boost/thread.hpp>
+
+#include <utils/Timer.h>
+
+#include <visualization_msgs/Marker.h>
+
 using namespace rslam;
 using namespace sensor_msgs;
 using namespace message_filters;
@@ -48,11 +56,13 @@ FrontEndConfig *FrontEndConfig::m_configInstance = 0;
 TrackingConfig *TrackingConfig::m_configInstance = 0;
 
 image_transport::Publisher pub0;
-image_transport::Publisher pub1;
+ros::Publisher marker_pub;
+
 
 class RslamApp
 {
   private:
+    bool gui_init;
     std::shared_ptr<RslamEngine> engine;
     std::shared_ptr<GlobalMapView> global_view;
     RslamEngineOptions options;
@@ -70,9 +80,20 @@ class RslamApp
     calibu::CameraRigT<Scalar> rig;
     bool engine_initialized;
 
+    std::shared_ptr<Gui> gui_;
+
+    boost::thread* vis_thread_;
+    std::shared_ptr<pb::ImageArray> images_;
   public:
     RslamApp(std::string &image_topic)
     {
+      gui_init = false;
+      image_transport::ImageTransport it0(nh_);
+      pub0 = it0.advertise("vis/camera_0", 1);
+      marker_pub = nh_.advertise<visualization_msgs::Marker>("slam_map", 10);
+      double vis_publish_period;
+      nh_.param("vis_publish_period", vis_publish_period, 10.0);
+
       engine.reset(new RslamEngine());
       engine->PrintAppInfo();
       engine_initialized = false;
@@ -84,7 +105,7 @@ class RslamApp
       sync = new TimeSynchronizer<Image, CameraInfo, Image, CameraInfo>(*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub, 10000);
       sync->registerCallback(boost::bind(&RslamApp::stereo_callback, this, _1, _2, _3, _4));
 
-      //std::shared_ptr<pb::ImageArray> images = pb::ImageArray::Create();
+      images_ = pb::ImageArray::Create();
       // quick hack to read in camera models
       std::string filename = "/home/liz/Data/GWU/cameras.xml";
       rig = calibu::ReadXmlRig(filename);
@@ -94,6 +115,11 @@ class RslamApp
         ROS_INFO("Loaded camera rig");
 
       engine->Reset(options,rig);
+      gui_ = std::make_shared<Gui>();
+      gui_->set_map(std::make_shared<PointerSlamMapProxy>(engine->map_));
+      gui_->SetCameraRig(rig);
+      
+      vis_thread_ = new boost::thread(boost::bind(&RslamApp::visLoop, this, vis_publish_period));
     }
 
     bool Capture(pb::CameraMsg& images_msg, const ImageConstPtr& left_image, const ImageConstPtr& right_image)
@@ -108,32 +134,61 @@ class RslamApp
       l_msg->set_width(left_image->width);
       l_msg->set_format(pb::PB_LUMINANCE);
       l_msg->set_data(&left_image->data[0], left_image->step*left_image->height);
-     // engine->Init(images);
 
-       r_msg->set_type(pb::PB_UNSIGNED_BYTE);
-       r_msg->set_height(right_image->height);
-       r_msg->set_width(right_image->width);
-       r_msg->set_format(pb::PB_LUMINANCE);
-       r_msg->set_data(&right_image->data[0], right_image->step*right_image->height);
+      r_msg->set_type(pb::PB_UNSIGNED_BYTE);
+      r_msg->set_height(right_image->height);
+      r_msg->set_width(right_image->width);
+      r_msg->set_format(pb::PB_LUMINANCE);
+      r_msg->set_data(&right_image->data[0], right_image->step*right_image->height);
+    }
+
+    void visLoop(double vis_publish_period)
+    {
+      if(vis_publish_period = 0)
+        return;
+
+      ros::Rate r(10.0);
+      while(ros::ok())
+      {
+        if(gui_->init())
+        {
+          cv::Mat im;
+          gui_->GetDisplayImage(im);
+
+          cv_bridge::CvImagePtr cv_ptr_im(new cv_bridge::CvImage);
+          cv_ptr_im->image = im;
+          cv_ptr_im->encoding = sensor_msgs::image_encodings::BGR8;
+          sensor_msgs::ImagePtr img_msg = cv_ptr_im->toImageMsg();
+          img_msg->header.stamp = ros::Time::now();
+          pub0.publish(img_msg);
+
+          visualization_msgs::Marker slam_map_msg;
+          if(gui_->GetMap(slam_map_msg))
+            marker_pub.publish(slam_map_msg);
+        }
+        r.sleep();
+      }
     }
 
     void stereo_callback(const ImageConstPtr& left_image, const CameraInfoConstPtr& left_cam_info, const ImageConstPtr& right_image, const CameraInfoConstPtr& right_cam_info)
     {
-       std::shared_ptr<pb::ImageArray> images = pb::ImageArray::Create();
-      Capture(images->Ref(), left_image, right_image);
+       images_->Ref().Clear();
+       Capture(images_->Ref(), left_image, right_image);
        if(!engine_initialized)
        {
-         engine->Init(images);
+         engine->Init(images_);
          engine_initialized = true;
          ROS_INFO("SLAM engine initialized");
        }
        ROS_INFO("Got stereo images and info");
-       engine->Iterate(images);
-       // Display
+       engine->Iterate(images_);
+       engine->timer_->PrintToTerminal(2);
        std::vector<std::vector<cv::KeyPoint> > keypoints;
        engine->frontend_->GetCurrentKeypointsForDisplay(keypoints);
+       gui_->Update(images_, engine->frontend_->current_frame()->id(), keypoints);
+       // Display
 
-       cv_bridge::CvImagePtr cv_ptr_left;
+       /*cv_bridge::CvImagePtr cv_ptr_left;
        cv_bridge::CvImagePtr cv_ptr_right;
        
        try
@@ -147,36 +202,8 @@ class RslamApp
        return;
        }
 
-       cur_frames_.clear();
-       cur_frames_.push_back(cv_ptr_left->image.clone());
-       cur_frames_.push_back(cv_ptr_right->image.clone());
-
-       // Grab info from the front end
-       std::vector<MultiViewMeasurement> cur_meas(num_meas, MultiViewMeasurement(rig.cameras.size()));
-
-       track_info_->Update(cur_frames_, cur_measurements_, cur_keypoints_, current_frame_id_);
-
-       //cv::drawKeypoints(cv_ptr_left->image, keypoints[0], cv_ptr_left->image);
-       //cv::drawKeypoints(cv_ptr_right->image, keypoints[1], cv_ptr_right->image);
-       //pub0.publish(cv_ptr_left->toImageMsg());
-       //pub1.publish(cv_ptr_right->toImageMsg());
-
-       // Both images, tracked landmarks and stereo correspondences
-       cv::Size sz1 = cv_ptr_left->image.size();
-       cv::Size sz2 = cv_ptr_right->image.size();
-       cv::Mat im3(sz1.height, sz1.width+sz2.width, CV_8UC3);
-       // Move right boundary to the left.
-       im3.adjustROI(0, 0, 0, -sz2.width);
-       cv_ptr_left->image.copyTo(im3);
-       // Move the left boundary to the right, right boundary to the right.
-       im3.adjustROI(0, 0, -sz1.width, sz2.width);
-       cv_ptr_right->image.copyTo(im3);
-       // restore original ROI.
-       im3.adjustROI(0, 0, sz1.width, 0);
-
-       cv::namedWindow( "Feature Matching", cv::WINDOW_AUTOSIZE );// Create a window for display.
-       cv::imshow( "Feature Matching", im3);  
-       cv::waitKey(0);
+       gui_init = true;
+ */      
     }
 
  };
@@ -187,16 +214,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "rslam_app");
   ros::NodeHandle nh("~"); 
 
+ 
   std::string image_topic;
   nh.param<std::string>("stereo_topic",image_topic,"/camera");
 
-  image_transport::ImageTransport it0(nh);
-  pub0 = it0.advertise("vis/camera_0", 1);
+   RslamApp* rslam_app = new RslamApp(image_topic);
 
-  image_transport::ImageTransport it1(nh);
-  pub1 = it1.advertise("vis/camera_1", 1);
-
-  RslamApp* rslam_app = new RslamApp(image_topic);
   while(ros::ok())
   {
     ros::spin();

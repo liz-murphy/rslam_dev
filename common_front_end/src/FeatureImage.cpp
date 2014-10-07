@@ -13,6 +13,8 @@
 #include <pb_msgs/ImagePyramid.h>
 #include <utils/ESM.h>
 
+#include <ros/ros.h>
+
 /*static double& g_harris_score_threshold =
     CVarUtils::CreateCVar<>("features.fast.HarrisScoreThrshold", 10000.0, "");
 */
@@ -41,10 +43,9 @@ FeatureImage::FeatureImage(unsigned int num_pyramid_levels,
       num_features_to_track_(num_features_to_track),
       max_features_in_cell_(max_features_in_cell),
       image_pyramid_(new pb::ImagePyramid(num_pyramid_levels,
-                                          level_scaling_factor)),
-      esm_use_search_roi_(false),
-      harris_score_threshold_(10000.0)
+                                          level_scaling_factor))
       {
+        std::cout << num_pyramid_levels << "," << level_scaling_factor << ", " << num_quadtree_levels << ", " << num_features_to_track << ", " << max_features_in_cell << ", " << use_buckets << "\n";
   factor_at_level_.resize(num_pyramid_levels_);
   factor_at_level_[0] = 1.0;
   for (unsigned int ii = 1; ii < num_pyramid_levels_; ++ii) {

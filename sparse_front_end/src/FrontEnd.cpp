@@ -110,7 +110,6 @@ void FrontEnd::SetupFeatureHandlers() {
     CommonFrontEndConfig::getConfig()->fast_level_factor        = 1.0;
     CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
     CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
-    CommonFrontEndConfig::getConfig()->num_features_to_track    = 1000;
     CommonFrontEndConfig::getConfig()->do_subpixel_refinement   = false;
     TrackingConfig::getConfig()->do_rethreading         = false;
     FrontEndConfig::getConfig()->do_relocalization      = false;
@@ -123,7 +122,6 @@ void FrontEnd::SetupFeatureHandlers() {
     CommonFrontEndConfig::getConfig()->fast_level_factor        = 1.0;
     CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
     CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
-    CommonFrontEndConfig::getConfig()->num_features_to_track    = 1000;
     CommonFrontEndConfig::getConfig()->esm_threshold            = 30.0;
     CommonFrontEndConfig::getConfig()->ransac_outlier_threshold = 2.0;
   } else if (options_.feature_detector == FLYBY) {
@@ -613,7 +611,6 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
                  reference_frame_->id(), work_set_,
                  has_imu_, false, false);
   }
-  ROS_INFO("Working set size is %d", work_set_.num_measurements);
   Toc("ComputeWorkingSet");
 
   //=========================================================

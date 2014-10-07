@@ -129,6 +129,7 @@ include_directories(
 add_library(rslam_engine
   src/RslamEngine.cpp
   src/SimpleRslamEngine.cpp
+  src/Gui.cpp
 )
 
 ## Declare a cpp executable
