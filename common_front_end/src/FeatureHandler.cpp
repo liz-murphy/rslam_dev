@@ -124,7 +124,6 @@ void FeatureHandler::DetectFeatures(
     const std::shared_ptr<pb::ImagePyramid>& pyramid,
     std::vector<cv::KeyPoint>& keypoints) {
   if(m_Options.feature_detector == FAST) {
-    std::cout << "Detecting FAST\n";
     auto* ptr =
         reinterpret_cast<FastPyramidDetector*>(m_pFeatureDetector.get());
     ptr->SetImagePyramidPtr(pyramid);

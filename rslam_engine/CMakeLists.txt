@@ -29,6 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   image_geometry
   cv_bridge
+  tf
 )
 
 #find_package(OpenCV REQUIRED)
@@ -129,6 +130,7 @@ include_directories(
 add_library(rslam_engine
   src/RslamEngine.cpp
   src/SimpleRslamEngine.cpp
+  src/RslamApp.cpp
   src/Gui.cpp
 )
 

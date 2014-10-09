@@ -15,9 +15,9 @@ class TemplateMatcher : public PlaceMatcher {
   TemplateMatcher(unsigned int txRes, unsigned int tyRes) :
       tx_res_(txRes), ty_res_(tyRes), match_threshold_(5000) {}
 
-  using PlaceMatcher::AddPlace;
+  //using PlaceMatcher::AddPlace;
 
-  void AddPlace(const ReferenceFrameId& frame_id,
+  virtual void AddPlace(const ReferenceFrameId& frame_id,
                 const cv::Mat &new_place) override;
 
   virtual void GetPotentialPlaceMatches(const ReferenceFrameId& id,

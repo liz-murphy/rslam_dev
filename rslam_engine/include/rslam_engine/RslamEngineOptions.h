@@ -40,7 +40,7 @@ struct RslamEngineOptions {
   std::string descriptor_type = "PATCH";
 
   // Should a persistent backend be used for the map
-  bool persistent_map = true;
+  bool persistent_map = false;
 
   // Should the map be limited to a single track?
   bool single_track = false;

@@ -68,7 +68,7 @@ public:
      do_bundle_adjustment = true;
      do_async_bundle_adjustment = true;
      use_inverse_depth_parameterization = false;
-     do_keyframing = false;
+     do_keyframing = true;
      do_relocalization = true;
      relocalizer_match_threshold = 50;
      relocalizer_min_keyframe_separation = 20;
@@ -97,7 +97,7 @@ public:
      ceres_debug_level = 1;
      iterate_debug_level = 0;
      initialization_debug_level = 1;
-     relocalizer_debug_level = 1;
+     relocalizer_debug_level = 0;
      server_debug_level=1;
 
    };

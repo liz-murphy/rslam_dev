@@ -586,7 +586,6 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
 
   Tic("ProcessImages");
   ExtractFeatures(frames, current_feature_images_);
-  ROS_INFO("frame 0: %d features, frame 1: %d features", current_feature_images_[0]->GetKeypoints().size(),current_feature_images_[1]->GetKeypoints().size());
   Toc("ProcessImages");
 
   //=========================================================
@@ -749,6 +748,9 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     }
 
     map_->AddEdge(reference_frame_, current_frame_, t_ab);
+    if( (current_frame_->id().id - reference_frame_->id().id) > 1)
+      ROS_ERROR("Adding edge between %d and %d", int(reference_frame_->id().id), int(current_frame_->id().id));
+   
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
                         CommonFrontEndConfig::getConfig()->tracker_hold_depth,
@@ -905,11 +907,20 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
     current_frame_  = map_->AddFrame(system_state_.time);
     ++system_state_.keyframe_number;
     map_->AddEdge(reference_frame_, current_frame_, t_ab);
+    if( (current_frame_->id().id - reference_frame_->id().id) > 1)
+      ROS_ERROR("Adding edge between %d and %d", reference_frame_->id().id, current_frame_->id().id);
+   
+
   } else {
     // In case the current frame is isolated, add an edge so that the pose is
     // correctly lifted.
     if (current_frame_->is_isolated()) {
       map_->AddEdge(reference_frame_, current_frame_, t_ab);
+      
+      if( (current_frame_->id().id - reference_frame_->id().id) > 1)
+        ROS_ERROR("Adding edge between %d and %d", reference_frame_->id().id, current_frame_->id().id);
+   
+
     }
     current_frame_->set_time(system_state_.time);
     map_->RemoveMeasurementsFromFrame(current_frame_->id());
@@ -1110,6 +1121,10 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
 
   if (current_frame_->is_isolated()) {
     map_->AddEdge(reference_frame_, current_frame_, t_ab);
+    
+    if( (current_frame_->id().id - reference_frame_->id().id) > 1)
+      ROS_ERROR("Isolated frame: Adding edge between %d and %d", reference_frame_->id().id, current_frame_->id().id);
+
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
                         CommonFrontEndConfig::getConfig()->tracker_hold_depth,
@@ -1304,6 +1319,7 @@ void FrontEnd::RelocalizerFunc() {
                                                        place_matches);
 
     if (place_matches.empty()) {
+      std::cout << "No place matches ...\n";
       server_interface_.AsyncQueryServerWithPlace(
           map_, place_matcher_, query_frame_id, query_vector_);
       is_relocalizer_busy_ = false;
@@ -1348,6 +1364,8 @@ void FrontEnd::RelocalizerFunc() {
     map_->AddNewMeasurementsToFrame(query_frame_id, meas);
     SlamEdgePtr edge = map_->AddEdge(query_frame, matched_frame, match.Tqm,
                                      true);
+      
+    ROS_ERROR("RELOCALIZER: Adding edge between %d and %d", query_frame_id.id, match.getFrameId().id);
 
     LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
         << "Loop closed with edge " << edge->id()

@@ -15,9 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 find_package(OpenCV REQUIRED)
 
-set(PLACEMATCH_SRCS src/PlaceMatcher.cpp src/PlaceMatcherFactory.cpp)
+set(PLACEMATCH_SRCS src/PlaceMatcher.cpp src/PlaceMatcherFactory.cpp src/TemplateMatcher/TemplateMatcher.cpp)
 
-add_subdirectory(src/TemplateMatcher)
+#add_subdirectory(src/TemplateMatcher)
 add_subdirectory(src/DBoWMatcher)
 add_subdirectory(src/MultiDBoWMatcher)
 

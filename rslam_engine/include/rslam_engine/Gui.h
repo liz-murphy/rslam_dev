@@ -37,7 +37,7 @@ class Gui
 {
   public:
   
-  Gui(){num_visible_time_steps_ = 5;init_=false;};
+  Gui(){num_visible_time_steps_ = 5;init_=false; map_id_=0; landmarks_id_=0; num_poses_to_show_=40; only_draw_active_=false;};
 
   void set_map(std::shared_ptr<SlamMapProxy> p);
   void SetCameraRig(const calibu::CameraRigT<Scalar>& rig);
@@ -45,12 +45,14 @@ class Gui
  
   void GetDisplayImage(cv::Mat &image);
   bool GetMap(visualization_msgs::Marker &map);
+  bool GetLandmarks(visualization_msgs::Marker &landmarks);
   // Current position of the robot in world coordinates
   //bool current_t_wp(Sophus::SE3t* out) const;
-
   bool init(){return init_;};
 
   private:
+  int map_id_;
+  int landmarks_id_;
   std::unique_lock<std::mutex> lock_gui() const;
 //  std::shared_ptr<TrackView> track_view_;
   std::shared_ptr<SlamMapProxy> map_;
@@ -60,11 +62,14 @@ class Gui
   std::vector<cv::Mat> current_frames_;
   std::vector<MultiViewMeasurement> current_measurements_;
   std::vector<std::vector<cv::KeyPoint> > current_keypoints_;
-  std::atomic<ReferenceFrameId> current_frame_id_;
+  ReferenceFrameId current_frame_id_;
   std::deque<std::shared_ptr<TrackInfo> > track_info_;
   int num_visible_time_steps_;
   mutable std::mutex mutex_;
   bool init_;
+
+  int num_poses_to_show_;
+  bool only_draw_active_;
 
   std::shared_ptr<GlobalMapView> global_view_;
   std::vector<TransformEdgeId> edge_ids_;
