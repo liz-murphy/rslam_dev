@@ -9,7 +9,7 @@
 #include <slam_map/SlamMapFwd.h>
 #include <slam_map/ReferenceFrameId.h>
 #include <opencv2/core/core.hpp>
-
+#include <sparse_front_end/FrontEndServerConfig.h>
 class PlaceMatcher;
 
 namespace rslam {
@@ -17,7 +17,7 @@ namespace sparse {
 
 class FrontEndServerInterface {
  public:
-  FrontEndServerInterface() = default;
+  FrontEndServerInterface() : server_upload_map_size_(50), server_download_map_size_(2000), server_query_spread_(15.0) {};
   FrontEndServerInterface(const FrontEndServerInterface&) = default;
   virtual ~FrontEndServerInterface();
 
@@ -63,6 +63,8 @@ class FrontEndServerInterface {
     return last_download_time_;
   }
 
+  void configCallback(sparse_front_end::FrontEndServerConfig &config, uint32_t level);
+
  protected:
   bool IsServerQueryReady() const;
   bool IsServerUploadReady() const;
@@ -72,6 +74,9 @@ class FrontEndServerInterface {
   std::future<bool> server_query_future_;
   std::future<void> server_upload_future_;
   std::shared_ptr<SlamServerProxy> server_proxy_;
+  int server_upload_map_size_;
+  int server_download_map_size_;
+  double server_query_spread_;
 };
 }  // namespace rslam
 }  // namespace sparse

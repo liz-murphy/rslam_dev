@@ -18,7 +18,9 @@
 #include <slam_server/SlamServerProxy.h>
 #include <slam_map/SlamMapFwd.h>
 #include <utils/ImageProcessing.h>
-
+#include <dynamic_reconfigure/server.h>
+#include <sparse_front_end/SparseFrontEndConfig.h>
+#include <sparse_front_end/FrontEnd.h>
 namespace geocon {
 class geodetic2local;
 }
@@ -26,11 +28,11 @@ class geodetic2local;
 class PlaceMatcher;
 class Timer;
 namespace rslam {
-
+/*
 namespace sparse {
   class FrontEnd;
 }
-
+*/
 class RslamEngine {
  public:
   RslamEngine();
@@ -73,7 +75,12 @@ class RslamEngine {
   }
 
   // Public access objects
-  std::shared_ptr<rslam::FrontEndInterface> frontend_;
+  //std::shared_ptr<rslam::FrontEndInterface> frontend_;
+  std::shared_ptr<sparse::FrontEnd> frontend_;
+  
+  std::shared_ptr<dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig> > frontend_dr_srv_;
+  dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>::CallbackType cb;
+ 
   std::shared_ptr<SlamMap> map_;
   calibu::CameraRigT<Scalar> rig_;
   std::shared_ptr<Timer> timer_;

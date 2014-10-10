@@ -16,10 +16,7 @@
 #include <slam_server/NodeSlamClient.h>
 #include <slam_server/SlamServer.h>
 #include <sparse_front_end/FrontEnd.h>
-//#include <sparse_front_end/FrontEndCVars.h>
-#include <sparse_front_end/FrontEndConfig.h>
 #include <sparse_front_end/LiftLocalMap.h>
-//#include <rhirdParty/CameraDrivers.h>
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
 #include <utils/Utils.h>
@@ -101,9 +98,7 @@ void RslamEngine::SetupSimulator(const RslamEngineOptions& options) {
     if (options.simulation_mono) {
       is_mono_tracking_ = true;
       active_camera_id_ = 0;
-      FrontEndConfig::getConfig()->use_only_camera_id = 0;
     } else {
-      FrontEndConfig::getConfig()->use_only_camera_id = -1;
     }
   }
 }
@@ -132,7 +127,6 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D) {
     active_camera_id_ = 0;
   } else {
-    active_camera_id_ = FrontEndConfig::getConfig()->use_only_camera_id;
   }
 
   working_directory_ = options.working_dir;
@@ -182,7 +176,13 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   if (options.tracker_type_ == Tracker_Sparse) {
     LOG(INFO) << "Creating sparse front-end.";
     frontend_ = std::make_shared<sparse::FrontEnd>();
-  } else {
+
+    frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>());
+    cb = boost::bind(&sparse::FrontEnd::configCallback, frontend_, _1, _2);
+    frontend_dr_srv_->setCallback(cb);
+
+  } 
+  else {
 #ifdef HAVE_SEMIDENSE_FRONTEND
     LOG(INFO) << "Creating semi-dense front-end.";
     frontend_ = std::make_shared<SemiDenseFrontEnd>();

@@ -30,6 +30,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_geometry
   cv_bridge
   tf
+  dynamic_reconfigure
 )
 
 #find_package(OpenCV REQUIRED)

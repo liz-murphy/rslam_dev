@@ -10,8 +10,8 @@
 #include <slam_map/SlamMap.h>
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/TransformEdge.h>
-//#include <sparse_FrontEnd/FrontEndCVars.h>
-#include <sparse_front_end/FrontEndConfig.h>
+
+#include <ros/ros.h>
 
 namespace rslam {
 namespace sparse {
@@ -19,7 +19,7 @@ namespace sparse {
 FrontEndServerInterface::~FrontEndServerInterface() {
   int n_tries = 0;
   while (!IsServerQueryReady() && n_tries++ < 10) {
-    LOG(INFO) << "Waiting for server interface to finish";
+    ROS_INFO("Waiting for server interface to finish");
     usleep(1000);
   }
 }
@@ -43,22 +43,17 @@ bool FrontEndServerInterface::QueryServerWithPlace(
     ReferenceFrameId id,
     cv::Mat image) {
   if (id.session_id != map->id()) {
-    LOG(WARNING) << "Querying server with a frame which is not ours: "
-                 << id;
+    ROS_WARN("Querying server with a frame which is not ours: %d", id.id);
     return false;
   }
 
   CameraRigPtr rig = map->GetCamera(id.session_id);
   SlamFramePtr frame = map->GetFramePtr(id);
   if (!rig) {
-    LOG(FrontEndConfig::getConfig()->server_debug_level)
-        << "No rig available for frame " << id
-        << "while querying server";
+    ROS_DEBUG_NAMED("sparse_front_end::Server", "No rig available for frame %d while querying server", id.id);
     return false;
   } else if (!frame) {
-    LOG(FrontEndConfig::getConfig()->server_debug_level)
-        << "No frame available for frame " << id
-        << "while querying server";
+    ROS_DEBUG_NAMED("sparse_front_end::Server", "No frame available for frame %d while querying server", id.id);
     return false;
   }
 
@@ -68,18 +63,14 @@ bool FrontEndServerInterface::QueryServerWithPlace(
     return false;
   }
 
-  LOG(FrontEndConfig::getConfig()->server_debug_level)
-      << "Match found on server for frame " << id
-      << "! Fetching map to depth of "
-      << FrontEndConfig::getConfig()->server_download_map_size;
+  ROS_DEBUG_NAMED("sparse_front_end::Server","Match found on server for frame %d! Fetching map to depth of %d", id.id, server_download_map_size_);
 
   TransformEdgeId edge_id = edge->id();
   ReferenceFrameId outgoing_frame_id =
       (edge_id.start == id) ? edge_id.end : edge_id.start;
   SessionId current_session_id = map->id();
 
-  LOG(FrontEndConfig::getConfig()->server_debug_level)
-      << "After query, adding edge " << edge_id;
+  ROS_DEBUG_NAMED("sparse_front_end::Server", "After query, adding edge %d", edge_id.id);
   map->AddEdge(edge);
 
   for (MultiViewMeasurement& z : measurements) {
@@ -88,7 +79,7 @@ bool FrontEndServerInterface::QueryServerWithPlace(
 
   last_download_time_ = hal::Tic();
   server_proxy_->FetchToDepth(
-      outgoing_frame_id, FrontEndConfig::getConfig()->server_download_map_size,
+      outgoing_frame_id, server_download_map_size_,
       &current_session_id, map.get(),
       place_matcher.get());
   return true;
@@ -98,7 +89,7 @@ void FrontEndServerInterface::AsyncUploadMapToServer(
     const std::shared_ptr<SlamMap>& map,
     const std::shared_ptr<PlaceMatcher>& place_matcher,
     const ReferenceFrameId& root_id) {
-  if ((map->NumFrames() % FrontEndConfig::getConfig()->server_upload_map_size) != 0 ||
+  if ((map->NumFrames() % server_upload_map_size_) != 0 ||
       !IsServerUploadReady()) {
     return;
   }
@@ -113,10 +104,9 @@ void FrontEndServerInterface::UploadMapToServer(
     std::shared_ptr<SlamMap> map,
     std::shared_ptr<PlaceMatcher> place_matcher,
     ReferenceFrameId root_id) {
-  LOG(FrontEndConfig::getConfig()->server_debug_level)
-      << "Uploading map with " << map->NumFrames() << " frames.";
+  ROS_DEBUG_NAMED("sparse_front_end::Server","Uploading map with %d frames.", map->NumFrames());
   server_proxy_->UploadMap(*map, place_matcher, root_id);
-  LOG(FrontEndConfig::getConfig()->server_debug_level) << "Done uploading map";
+  ROS_DEBUG_NAMED("sparse_front_end::Server","Done uploading map");
 }
 
 template<typename FutureT>
@@ -131,11 +121,11 @@ bool FrontEndServerInterface::IsServerQueryReady() const {
     double since_download = hal::Toc(last_download_time());
     return (server_proxy_ &&
             future_ready(server_query_future_) &&
-            since_download > FrontEndConfig::getConfig()->server_query_spread);
+            since_download > server_query_spread_);
   } catch(const std::future_error& fe) {
-    LOG(ERROR) << "Server query threw an exception: " << fe.what();
+    ROS_ERROR("Server query threw an exception: %s", fe.what());
   } catch(...) {
-    LOG(ERROR) << "Server query threw an unknown exception";
+    ROS_ERROR("Server query threw an unknown exception");
   }
 
   // It failed, but that means it's ready again
@@ -146,6 +136,13 @@ bool FrontEndServerInterface::IsServerUploadReady() const {
   return (server_proxy_ &&
           (!server_upload_future_.valid() ||
            future_ready(server_upload_future_)));
+}
+
+void FrontEndServerInterface::configCallback(sparse_front_end::FrontEndServerConfig &config, uint32_t level)
+{
+  server_upload_map_size_ = config.server_upload_map_size;
+  server_download_map_size_ = config.server_download_map_size;
+  server_query_spread_ = config.server_query_spread;
 }
 }  // namespace rslam
 }  // namespace sparse

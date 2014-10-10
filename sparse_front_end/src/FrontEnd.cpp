@@ -12,10 +12,8 @@
 #include <utility>
 #include <string>
 
-//#include <common_front_end/CommonFrontEndCVars.h>
 #include <common_front_end/CommonFrontEndConfig.h>
 #include <sparse_tracking/TrackingConfig.h>
-#include <sparse_front_end/FrontEndConfig.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
 #include <common_front_end/EssentialMatrix.h>
 #include <common_front_end/PatchMatch.h>
@@ -25,14 +23,12 @@
 #include <slam_map/SlamMap.h>
 #include <slam_map/TransformEdge.h>
 #include <sparse_front_end/FrontEnd.h>
-//#include <sparse_front_end/FrontEndCVars.h>
 #include <sparse_front_end/FrontEndServerInterface.h>
 #include <sparse_front_end/LiftLocalMap.h>
 #include <sparse_front_end/PushLocalMap.h>
 #include <sparse_front_end/ClosestKeyframeMapVisitor.h>
 #include <sparse_tracking/EstimateRelativePose.h>
 #include <sparse_tracking/StartNewLandmarks.h>
-#include <utils/PrintMessage.h>
 #include <utils/Utils.h>
 #include <pb_msgs/frontend.pb.h>
 #include <miniglog/logging.h>
@@ -65,22 +61,22 @@ FrontEnd::FrontEnd() : is_simulation_(false),
 FrontEnd::~FrontEnd() {
   // also kill the relocalizer thread
   if (ba_thread_ && ba_thread_->joinable()) {
-    LOG(INFO) << "Quitting BA thread..." << std::endl;
+    ROS_INFO("Quitting BA thread...");
     is_quitting_ba_ = true;
     async_ba_cond_.notify_all();
     ba_thread_->join();
-    LOG(INFO) << "BA thread shut down." << std::endl;
+    ROS_INFO("BA thread shut down.");
   }
 
   if (relocalizer_thread_ && relocalizer_thread_->joinable()) {
-    LOG(INFO) << "Quitting relocalizer thread..." << std::endl;
+    ROS_INFO("Quitting relocalizer thread...");
     is_quitting_localizer_ = true;
     relocalizer_cond_.notify_all();
     relocalizer_thread_->join();
-    LOG(INFO) << "Relocalizer thread shut down." << std::endl;
+    ROS_INFO("Relocalizer thread shut down.");
   }
 
-  LOG(INFO) << "All threads closed, shutting down." << std::endl;
+  ROS_INFO("All threads closed, shutting down.");
   Clear();
 }
 
@@ -105,15 +101,7 @@ void FrontEnd::SetupFeatureHandlers() {
   options_.feature_descriptor =
       FeatureHandler::StrToDescriptorType(CommonFrontEndConfig::getConfig()->feature_descriptor);*/
 
-  if (options_.feature_detector == SIMULATION) {
-    CommonFrontEndConfig::getConfig()->fast_levels              = 1;
-    CommonFrontEndConfig::getConfig()->fast_level_factor        = 1.0;
-    CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
-    CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
-    CommonFrontEndConfig::getConfig()->do_subpixel_refinement   = false;
-    TrackingConfig::getConfig()->do_rethreading         = false;
-    FrontEndConfig::getConfig()->do_relocalization      = false;
-  } else if (options_.feature_detector == DOG) {
+  if (options_.feature_detector == DOG) {
     CommonFrontEndConfig::getConfig()->do_subpixel_refinement   = false;
     CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
     CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
@@ -184,7 +172,7 @@ bool FrontEnd::Init(
   map_ = map;
   place_matcher_ = place_matcher;
   timer_ = timer;
-  timer_->set_window_size(FrontEndConfig::getConfig()->timer_window_size);
+  timer_->set_window_size(timer_window_size_);
   rig_ = rig;
   tracking_stats_.SetRigSize(rig_.cameras.size());
 
@@ -226,8 +214,7 @@ bool FrontEnd::Init(
         // 0, -1, 0)).finished().normalized() * ba::Gravity);
         front_end_opt.GetImuBuffer().elements.front().a.normalized() *
         ba::Gravity);
-    LOG(INFO) << "Setting starting frame gravity to "
-              << current_frame_->g_r().transpose();
+    ROS_INFO("Setting starting frame gravity to %s", boost::lexical_cast<std::string>(current_frame_->g_r().transpose()).c_str() );
 
     // Peanut joe2
     // current_frame_->set_b((Eigen::Vector6t() << 0.000763685,
@@ -260,8 +247,7 @@ bool FrontEnd::Init(
     // For loop
     //current_frame_->set_b( (Eigen::Vector6t() << 0.000989608,
     //0.00161033, 0.00163137, 4.84568, 0.0729798, -0.38888).finished());
-    LOG(INFO) << "Setting starting frame bias to "
-              << current_frame_->b().transpose();
+    ROS_INFO("Setting starting frame bias to %s", boost::lexical_cast<std::string>(current_frame_->b().transpose()).c_str() );
   }
   current_frame_->set_t_vs(rig_.cameras[0].T_wc);
   current_frame_->set_cam_params(rig_.cameras[0].camera.GenericParams());
@@ -328,7 +314,7 @@ bool FrontEnd::Init(
   system_state_.frame_number = 0;
   system_state_.keyframe_number = 0;
   system_state_.time = timestamp;
-  system_state_.inlier_noise_error = FrontEndConfig::getConfig()->inlier_threshold;
+  system_state_.inlier_noise_error = inlier_threshold_;
 
   learning_rate_ = 0.9;  // slow
   system_state_.is_initialized =  false;
@@ -365,9 +351,7 @@ bool FrontEnd::SwitchToKeyframe(const ReferenceFrameId& closest_keyframe_id,
   //=========================================================
 
   if (closest_keyframe_id != reference_frame_->id()) {
-    LOG(FrontEndConfig::getConfig()->iterate_debug_level)
-        << "Iterate: Switching keyframe from id= "
-        << reference_frame_->id() << " to " << closest_keyframe_id << std::endl;
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate","Iterate: Switching keyframe from id=%d to %d", reference_frame_->id().id ,closest_keyframe_id.id);
 
     SlamFramePtr pNewKeyframe = map_->GetFramePtr(closest_keyframe_id);
     SlamEdgePtr pEdge = map_->GetEdgePtr(reference_frame_->id(),
@@ -388,8 +372,8 @@ bool FrontEnd::IterateBa() {
   // also modifies the map
   // BackEnd::AdaptiveOptions options(false, 0, 0);
   BackEnd::AdaptiveOptions options(false, false, 15, 100);
-  uint32_t depth = FrontEndConfig::getConfig()->ba_window_size;
-  uint32_t num_iterations = FrontEndConfig::getConfig()->ba_num_iter;
+  uint32_t depth = ba_window_size_;
+  uint32_t num_iterations = ba_num_iter_;
 
   Eigen::Vector3t initial_gravity, initial_velocity;
   Eigen::Vector6t initial_bias;
@@ -434,9 +418,7 @@ void FrontEnd::ProcessKeyframe(
     std::vector<MultiViewMeasurement>* new_measurements,
     std::vector<std::vector<Feature*> >* feature_matches) {
 
-  LOG(FrontEndConfig::getConfig()->iterate_debug_level)
-      << "Iterate: Frame id = " << current_frame_->id()
-      << "is a new keyframe" << std::endl;
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate","Iterate: Frame id=%d is a new keyframe", current_frame_->id().id);
 
   //=========================================================
   // If we are not lost, include measurements
@@ -476,7 +458,7 @@ void FrontEnd::ProcessKeyframe(
   // Do slidding window bundle adjustment
   //=========================================================
   if (system_state_.tracking_status == common::eTrackingGood &&
-      FrontEndConfig::getConfig()->do_bundle_adjustment) {
+      do_bundle_adjustment_) {
     Tic("BA");
     IterateBa();
     Toc("BA");
@@ -490,7 +472,7 @@ void FrontEnd::ProcessKeyframe(
 
   // only update keyframe feature images and  query thumbnail
   // if the relocalizer is not busy
-  if (!is_relocalizer_busy_ && FrontEndConfig::getConfig()->do_relocalization) {
+  if (!is_relocalizer_busy_ && do_relocalization_) {
     for (size_t ii = 0; ii < current_feature_images_.size(); ii++) {
       keyframe_images_[ii]->Copy(*current_feature_images_[ii]);
       keyframe_images_[ii]->ResetFeatures();
@@ -506,7 +488,6 @@ void FrontEnd::ProcessKeyframe(
 
 bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
                        double timestamp) {
-  const int debug_level = FrontEndConfig::getConfig()->iterate_debug_level;
   // Start timer for the main cycle.
   Tic("FrontEnd");
 
@@ -543,8 +524,8 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     current_frame_  = map_->AddFrame(system_state_.time);
     ++system_state_.keyframe_number;
 
-    LOG(debug_level) << "Iterate: Adding new frame with id = "
-                     << current_frame_->id() << std::endl;
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate","Iterate: Adding new frame with id = %d",current_frame_->id().id);
+
     server_interface_.AsyncUploadMapToServer(
         map_, place_matcher_, reference_frame_->id());
   } else {
@@ -557,7 +538,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     current_frame_->set_time(system_state_.time);
     map_->RemoveMeasurementsFromFrame(current_frame_->id());
 
-    LOG(debug_level) << "Iterate: Checking for closest keyframe";
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate","Iterate: Checking for closest keyframe");
 
     //=========================================================
     // this call finds our closest keyframe, as well as updating
@@ -571,7 +552,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     if (!has_imu_) {
       ReferenceFrameId closest_keyframe_id =
           GetClosestKeyframeId(current_frame_->id(),
-                               FrontEndConfig::getConfig()->keyframe_search_depth,
+                               keyframe_search_depth_,
                                t_ab_);
       SwitchToKeyframe(closest_keyframe_id, t_ab_);
     }
@@ -600,12 +581,12 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     // seen in the current optimization window, but nothing more, which is why
     // the local_only flag is set on the lift operation, and the lift window
     // size is set to the ba window size.
-    LiftLocalMap(map_.get(), FrontEndConfig::getConfig()->ba_window_size,
+    LiftLocalMap(map_.get(), ba_window_size_,
                  reference_frame_->id(), work_set_,
                  has_imu_, false, true);
   } else {
     LiftLocalMap(map_.get(),
-                 FrontEndConfig::getConfig()->do_keyframing ?
+                 do_keyframing_ ?
                  1u : TrackingConfig::getConfig()->matchintime_window_size,
                  reference_frame_->id(), work_set_,
                  has_imu_, false, false);
@@ -620,14 +601,13 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
   //=========================================================
 
   // Do dense alignment.
-  if (FrontEndConfig::getConfig()->do_dense_init) {
+  if (do_dense_init_) {
     Tic("DenseAlignment");
     Sophus::SE3t hint_t_ab;
     unsigned int cam_id = calibu::LargestFrustum(rig_);
     const cv::Mat& current_image = current_feature_images_[cam_id]->ImageRef();
     dense_aligner_.Align(current_image, hint_t_ab);
-    LOG(INFO) << "------------------------------------------" << std::endl;
-    LOG(INFO) << "Motion hint: " << Pose2Str(hint_t_ab.matrix());
+    ROS_INFO("Motion hint: %s", Pose2Str(hint_t_ab.matrix()));
 
     t_ab = t_ab * hint_t_ab;
     Toc("DenseAlignment");
@@ -643,7 +623,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
 
   // Only use the IMU for estimation if we have an IMU and we have elected
   // to use it for the frame to frame estimation.
-  if (has_imu_ && FrontEndConfig::getConfig()->use_imu_for_gn) {
+  if (has_imu_ && use_imu_for_gn_) {
     meas = front_end_opt.GetImuBuffer().GetRange(
         reference_frame_->time(), timestamp);
     use_imu_for_estimate = !meas.empty();
@@ -675,8 +655,8 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
   // Clear the feature mask before we do any matching
   feature_mask_.Clear();
 
-  LOG_IF(FATAL, !map_->GetCamera(current_frame_->id().session_id))
-      << "No camera rig found for given frame.";
+  ROS_ERROR_COND(!map_->GetCamera(current_frame_->id().session_id), "No camera rig found for given frame");
+
   bool failed = !EstimateRelativePose(current_frame_->id(),
                                       options_,
                                       work_set_,
@@ -729,9 +709,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
   // Add edge with estimated pose or update edge if it exists.
   //=========================================================
   if (current_frame_->is_isolated()) {
-    LOG(debug_level) << "Iterate: Adding a new edge between "
-                     << reference_frame_->id() << " and "
-                     << current_frame_->id() << std::endl;
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate","Iterate: Adding a new edge between %d and %d ", reference_frame_->id().id, current_frame_->id().id);
 
     if (previous_id_ == reference_frame_->id()) {
       last_motion_ = t_ab;
@@ -748,17 +726,13 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     }
 
     map_->AddEdge(reference_frame_, current_frame_, t_ab);
-    if( (current_frame_->id().id - reference_frame_->id().id) > 1)
-      ROS_ERROR("Adding edge between %d and %d", int(reference_frame_->id().id), int(current_frame_->id().id));
    
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
                         CommonFrontEndConfig::getConfig()->tracker_hold_depth,
                         true);
   } else {
-    LOG(debug_level) << "Iterate: Updating edge between "
-                     << reference_frame_->id() << " and "
-                     << current_frame_->id() << std::endl;
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Iterate: Updating edge between %d and %d", reference_frame_->id().id, current_frame_->id().id);
 
     Sophus::SE3t old_t_ab;
     if (SlamEdgePtr edge = map_->GetEdgePtr(reference_frame_->id(),
@@ -776,7 +750,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
 
   // If we have elected not to use the IMU in the frame to frame estimation,
   // initialize the V and G values based on the previous frame.
-  if (!FrontEndConfig::getConfig()->use_imu_for_gn) {
+  if (!use_imu_for_gn_) {
     const auto& rot_ba = t_ab.so3().inverse();
     current_frame_->set_g_r(rot_ba * reference_frame_->g_r());
     current_frame_->set_v_r(rot_ba * reference_frame_->v_r());
@@ -811,9 +785,9 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     ProcessKeyframe(*query_frame, &new_measurements, &feature_matches);
     // Collect pose analytics if requested.
     Sophus::SE3t pose;
-    if (FrontEndConfig::getConfig()->collect_pose_analytics) {
+    if (collect_pose_analytics_) {
       pose_analytics_.emplace_back(current_frame_->id(),
-                                   FrontEndConfig::getConfig()->async_ba_window_size,
+                                   async_ba_window_size_,
                                    pose,
                                    timestamp);
     }
@@ -843,47 +817,6 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
   tracking_stats_.analytics["AvgTrkLen"] =
       fAvgTrackLen / work_set_.landmarks.size();
 
-#if _BUILD_OVV
-  std::vector<std::pair<unsigned int, unsigned int> > trackIds;
-  std::vector<unsigned char *> features;
-  int desc_size = 0;
-
-  // Return a cv::Mat of track ID and feature ids
-  LOG(INFO) << "New measurements size is " << new_measurements.size() << "\n";
-  for (unsigned int i = 0; i < new_measurements.size(); i++) {
-    if (new_measurements[i].HasGoodMeasurementInCam(0)) {
-      LOG(INFO) << "Good measurement\n";
-      std::pair<unsigned int, unsigned int> tmp;
-      // NB may need map at later point
-
-      // reference frame id
-      unsigned int ref_frame_id =
-          new_measurements[i].id().landmark_id.ref_frame_id.id;
-      // index of landmark
-      unsigned int landmark_id =
-          new_measurements[i].id().landmark_id.landmark_index;
-
-      tmp = std::make_pair(ref_frame_id, landmark_id);
-      trackIds.push_back(tmp);
-
-      // Do the conversion back to cv::Mat here so the place
-      // recognition library can be standalone???
-      // left image
-      features.push_back((feature_matchfes[i][0])->descriptor);
-      // left image
-      desc_size = (feature_matches[i][0])->descsize;
-      LOG(INFO) << "Descriptor Size is " << desc_size << "\n";
-      /* LOG(INFO) << "Track with frame id " << ref_frame_id << " Landmark id " << landmark_id << "\n";
-         LOG(INFO) << "Descriptor: ";
-         for(int i=0; i < desc_size/4; i++)
-         LOG(INFO) << *((float*)(the_desc + 4*i)) << " ";
-         LOG(INFO) << "\n";*/
-    }
-  }
-  unsigned int next_place_id = MaxPlaceid() + 1;
-  place_matcher_->AddTracks(next_place_id, trackIds, features, desc_size);
-#endif
-
   Toc("FrontEnd");
   return true;
 }
@@ -898,7 +831,6 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
                               double timestamp) {
   if (rig_.cameras.size() > 1) return true;
 
-  auto debug_level = FrontEndConfig::getConfig()->initialization_debug_level;
   Sophus::SE3t t_ab;
 
   // check if the last frame is a keyframe
@@ -938,9 +870,7 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
                has_imu_, false, false);
   Toc("ComputeWorkingSet");
 
-  LOG_IF(FATAL, work_set_.poses.find(current_frame_->id()) ==
-         work_set_.poses.end())
-      << "Current frame did not lift during initialization. Check if isolated.";
+  ROS_ERROR_COND(work_set_.poses.find(current_frame_->id()) == work_set_.poses.end(),"Current frame did not lift during initialization. Check if isolated.");
 
   // Data association.
   Tic("PoseEstimation");
@@ -958,7 +888,7 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
               feature_matches,
               CommonFrontEndConfig::getConfig()->initial_search_radius);
   Toc("MatchInTime");
-  LOG(debug_level) << "Made " << new_measurements.size() << " new measurements";
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Made %d new measurements", (int)new_measurements.size());
 
   Tic("RANSAC"); Toc("RANSAC");
   Tic("GaussNewton");
@@ -995,16 +925,15 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
     w = std::fabs(params[4]);
   }
 
-  LOG(debug_level) << "Mean disp: " << mean_disparity << " distortion: " << w;
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Mean disp: %f distortion %f", mean_disparity, w);
 
-  if (mean_disparity > FrontEndConfig::getConfig()->init_min_disparity &&
+  if (mean_disparity > init_min_disparity_ &&
       // Need 8 points to do fundamental matrix extraction
       src_pts.size() >= 8 &&
-      w <= FrontEndConfig::getConfig()->init_max_distortion) {
+      w <= init_max_distortion_) {
 
     // Estimate pose from 2d matches.
-    LOG(debug_level) << "POSE 2D-C ----------------------------------";
-    LOG(debug_level) << "computing pose...";
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "POSE 2D-C ----------- computing pose...");
 
     ComputeCameraPoseFromEssentialMatrix(src_pts,
                                          dst_pts,
@@ -1012,10 +941,11 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
                                          &system_state_.rng,
                                          t_ab);
 
-    LOG(debug_level) << "Init pose from 2d corresp tab: " << t_ab.matrix();
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate","Init pose from 2d corresp tab: %s", boost::lexical_cast<std::string>(t_ab.matrix()).c_str());
   } else {
     // Use BA to estimate only t_ab from 3D-2D matches
-    LOG(debug_level) << "POSE ONLY BA ----------------------------------";
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate","POSE ONLY BA");
+    
     ba_init.Init(options, 1, new_measurements.size(), new_measurements.size(),
                  rig_.cameras[0].T_wc);
     for (unsigned int ii = 0; ii < rig_.cameras.size(); ++ii) {
@@ -1039,12 +969,11 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
     t_ab = ba_init.GetPose(cur_pose_id).t_wp;
     ba_init.GetErrors(proj_error, unary_error, binary_error, inertial_error);
 
-    PrintMessage(debug_level,
-                 "  Init pose-only tab: %s error:%f\n",
-                 Pose2Str(t_ab.matrix()), proj_error);
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Init pose-only tab: %s error:%f\n", Pose2Str(t_ab.matrix()), proj_error);
   }
 
-  LOG(debug_level) << "POSE & LMKS BA ----------------------------------";
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate","POSE & LMKS BA -------------------");
+  
   // Use BA to estimate t_ab and inverse depth
   Eigen::Vector3t c1(0, 0, 0);
   Eigen::Vector3t c2 = t_ab.translation();
@@ -1084,11 +1013,9 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
   }
 
   unsigned int total_landmarks = num_active_landmarks + num_pasive_landmarks;
-  LOG(debug_level) << "optimizing " <<
-                                                      num_active_landmarks << "/" <<
-                                                      num_active_landmarks + num_pasive_landmarks;
-
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate","Optimizing  %d/%d", num_active_landmarks, total_landmarks); 
   ba_init.Solve(TrackingConfig::getConfig()->gn_max_num_iter);
+  
   // Get estimated pose
   t_ab = ba_init.GetPose(cur_pose_id).t_wp;
 
@@ -1108,9 +1035,7 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
 
   ba_init.GetErrors(proj_error, unary_error, binary_error, inertial_error);
 
-  PrintMessage(debug_level,
-               "  Init pose-and-lmks tab: %s error:%f\n",
-               Pose2Str(t_ab.matrix()), proj_error);
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate","Init pose-and-lmks tab: %s error:%f\n", Pose2Str(t_ab.matrix()), proj_error);
 
   Toc("GaussNewton");
   Toc("PoseEstimation");
@@ -1144,12 +1069,11 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
   PushLocalMap(map_.get(), work_set_);
   // Check if we have a keyframe
 
-  LOG(debug_level)
-      << "Active landmarks: " << num_active_landmarks
-      << "\tTotal Landmarks: " << total_landmarks;
+  ROS_DEBUG_NAMED("sparse_front_end::Iterate","Active landmarks: %d \tTotal landmarks: %d", num_active_landmarks, total_landmarks);
+  
   float landmark_pct =
       (static_cast<float>(num_active_landmarks) / total_landmarks);
-  if (landmark_pct > FrontEndConfig::getConfig()->init_min_pctg_init_landmarks) {
+  if (landmark_pct > init_min_pctg_init_landmarks_) {
     // If it is a keyframe, start new feature tracks if needed
     Tic("StartNewLandmarks");
     feature_mask_.Clear();
@@ -1162,21 +1086,18 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
     Toc("BA");
     system_state_.drop_new_frame = true;
     t_ab_ = Sophus::SE3t();
-    if (system_state_.frame_number < FrontEndConfig::getConfig()->init_min_keyframes) {
-      LOG(FrontEndConfig::getConfig()->initialization_debug_level) <<
-          "Not enough keyframes to initialize.";
+    if (system_state_.frame_number < init_min_keyframes_) {
+      ROS_DEBUG_NAMED("sparse_front_end::Initialization", "Not enough keyframes to initialize.");
       return false;
     } else {
-      LOG(FrontEndConfig::getConfig()->initialization_debug_level) <<
-          "Initialization successful.";
+      ROS_DEBUG_NAMED("sparse_front_end::Initialization", "Initialization successful.");
       return true;
     }
   } else {
     Tic("StartNewLandmarks");  Toc("StartNewLandmarks");
     Tic("BA"); Toc("BA");
     system_state_.drop_new_frame = false;
-    LOG(FrontEndConfig::getConfig()->initialization_debug_level) <<
-        "Only " << landmark_pct << "% landmarks tracked.";
+    ROS_DEBUG_NAMED("sparse_front_end::Initialization","Only %f landmarks tracked.", landmark_pct);
     return false;
   }
 }
@@ -1189,7 +1110,7 @@ void FrontEnd::Clear() {
 bool FrontEnd::IsKeyframe(
     const Sophus::SE3t& t_ab,
     const std::vector<MultiViewMeasurement>& measurements) {
-  if (!FrontEndConfig::getConfig()->do_keyframing) {
+  if (!do_keyframing_) {
     return true;
   }
   // check percentage of lanmarks tracked
@@ -1204,40 +1125,30 @@ bool FrontEnd::IsKeyframe(
   }
 
   Scalar dPctgTracked  = static_cast<Scalar>(num_tracked) / num_landmarks;
-  // CommonFrontEndConfig::getConfig()->num_features_to_track;
   Scalar dDistTraveled = t_ab.translation().norm();
   Scalar dAngleDifference = t_ab.so3().log().maxCoeff() * 180/M_PI;
 
   bool add_keyframe = false;
   if (num_tracked < 2 * TrackingConfig::getConfig()->min_tracked_features) {
-    LOG(FrontEndConfig::getConfig()->iterate_debug_level)
-        << "Adding new keyframe because only "
-        << num_tracked << " features were tracked.";
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Adding new keyframe because only %d features were tracked.", num_tracked); 
     add_keyframe = true;
   }
 
-  if (dPctgTracked  < FrontEndConfig::getConfig()->keyframe_threshold) {
-    PrintMessage(FrontEndConfig::getConfig()->iterate_debug_level,
-                 "Adding new keyframe since only %.2f (>%.2f) "
-                 "percent of landmarks were tracked [%d/%d].\n",
-                 dPctgTracked, FrontEndConfig::getConfig()->keyframe_threshold,
-                 num_tracked, num_landmarks);
+  if (dPctgTracked  < keyframe_threshold_) {
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Adding new keyframe since only %.2f (>%.2f) percent of landmarks were tracked [%d/%d].",
+                 dPctgTracked, keyframe_threshold_, num_tracked, num_landmarks);
     add_keyframe = true;
   }
 
-  if (dDistTraveled > FrontEndConfig::getConfig()->keyframe_max_distance) {
-    PrintMessage(FrontEndConfig::getConfig()->iterate_debug_level,
-                 "Adding new keyframe since %.2f meters (>%.2f) "
-                 "were travelled since the last keyframe.\n",
-                 dDistTraveled, FrontEndConfig::getConfig()->keyframe_max_distance);
+  if (dDistTraveled > keyframe_max_distance_) {
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Adding new keyframe since %.2f meters (>%.2f) were travelled since the last keyframe.",
+                 dDistTraveled, keyframe_max_distance_);
     add_keyframe = true;
   }
 
-  if (dAngleDifference > FrontEndConfig::getConfig()->keyframe_max_angle) {
-    PrintMessage(FrontEndConfig::getConfig()->iterate_debug_level,
-                 "Adding new keyframe since %.2f degrees (>%.2f) "
-                 "were travelled since the last keyframe.\n",
-                 dAngleDifference, FrontEndConfig::getConfig()->keyframe_max_angle);
+  if (dAngleDifference > keyframe_max_angle_) {
+    ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Adding new keyframe since %.2f degrees (>%.2f) were travelled since the last keyframe.",
+                 dAngleDifference, keyframe_max_angle_);
     add_keyframe = true;
   }
 
@@ -1245,7 +1156,7 @@ bool FrontEnd::IsKeyframe(
 }
 
 void FrontEnd::AsyncBaFunc() {
-  LOG(INFO) << "Starting async ba thread.";
+  ROS_INFO("Starting async ba thread.");
   async_ba_.Init(map_);
 
   std::chrono::seconds wait_time(1);
@@ -1253,7 +1164,7 @@ void FrontEnd::AsyncBaFunc() {
   std::unique_lock<std::mutex> lock(async_mutex);
   while (!is_quitting_ba_) {
     is_async_busy_ = false;
-    if (!FrontEndConfig::getConfig()->do_async_bundle_adjustment) {
+    if (!do_async_bundle_adjustment_) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       continue;
     } else if (async_ba_cond_.wait_for(lock, wait_time) ==
@@ -1262,14 +1173,14 @@ void FrontEnd::AsyncBaFunc() {
     }
 
     is_async_busy_ = true;
-    BackEnd::AdaptiveOptions options(FrontEndConfig::getConfig()->do_adaptive_window,
+    BackEnd::AdaptiveOptions options(do_adaptive_window_,
                                      true,
-                                     FrontEndConfig::getConfig()->ba_window_size, 100);
+                                     ba_window_size_, 100);
     // We don't want to include the current frame in our optimizations
     options.ignore_frame = current_frame_->id();
-    async_ba_.RefineMap(FrontEndConfig::getConfig()->async_ba_window_size,
+    async_ba_.RefineMap(async_ba_window_size_,
                         async_frame_id_,
-                        FrontEndConfig::getConfig()->ba_num_iter_adaptive,
+                        ba_num_iter_adaptive_,
                         has_imu_,
                         rig_,
                         options,
@@ -1278,15 +1189,14 @@ void FrontEnd::AsyncBaFunc() {
                         BackEnd::RefineMapCallbacks());
   }
   is_async_busy_ = false;
-  LOG(INFO) << "Quitting ba thread.";
+  ROS_INFO("Quitting ba thread.");
 }
 
 void FrontEnd::RelocalizerFunc() {
   const std::chrono::milliseconds to_wait(30);
   std::unique_lock<std::mutex> lock(relocalizer_mutex_);
 
-  PrintMessage(FrontEndConfig::getConfig()->relocalizer_debug_level,
-               "Starting relocalizer thread\n");
+  ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Starting relocalizer thread");
   LocalMap work_set;
   ReferenceFrameId query_frame_id(0, map_->id());
   last_successful_relocalization_frame_id = query_frame_id;
@@ -1294,7 +1204,7 @@ void FrontEnd::RelocalizerFunc() {
   common::TrackingStats reloc_tracking_stats = tracking_stats_;
   uint64_t reloc_hold_token = map_->GetHoldToken();
   while (!is_quitting_localizer_) {
-    if (!FrontEndConfig::getConfig()->do_relocalization) {
+    if (!do_relocalization_) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       continue;
     }
@@ -1326,8 +1236,7 @@ void FrontEnd::RelocalizerFunc() {
       continue;
     }
 
-    LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-        << "Found " << place_matches.size() << " match candidates";
+    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer","Found %d match candidates", (int)place_matches.size());
 
     const PlaceMatchCandidate& match = place_matches[0];
 
@@ -1335,8 +1244,9 @@ void FrontEnd::RelocalizerFunc() {
     // For all the keypoints in the candidate
     MultiViewMeasurement z(1);
     MeasurementId zid(query_frame_id, LandmarkId());
-    LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-        << "Creating " << match.match.size() << " matching measurements";
+
+    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Creating %d matching measurements", (int)match.match.size());
+
     for (size_t i = 0; i < match.query.size(); ++i) {
       // Set its landmark_id, frame_id accordingly
       zid.landmark_id = match.query_landmarks[i];
@@ -1348,15 +1258,13 @@ void FrontEnd::RelocalizerFunc() {
       // Set Flag to GoodMatch
       z.SetFlag(0, GoodMatch);
 
-      LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-          << "Adding measurement at " << match.query[i].pt;
+      ROS_DEBUG_NAMED("sparse_front_end::Relocalizer","Adding measurement at %f,%f", match.query[i].pt.x, match.query[i].pt.y);
       meas.push_back(z);
     }
 
     SlamFramePtr matched_frame = map_->GetFramePtr(match.getFrameId());
     if (!matched_frame) {
-      LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-          << "matched_frame not found. No loop closure completed.";
+      ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Matched_frame not found. No loop closure completed.");
       continue;
     }
 
@@ -1365,27 +1273,22 @@ void FrontEnd::RelocalizerFunc() {
     SlamEdgePtr edge = map_->AddEdge(query_frame, matched_frame, match.Tqm,
                                      true);
       
-    ROS_ERROR("RELOCALIZER: Adding edge between %d and %d", query_frame_id.id, match.getFrameId().id);
-
-    LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-        << "Loop closed with edge " << edge->id()
-        << " and T_q_m:\n" << match.Tqm.matrix();
+    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Loop closed with edge %d and T_q_m: %s", edge->id().id, boost::lexical_cast<std::string>(match.Tqm.matrix()).c_str());
 
     // Release frames while we do the relaxation, since we're going
     // to be iterating over the whole map anyways
     map_->RemoveFrameHold(reloc_hold_token);
 
-    LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-        << "Relaxing map at " << relocalization_frame_id_;
+    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Relaxing map at %d", relocalization_frame_id_.id);
+ 
     back_end_opt_.RelaxMap(map_->NumFrames(),
                            query_frame_id, 100,
                            rig_);
-    LOG(FrontEndConfig::getConfig()->relocalizer_debug_level)
-        << "Map relaxation finished";
+    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Map relaxation finished");
 
     // we are no longer lost
     if (is_lost_) {
-      LOG(FrontEndConfig::getConfig()->relocalizer_debug_level) << "I'M FOUND";
+      ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "I'M FOUND");
       is_lost_ = false;
     }
     is_relocalizer_busy_ = false;
@@ -1402,10 +1305,7 @@ void FrontEnd::ProcessFailedTracks(
       if (Feature* feature = feature_matches->at(ii)[0]) {
         feature->used = false;
       }
-      LOG(FrontEndConfig::getConfig()->iterate_debug_level)
-          << "Bad measurement [" << MatchStr(z.Flag(0)) << "] of"
-          << " landmark: " << lm_id.track2d_id
-          << " resetting to -1" << std::endl;
+      ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Bad measurement [%s] of landmark: %d resetting to -1", MatchStr(z.Flag(0)), lm_id.track2d_id);
 
       if (SlamFramePtr frame = map_->GetFramePtr(
               lm_id.ref_frame_id)) {
@@ -1419,12 +1319,11 @@ void FrontEnd::ProcessFailedTracks(
 }
 
 void FrontEnd::PrintTrack(const Landmark &lm) {
-  LOG(INFO) << "LM " << lm.id() << " has " <<
-               lm.GetFeatureTrackRef().size() << " measurements:\n";
+  ROS_INFO("LM %d,%d has %d measurements: ",lm.id().landmark_index, lm.id().track2d_id, (int)lm.GetFeatureTrackRef().size());
   for (const MeasurementId& zid : lm.GetFeatureTrackRef()) {
     MultiViewMeasurement z;
     if (map_->GetMeasurement(zid, z)) {
-      LOG(INFO) << "    " << z.InfoStr() << std::endl;
+      ROS_INFO("    %s",z.InfoStr().c_str());
     }
   }
 }
@@ -1469,19 +1368,18 @@ void FrontEnd::ResetFeatures(FeatureImageVector images) {
 }
 
 void FrontEnd::LoadGroundTruth() {
-  if (FrontEndConfig::getConfig()->ground_truth_file.empty() == false) {
+  if (ground_truth_file_.empty() == false) {
     std::ifstream fin;
     Vector6t pose;
 
-    fin.open(FrontEndConfig::getConfig()->ground_truth_file.c_str());
+    fin.open(ground_truth_file_.c_str());
     if (fin.is_open()) {
       while (!fin.eof()) {
         fin >> pose(0) >> pose(1) >> pose(2) >> pose(3) >> pose(4) >> pose(5);
         ground_truth_.push_back(pose);
       }
     } else {
-      PrintMessage(1, "ERROR -> LoadGroundTruth(): "
-                   "opening ground truth file failed\n");
+      ROS_ERROR("ERROR -> LoadGroundTruth(): opening ground truth file failed");
     }
     fin.close();
   }
@@ -1489,13 +1387,12 @@ void FrontEnd::LoadGroundTruth() {
 
 void FrontEnd::PrintPoseCart(Sophus::SE3t &Tab) {
   Vector6t p = rslam::T2Cart(Tab.matrix());
-  LOG(INFO) << std::setw(8) << "x:" << std::setw(13) << p(0);
-  LOG(INFO) << std::setw(8) << "y:" << std::setw(13) << p(1);
-  LOG(INFO) << std::setw(8) << "z:" << std::setw(13) << p(2);
-  LOG(INFO) << std::setw(10) << "roll:" << std::setw(13) << p(3)*57.2957796;
-  LOG(INFO) << std::setw(10) << "pitch:"<< std::setw(13) << p(4)*57.2957796;
-  LOG(INFO) << std::setw(10) << "yaw:"  << std::setw(13) << p(5)*57.2957796;
-  LOG(INFO) << std::endl;
+  ROS_INFO("std::setw(8) x: std::setw(13) %f",p(0));
+  /*ROS_INFO("y:" << std::setw(13) << p(1);
+  ROS_INFO("z:" << std::setw(13) << p(2);
+  ROS_INFO("roll:" << std::setw(13) << p(3)*57.2957796;
+  ROS_INFO("pitch:"<< std::setw(13) << p(4)*57.2957796;
+  ROS_INFO("yaw:"  << std::setw(13) << p(5)*57.2957796;*/
 }
 
 Scalar FrontEnd::ComputeRMSRE(const unsigned int window_size) {
@@ -1531,7 +1428,7 @@ Scalar FrontEnd::ComputeRMSRE(const unsigned int window_size) {
 ReferenceFrameId FrontEnd::GetClosestKeyframeId(const ReferenceFrameId& root_id,
                                                 const unsigned int depth,
                                                 Sophus::SE3t &t_ab) {
-  ClosestKeyframeMapVisitor visitor;
+  ClosestKeyframeMapVisitor visitor(keyframe_max_angle_,keyframe_max_distance_);
   visitor.set_depth(depth);
   visitor.set_root_id(root_id);
   map_->BFS(&visitor);
@@ -1576,5 +1473,42 @@ void FrontEnd::RegisterPoseMeasurement(
     current_frame_->AddPoseMeasurement(pose);
   }
 }
+
+void FrontEnd::configCallback(sparse_front_end::SparseFrontEndConfig &config, uint32_t level)
+{
+  ROS_ERROR("IN FRONT END CONFIG CALLBACK");
+  collect_pose_analytics_ = config.collect_pose_analytics;
+  use_imu_for_gn_ = config.use_imu_for_gn;
+  do_adaptive_window_ = config.do_adaptive_window;
+  do_dense_init_ = config.do_dense_init;
+  do_bundle_adjustment_= config.do_bundle_adjustment;
+  do_async_bundle_adjustment_ = config.do_async_bundle_adjustment;
+  use_inverse_depth_parameterization_ = config.use_inverse_depth_parameterization;
+  do_keyframing_ = config.do_keyframing;
+  do_relocalization_ = config.do_relocalization;
+
+  relocalizer_match_threshold_ = config.relocalizer_match_threshold;
+  relocalizer_min_keyframe_separation_ = config.relocalizer_min_keyframe_separation;
+  min_keyframes_for_initializing_ = config.min_keyframes_for_initializing;
+  keyframe_search_depth_ = config.keyframe_search_depth;
+  async_ba_window_size_ = config.async_ba_window_size;
+  ba_window_size_ = config.ba_window_size;
+  ba_num_iter_ = config.ba_num_iter;
+  ba_num_iter_adaptive_ = config.ba_num_iter_adaptive;
+
+  keyframe_threshold_ = config.keyframe_threshold;
+  keyframe_max_distance_ = config.keyframe_max_distance;
+  keyframe_max_angle_ = config.keyframe_max_angle;
+
+  init_min_keyframes_ = config.init_min_keyframes;
+  init_min_disparity_ = config.init_min_disparity;
+  init_max_distortion_ = config.init_max_distortion;
+  init_min_pctg_init_landmarks_ = config.init_min_pctg_init_landmarks;
+  inlier_threshold_ = config.inlier_threshold;
+
+  ground_truth_file_ = config.ground_truth_file;
+  timer_window_size_ = config.timer_window_size;
+}
+
 }  // namespace sparse
 }  // namespace rslam

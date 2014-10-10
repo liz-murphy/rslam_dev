@@ -16,10 +16,16 @@ find_package(catkin REQUIRED COMPONENTS
   sparse_tracking
   slam_server
   back_end
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+
+generate_dynamic_reconfigure_options(
+  cfg/SparseFrontEnd.cfg
+  cfg/FrontEndServer.cfg
+)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -119,7 +125,7 @@ add_library(sparse_front_end
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(sparse_front_end_node sparse_front_end_generate_messages_cpp)
+add_dependencies(sparse_front_end ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(sparse_front_end_node

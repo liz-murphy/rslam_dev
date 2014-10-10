@@ -35,6 +35,8 @@
 
 #include <image_transport/image_transport.h>
 
+#include <sparse_front_end/SparseFrontEndConfig.h>
+
 namespace rslam {
 namespace sparse {
 struct PoseAnalytics {
@@ -153,6 +155,10 @@ class FrontEnd : public FrontEndInterface{
   ///
   /// \returns Whether the system has initialized landmarks yet.
   bool IsInitialized() const;
+
+  ///
+  /// \brief Config callback for dynamic reconfigure server
+  void configCallback(sparse_front_end::SparseFrontEndConfig &config, uint32_t level);
 
 protected:
  
@@ -344,6 +350,46 @@ private:
   Sophus::SE3t last_motion_;
   FrontEndServerInterface server_interface_;
   ReferenceFrameId initial_frame_;
+
+  // configurable variables through dynamic reconfigure
+  bool collect_pose_analytics_;
+  bool use_imu_for_gn_;
+  bool do_adaptive_window_;
+  bool do_dense_init_;
+  bool do_bundle_adjustment_;
+  bool do_async_bundle_adjustment_;
+  bool use_inverse_depth_parameterization_;
+  bool do_keyframing_;
+  bool do_relocalization_;
+  int relocalizer_match_threshold_;
+  int relocalizer_min_keyframe_separation_;
+  int min_keyframe_separation_;
+  int min_keyframes_for_initializing_;
+  int keyframe_search_depth_;
+  int async_ba_window_size_;
+  int ba_window_size_;
+  int ba_num_iter_;
+  int ba_num_iter_adaptive_;
+  int use_only_camera_id_;
+  double keyframe_threshold_;
+  double keyframe_max_distance_;
+  double keyframe_max_angle_;
+
+  // Mono
+  int init_min_keyframes_;
+  double init_min_disparity_;
+  double init_max_distortion_;
+  double init_min_pctg_init_landmarks_;
+
+  //tracker
+  double inlier_threshold_;
+  int server_upload_map_size_;
+  int server_download_map_size_;
+
+  //gui
+  std::string ground_truth_file_;
+  int timer_window_size_;
+  double server_query_spread_;
 };
 }
 }

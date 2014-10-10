@@ -23,7 +23,6 @@
 #include <back_end/BackEndConfig.h>
 #include <slam_server/ServerConfig.h>
 #include <common_front_end/CommonFrontEndConfig.h>
-#include <sparse_front_end/FrontEndConfig.h>
 #include <sparse_tracking/TrackingConfig.h>
 #include <image_transport/image_transport.h>
 #include <opencv/highgui.h>

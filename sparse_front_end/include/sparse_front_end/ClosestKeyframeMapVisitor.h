@@ -4,17 +4,23 @@
 #pragma once
 
 #include <slam_map/MapVisitor/TransformMapVisitor.h>
-#include <sparse_front_end/FrontEndConfig.h>
-//#include <sparse_front_end/FrontEndCVars.h>
 
 /**
  * Find the closest keyframe to the root that can be used as a
  * relocalization keyframe.
  */
 class ClosestKeyframeMapVisitor : public TransformMapVisitor {
+
  public:
-  ClosestKeyframeMapVisitor() :
+  /*ClosestKeyframeMapVisitor() :
       closest_total_(std::numeric_limits<Scalar>::max()) {
+    set_has_visit(true);
+  }*/
+
+  ClosestKeyframeMapVisitor(double keyframe_max_angle, double keyframe_max_distance) :
+      closest_total_(std::numeric_limits<Scalar>::max()),
+      keyframe_max_angle_(keyframe_max_angle),
+      keyframe_max_distance_(keyframe_max_distance){
     set_has_visit(true);
   }
 
@@ -26,8 +32,8 @@ class ClosestKeyframeMapVisitor : public TransformMapVisitor {
     Scalar dist_traveled = cur_pose.translation().norm();
     Scalar angle_difference = cur_pose.so3().log().maxCoeff() * 180 / M_PI;
 
-    Scalar angle_score = angle_difference / FrontEndConfig::getConfig()->keyframe_max_angle;
-    Scalar dist_score = dist_traveled / FrontEndConfig::getConfig()->keyframe_max_distance;
+    Scalar angle_score = angle_difference / keyframe_max_angle_;
+    Scalar dist_score = dist_traveled / keyframe_max_distance_;
 
     Scalar total = angle_score + dist_score;
     if (total < closest_total_) {
@@ -50,4 +56,6 @@ class ClosestKeyframeMapVisitor : public TransformMapVisitor {
   Sophus::SE3t relative_pose_;
   ReferenceFrameId closest_keyframe_;
   Scalar closest_total_;
+  double keyframe_max_angle_;
+  double keyframe_max_distance_;
 };

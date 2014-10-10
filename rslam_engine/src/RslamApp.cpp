@@ -7,7 +7,6 @@ using namespace message_filters;
 BackEndConfig *BackEndConfig::s_instance = 0;
 ServerConfig *ServerConfig::m_configInstance = 0;
 CommonFrontEndConfig *CommonFrontEndConfig::m_configInstance = 0;
-FrontEndConfig *FrontEndConfig::m_configInstance = 0;
 TrackingConfig *TrackingConfig::m_configInstance = 0;
 
 RslamApp::RslamApp(std::string &image_topic)
