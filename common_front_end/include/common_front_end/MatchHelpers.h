@@ -40,13 +40,13 @@ struct FeatureMatches
 /// \return
 ///
 inline Feature* GetBestSimMatch(const int feature_id,
-                                const FeatureImage& search_image,
-                                 int roi_top,
-                                 int roi_bottom,
-                                 int roi_left,
-                                 int roi_right,
-                                float&    match_score,
-                                MatchFlag& match_flag)
+    const FeatureImage& search_image,
+    int roi_top,
+    int roi_bottom,
+    int roi_left,
+    int roi_right,
+    float&    match_score,
+    MatchFlag& match_flag)
 {
   Feature* match = nullptr;
 
@@ -85,9 +85,9 @@ inline Feature* GetBestSimMatch(const int feature_id,
 
 ///////////////////////////////////////////////////////////////////////////////
 inline Feature* GetBestTrack2dMatch(const int            nId,
-                                   const FeatureImage&  rSearchImage,
-                                   float&               fMatchScore,
-                                   MatchFlag&           eFlag)
+    const FeatureImage&  rSearchImage,
+    float&               fMatchScore,
+    MatchFlag&           eFlag)
 {
 
   Feature* pMatch = nullptr;
@@ -132,59 +132,29 @@ inline Feature* FindBestMatchInRegion(
     const int                        search_width,    //< Input: Search width delta
     const int                        search_height,   //< Input: Search height delta
     const FeatureImage               &search_image,    //< Input: Image we search in
-    const FeatureHandler::Options    &feature_options,
     float                            &match_score,
     MatchFlag                        &match_flag
     ) {
-  if (CommonFrontEndConfig::getConfig()->feature_descriptor== common_front_end::CommonFrontEndParams_TRACK_2D) {
-    return GetBestTrack2dMatch( feature_id, search_image, match_score, match_flag );
-  } 
-  if( CommonFrontEndConfig::getConfig()->feature_descriptor== common_front_end::CommonFrontEndParams_SIMULATION ) {
-
-    int search_col  = round( H.CenterPixel()[0] );
-    int search_row  = round( H.CenterPixel()[1] );
-    int roi_top     = search_row - search_height;
-    int roi_bottom  = search_row + search_height;
-    int roi_left    = search_col - search_width;
-    int roi_right   = search_col + search_width;
-    int image_width = search_image.Width();
-    int image_height = search_image.Height();
-    if (roi_left < 0)               { roi_left  = 0; }
-    if (roi_top < 0)                { roi_top  = 0; }
-    if (roi_right >= image_width)   { roi_right = image_width - 1;  }
-    if (roi_bottom >= image_height) { roi_bottom = image_height - 1; }
-
-    return GetBestSimMatch( feature_id,
-                            search_image,
-                            roi_top,
-                            roi_bottom,
-                            roi_left,
-                            roi_right,
-                            match_score,
-                            match_flag);
-
-
-  } else if(CommonFrontEndConfig::getConfig()->feature_descriptor== common_front_end::CommonFrontEndParams_PATCH ) {
+  if(CommonFrontEndConfig::getConfig()->getFeatureDescriptor() == common_front_end::CommonFrontEndParams_PATCH ) {
     return FindBestPatchInRegion<PatchSize>( H,
-                                             pPatch,
-                                             search_width,
-                                             search_height,
-                                             search_image,
-                                             match_score,
-                                             match_flag );
+        pPatch,
+        search_width,
+        search_height,
+        search_image,
+        match_score,
+        match_flag );
   }
   else{
     // else match feature descriptors
     return FindBestFeatureInRegion( H.CenterPixel()[0],
-                                    H.CenterPixel()[1],
-                                    descriptor,
-                                    descsize,
-                                    search_width,
-                                    search_height,
-                                    search_image,
-                                    feature_options,
-                                    match_score,
-                                    match_flag );
+        H.CenterPixel()[1],
+        descriptor,
+        descsize,
+        search_width,
+        search_height,
+        search_image,
+        match_score,
+        match_flag );
   }
 }
 
@@ -203,19 +173,19 @@ inline Feature* FindBestMatchInRow(
     MatchFlag& eFlag                //< Output: Match flag [GOOD, BAD or NO match]
     )
 {
-  if(CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_PATCH ){
+  if(CommonFrontEndConfig::getConfig()->getFeatureDetector() == common_front_end::CommonFrontEndParams_PATCH ){
     return FindBestPatchInRow( x, y, pPatch, patchsize,
-                               nSearchWidth, SearchImage, fMatchScore, eFlag );
+        nSearchWidth, SearchImage, fMatchScore, eFlag );
   }
   return FindBestFeatureInRow( x, y, descriptor, descsize,
-                               nSearchWidth, SearchImage, fMatchScore, eFlag );
+      nSearchWidth, SearchImage, fMatchScore, eFlag );
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Given rHRef defining a patch warp into an nxn patch in the ref image,
 /// compute homography H for loading an nxn patch in level 0 of search image.
-template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
 inline bool GetHomographyIfOnEpipolarLine(
     const PatchHomography<PatchSize>         &rHRef,
     const Eigen::Vector3t                    &rRefRay_sp,
@@ -259,7 +229,7 @@ inline bool GetHomographyIfOnEpipolarLine(
 /// \param[out] match_homography,  homography for best match
 /// \return pointer to matched feature (nullptr is no match is found)
 ///
-template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
 inline Feature* FindBestPatchOnEpipolarLine(
     const Feature                             &ref_feature,
     const Eigen::Vector3t                     &ref_ray_sp,
@@ -272,15 +242,12 @@ inline Feature* FindBestPatchOnEpipolarLine(
     FeatureImage                              &search_image,
     float                                     &match_score,
     MatchFlag                                 &match_flag,
-    PatchHomography<PatchSize>                &match_homography,
-    const FeatureHandler::Options             &feature_options)
+    PatchHomography<PatchSize>                &match_homography)
 {
 
-  bool is_simulation = feature_options.feature_detector == SIMULATION;
-
   Eigen::Vector2tArray pts =
-      GetEpiPolarLine(ref_cam, search_cam, Tsr,
-                      Eigen::Vector2t(ref_feature.x,ref_feature.y) );
+    GetEpiPolarLine(ref_cam, search_cam, Tsr,
+        Eigen::Vector2t(ref_feature.x,ref_feature.y) );
 
 
   // get region to search in
@@ -321,77 +288,64 @@ inline Feature* FindBestPatchOnEpipolarLine(
       const Eigen::Vector2t rSearchPix = Eigen::Vector2t(pf->x,pf->y);
 
       PrintMessage( verb, "        Checking [%.2f, %.2f, s(%.2f)] "
-                    "and [%.2f, %.2f, s(%.2f)]  ",
-                    ref_feature.x, ref_feature.y, ref_feature.scale,
-                    pf->x, pf->y, pf->scale ); fflush(stdout);
+          "and [%.2f, %.2f, s(%.2f)]  ",
+          ref_feature.x, ref_feature.y, ref_feature.scale,
+          pf->x, pf->y, pf->scale ); fflush(stdout);
 
       // should always enforce epipolar geometry as
       // GetHomographyIfOnEpipolarLine returns junk H if not on epipolar line
       PatchHomography<PatchSize> H;
       bool bRes =
-          GetHomographyIfOnEpipolarLine<PatchSize>(ref_homography,
-                                                   ref_ray_sp,
-                                                   rSearchPix,
-                                                   search_cam,
-                                                   ref_cam,
-                                                   Tsr,
-                                                   H);
+        GetHomographyIfOnEpipolarLine<PatchSize>(ref_homography,
+            ref_ray_sp,
+            rSearchPix,
+            search_cam,
+            ref_cam,
+            Tsr,
+            H);
       if (!bRes) {
         PrintMessage( verb,
-                      "             Epipolar line check fail, skipping\n" );
+            "             Epipolar line check fail, skipping\n" );
         fflush(stdout);
         continue;
       }
 
-      if (is_simulation) {
 
-        if( pf->id == ref_feature.id){
-          match = pf.get();
-          match_homography = H;
-          best_score = 0.0;
-          break;
-        }
-
+      if (search_image.LoadPatch( H, pPatch )) {
+        score = ScorePatchesMeanSAD(ref_patch, pPatch, patch_size, patch_size);
+        PrintMessage( verb, "     score = %.2f ", score );
       } else {
+        continue;
+      }
 
-        if (search_image.LoadPatch( H, pPatch )) {
-          score = ScorePatchesMeanSAD(ref_patch, pPatch, patch_size, patch_size);
-          PrintMessage( verb, "     score = %.2f ", score );
-        } else {
-          continue;
-        }
-
-        if (score < best_score) {
-          second_best = best_score;
-          match = pf.get();
-          match_homography = H;
-          best_score  = score;
-          PrintMessage( verb, "***" );
-        } else if (score < second_best) {
-          // only record second best if the feature is actually from a different
-          // location:
-          if (match && fabs(match->x - pf->x) > 2) {
-            second_best = score;
-          }
+      if (score < best_score) {
+        second_best = best_score;
+        match = pf.get();
+        match_homography = H;
+        best_score  = score;
+        PrintMessage( verb, "***" );
+      } else if (score < second_best) {
+        // only record second best if the feature is actually from a different
+        // location:
+        if (match && fabs(match->x - pf->x) > 2) {
+          second_best = score;
         }
       }
 
+
       PrintMessage( verb, "\n" );
     }
-
-    if (match && is_simulation) {
-      break;
-    }
+    
   }
 
   match_score = best_score;
   if( best_score == FLT_MAX ){
     match_flag = NoFeaturesToMatch;
   }
-  else if( best_score > CommonFrontEndConfig::getConfig()->match_error_threshold ) {
+  else if( best_score > CommonFrontEndConfig::getConfig()->getMatchErrorThreshold() ) {
     match_flag  = NoMatchInRegion;
   }
-  else if( best_score*CommonFrontEndConfig::getConfig()->match_error_factor >= second_best ) {
+  else if( best_score*CommonFrontEndConfig::getConfig()->getMatchErrorFactor() >= second_best ) {
     match_flag  = AmbiguousMatch;
   }
   else{
@@ -434,8 +388,7 @@ inline Feature* FindEpipolarMatch(
     FeatureImage                       &search_image,
     float                              &match_score,
     MatchFlag                          &match_flag,
-    PatchHomography<PatchSize>         &match_homography,
-    const FeatureHandler::Options&     feature_options
+    PatchHomography<PatchSize>         &match_homography
     )
 {
   int verb = 1;
@@ -447,30 +400,30 @@ inline Feature* FindEpipolarMatch(
 
   // pre-compute ray coming out of ref camera, but in search camera frame
   const Sophus::SE3t Tsr = rig.cameras[search_cam_id].T_wc.inverse() *
-                           rig.cameras[ref_cam_id].T_wc;
+    rig.cameras[ref_cam_id].T_wc;
   Eigen::Vector2t pt = Eigen::Vector2t(ref_feature.x, ref_feature.y);
   const Eigen::Vector3t rRefRay_sp = Tsr.so3()*ref_cam.Unproject(pt);
 
   // OK, need to determine the transfer function between reference image and search image:
   //PatchHomography<float,PatchSize> H;
   match = FindBestPatchOnEpipolarLine<PatchSize>(ref_feature,
-                                                 rRefRay_sp,
-                                                 ref_homography,
-                                                 Tsr,
-                                                 ref_cam,
-                                                 search_cam,
-                                                 ref_patch,
-                                                 PatchSize,
-                                                 search_image,
-                                                 match_score,
-                                                 match_flag,
-                                                 match_homography,
-                                                 feature_options);
+      rRefRay_sp,
+      ref_homography,
+      Tsr,
+      ref_cam,
+      search_cam,
+      ref_patch,
+      PatchSize,
+      search_image,
+      match_score,
+      match_flag,
+      match_homography
+      );
 
   if (match_flag != GoodMatch) {
     ref_feature.used = true; // not sure this is wise
     PrintMessage(verb, "    Epipolar Search Failed: '%s'\n",
-                 MatchStr(match_flag));
+        MatchStr(match_flag));
     //        if( eMatchFlag == NoMatchOnLine ) {
     //            PrintMessage( g_frontend_cvars.m_uDebugStartNewLandmarks,
     //                          "    Bad multi-view match [%.2f %.2f] score: %.2f, skipping\n",
@@ -483,17 +436,17 @@ inline Feature* FindEpipolarMatch(
 
   // we have an initial match
   PrintMessage( verb,
-                "    Initial match (berofe reverse validation) from cam[%d] "
-                "at [%.2f. %.2f %.2f] to cam[%d] at [%.2f. %.2f %.2f] "
-                "score: %0.2f\n",
-                ref_cam_id, ref_feature.x, ref_feature.y, ref_feature.scale,
-                search_cam_id, match->x, match->y, match->scale, match_score );
+      "    Initial match (berofe reverse validation) from cam[%d] "
+      "at [%.2f. %.2f %.2f] to cam[%d] at [%.2f. %.2f %.2f] "
+      "score: %0.2f\n",
+      ref_cam_id, ref_feature.x, ref_feature.y, ref_feature.scale,
+      search_cam_id, match->x, match->y, match->scale, match_score );
 
   // validate match by doing reverse matching
   //    printf( "    Starting from [%.0f,%.0f], hoping to reverse match to [%.0f,%.0f]\n",
   //            pMatch->x, pMatch->y, rRefFeature.x, rRefFeature.y ); fflush(stdout);
 
-  if (CommonFrontEndConfig::getConfig()->do_jealous_matching) {
+  if (CommonFrontEndConfig::getConfig()->doJealousMatching()) {
     // re-compute H that we found in first epi-polar search:
     pt << match->x, match->y;
     search_image.LoadPatch( match_homography, match_patch );
@@ -501,18 +454,18 @@ inline Feature* FindEpipolarMatch(
     const Eigen::Vector3t rSearchRay = Tsr.inverse().so3()*ref_cam.Unproject( pt );
     PatchHomography<PatchSize> reverseH;
     Feature* pReverseMatch = FindBestPatchOnEpipolarLine(*match,
-                                                         rSearchRay,
-                                                         match_homography,
-                                                         Tsr.inverse(),
-                                                         search_cam,
-                                                         ref_cam,
-                                                         match_patch,
-                                                         PatchSize,
-                                                         ref_image,
-                                                         match_score,
-                                                         match_flag,
-                                                         reverseH,
-                                                         feature_options);
+        rSearchRay,
+        match_homography,
+        Tsr.inverse(),
+        search_cam,
+        ref_cam,
+        match_patch,
+        PatchSize,
+        ref_image,
+        match_score,
+        match_flag,
+        reverseH
+        );
 
     //        assert( rHRef.matrix() == reverseH.matrix() );
 
@@ -532,8 +485,8 @@ inline Feature* FindEpipolarMatch(
       ref_feature.used = true;
       match->used = true;
       PrintMessage( 1,
-                    "    Reverse-match FAIL (got %.2f instead of %.2f), skipping\n",
-                    pReverseMatch->x, ref_feature.x );
+          "    Reverse-match FAIL (got %.2f instead of %.2f), skipping\n",
+          pReverseMatch->x, ref_feature.x );
       match_flag = ReverseMatchFail;
       return NULL;
     }
@@ -541,25 +494,25 @@ inline Feature* FindEpipolarMatch(
 
   // we have a match!
   PrintMessage( verb,
-                "    Initial match from cam[%d] at [%.2f. %.2f  s(%.2f)] to cam[%d] at [%.2f. %.2f] score: %0.2f\n",
-                ref_cam_id, ref_feature.x, ref_feature.y, ref_feature.scale,
-                search_cam_id, match->x, match->y, match_score);
+      "    Initial match from cam[%d] at [%.2f. %.2f  s(%.2f)] to cam[%d] at [%.2f. %.2f] score: %0.2f\n",
+      ref_cam_id, ref_feature.x, ref_feature.y, ref_feature.scale,
+      search_cam_id, match->x, match->y, match_score);
 
   // now do subpixel refinement if active
-  if( CommonFrontEndConfig::getConfig()->do_subpixel_refinement ){
+  if( CommonFrontEndConfig::getConfig()->doSubpixelRefinement() ){
     float fRefinedX = match->x;
     float fRefinedY = match->y;
     double dError = search_image.RefineSubPixelXY((unsigned char*)ref_patch,
-                                                  match_homography,
-                                                  fRefinedX,
-                                                  fRefinedY );
+        match_homography,
+        fRefinedX,
+        fRefinedY );
 
     PrintMessage( verb,
-                  "    ESM RMS error %f, refined match location in cam[%d] from u=%.3f to u=%.3f and v=%.3f to v=%.3f\n",
-                  dError, search_cam_id, match->x, fRefinedX,match->y, fRefinedY );
+        "    ESM RMS error %f, refined match location in cam[%d] from u=%.3f to u=%.3f and v=%.3f to v=%.3f\n",
+        dError, search_cam_id, match->x, fRefinedX,match->y, fRefinedY );
 
-    if( fabs(fRefinedX - match->x) > CommonFrontEndConfig::getConfig()->esm_subpixel_threshold*match->scale ||
-        fabs(fRefinedY - match->y) > CommonFrontEndConfig::getConfig()->esm_subpixel_threshold*match->scale) {
+    if( fabs(fRefinedX - match->x) > CommonFrontEndConfig::getConfig()->getEsmSubpixelThreshold()*match->scale ||
+        fabs(fRefinedY - match->y) > CommonFrontEndConfig::getConfig()->getEsmSubpixelThreshold()*match->scale) {
       ref_feature.used = true;
       match->used = true;
       match_flag = LowSubPixOnLine;
@@ -567,7 +520,7 @@ inline Feature* FindEpipolarMatch(
       return NULL;
     }
 
-    if( dError > CommonFrontEndConfig::getConfig()->esm_threshold ){
+    if( dError > CommonFrontEndConfig::getConfig()->getEsmThreshold() ){
       ref_feature.used = true;
       match->used = true;
       PrintMessage( verb,"    ESM error above threshold, skipping\n" );
@@ -591,7 +544,7 @@ inline Feature* FindEpipolarMatch(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
 bool Create3DPatchHomography(
     const calibu::CameraModelGeneric<Scalar> &cam,
     const Sophus::SE3Group<Scalar>           &Tvs,
@@ -675,7 +628,7 @@ bool Create3DPatchHomography(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Search over all images besides uCamera and try to find a match.
-template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
 inline bool GetMultiViewMatchesIfPossible(
     const calibu::CameraRigT<Scalar> &rig,               //< Input: Mullti-view camera rig
     const unsigned                   ref_cam_id,         //< Input: Id of camera feature is in
@@ -683,8 +636,7 @@ inline bool GetMultiViewMatchesIfPossible(
     Feature                          *feature,           //< Input: Feature from nRefCam to triangulate
     FeatureMatches<PatchSize>        &matches,           //< Output: vector of features that match
     Sophus::SO3Group<Scalar>         &patch_orientation, //< Output: Orientation of patch
-    Scalar                           &radius,            //< Output: Radius of patch
-    const FeatureHandler::Options    &feature_options)
+    Scalar                           &radius)            //< Output: Radius of patch
 {
   matches.vFeatures.clear();
   matches.vErrors.clear();
@@ -717,8 +669,8 @@ inline bool GetMultiViewMatchesIfPossible(
 
   // this function may return false if the homography is unsuitable
   if (Create3DPatchHomography(cam, Tvs, pt, homography_width,
-                              reference_homography, patch_orientation,
-                              radius) == false) {
+        reference_homography, patch_orientation,
+        radius) == false) {
     feature->used = true;
     return false;
   }
@@ -741,18 +693,17 @@ inline bool GetMultiViewMatchesIfPossible(
     // find match on the epi-polar line in every camera that can see the feature:
     FeatureImage& search_image = *images[search_cam_id];
     Feature* match =
-        FindEpipolarMatch<PatchSize>(*feature,
-                                     reference_homography,
-                                     pPatch,
-                                     rig,
-                                     ref_cam_id,
-                                     search_cam_id,
-                                     reference_image,
-                                     search_image,
-                                     match_score,
-                                     match_flag,
-                                     match_homography,
-                                     feature_options);
+      FindEpipolarMatch<PatchSize>(*feature,
+          reference_homography,
+          pPatch,
+          rig,
+          ref_cam_id,
+          search_cam_id,
+          reference_image,
+          search_image,
+          match_score,
+          match_flag,
+          match_homography);
 
     matches.vFeatures.push_back(match); // if null, then no match.  Epipolar geometry will be good
     matches.vErrors.push_back(match_score);

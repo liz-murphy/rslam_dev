@@ -4,13 +4,11 @@
 #include <utils/PrintMessage.h>
 #include <features/Features.h>
 #include <common_front_end/PatchMatch.h>
-//#include <common_front_end/CommonFrontEndCVars.h>
-#include <common_front_end/CommonFrontEndConfig.h>
 #include <assert.h>
 #include <math.h>
 #include <float.h>
 #include <vector>
-
+#include <common_front_end/CommonFrontEndConfig.h>
 //using namespace rslam;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -246,10 +244,10 @@ Feature* FindBestPatchInRow(
   if( fBestScore == FLT_MAX ){
     eFlag = NoFeaturesToMatch;
   }
-  else if( fBestScore > CommonFrontEndConfig::getConfig()->match_error_threshold) {
+  else if( fBestScore > CommonFrontEndConfig::getConfig()->getMatchErrorThreshold()) {
     eFlag  = NoMatchOnLine;
   }
-  else if( fBestScore*CommonFrontEndConfig::getConfig()->match_error_factor >= fSecondBest ) {
+  else if( fBestScore*CommonFrontEndConfig::getConfig()->getMatchErrorFactor() >= fSecondBest ) {
     eFlag  = NoMatchOnLine;
   }
   else{
@@ -349,9 +347,9 @@ Feature* FindBestPatchInRegion(
   match_score = best_score;
   if (best_score == FLT_MAX) {
     match_flag = NoFeaturesToMatch;
-  } else if (best_score > CommonFrontEndConfig::getConfig()->match_error_threshold) {
+  } else if (best_score > CommonFrontEndConfig::getConfig()->getMatchErrorThreshold()) {
     match_flag  = NoMatchInRegion;
-  } else if (best_score*CommonFrontEndConfig::getConfig()->match_error_factor >= second_best_score
+  } else if (best_score*CommonFrontEndConfig::getConfig()->getMatchErrorFactor() >= second_best_score
              && second_feat
              && fabs(feat_out->x - second_feat->x) > 2.0
              && fabs(feat_out->y - second_feat->y) > 2.0 ) {

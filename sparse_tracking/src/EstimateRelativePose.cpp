@@ -33,8 +33,7 @@ Scalar CalcSigma(const LocalMap &work_set,
             (t_ab * rig_ptr->cameras[cam_id].T_wc).inverse();
         auto it = work_set.landmarks.find(z.id().landmark_id);
         if (it == work_set.landmarks.end()) {
-          LOG(FATAL) << "Tried to find landmark " << z.id() << " in work set"
-                        " but it was not there.";
+          ROS_ERROR("Tried to find landmark %d in work set but it was not there.", z.id().frame_id.id);
         }
         const Eigen::Vector4t x_w =it->second->x_w;
         const Eigen::Vector4t x_s = Sophus::MultHomogeneous(t_sw, x_w);
@@ -111,8 +110,8 @@ int DoReThreading(const LocalMap &work_set,
       const Eigen::Vector2t pr(refined_x, refined_y);
       const Eigen::Vector2t e = pr - p;
 
-      if (error < CommonFrontEndConfig::getConfig()->esm_threshold &&
-          e.norm() < CommonFrontEndConfig::getConfig()->esm_subpixel_threshold) {
+      if (error < CommonFrontEndConfig::getConfig()->getEsmThreshold() &&
+          e.norm() < CommonFrontEndConfig::getConfig()->getEsmSubpixelThreshold()) {
         z.SetFlag(cam_id, GoodMatch);
         z.SetPixelInCam(cam_id, refined_x, refined_y);
         z.SetPatchHomography(cam_id, homography);
@@ -133,8 +132,6 @@ int FlagOutliers(
     double                               &msre,
     int* infinity_lms)
 {
-  PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level, "<FlagOutliers>\n");
-
   int num_inliers = 0;
   int num_landmarks_at_infinity = 0;
   msre = 0.0;
@@ -157,8 +154,7 @@ int FlagOutliers(
 
     auto it = rigs.find(z.id().frame_id.session_id);
     if (it == rigs.end()) {
-      LOG(WARNING) << "Camera rig missing for " <<  z.id()
-                   << std::endl;
+      ROS_WARN("Camera rig missing for %d ",z.id().frame_id.id);
       for (size_t cam_id = 0; cam_id < z.NumCameras(); ++cam_id) {
         z.SetFlag(cam_id, outlier_flag);
       }
@@ -179,19 +175,15 @@ int FlagOutliers(
       const Eigen::Vector2t   e = p - z.Pixel(cam_id);
       const Scalar error = e.norm();
 
-      PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level,
-                   "FlagOutliers: LM %s cam[%d] z=[%.2f, %.2f], "
-                   "hx=[%.2f, %.2f] error %f\n",
-                   lm.id(), cam_id, z.Pixel(cam_id)[0], z.Pixel(cam_id)[1],
-                   p[0], p[1], error);
+      ROS_DEBUG_NAMED("FlagOutliers","FlagOutliers: LM [%d,%d] cam[%d] z=[%.2f, %.2f], hx=[%.2f, %.2f] error %f",
+                   lm.id().ref_frame_id.id, lm.id().landmark_index, (int)cam_id, z.Pixel(cam_id)[0], z.Pixel(cam_id)[1],
+                   p[0], p[1], (double)error);
 
       z.SetReprojectionError(cam_id, error);
 
       //if "dist" to model is > than the inlier threshold ->FLAG as outlier
       if (error > outlier_threshold ){
-        PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level,
-                     "FlagOutliers %s reprojection error %f too big\n",
-                     lm.id(), error);
+        ROS_DEBUG_NAMED("FlagOutliers","FlagOutliers [%d,%d] reprojection error %f too big", lm.id().ref_frame_id.id,lm.id().landmark_index, error);
         z.SetFlag(cam_id, outlier_flag);
       } else {
         z.SetFlag(cam_id, GoodMatch);
@@ -206,7 +198,6 @@ int FlagOutliers(
   } else {
     msre = DBL_MAX;
   }
-  PrintMessage(TrackingConfig::getConfig()->flagoutliers_debug_level, "</FlagOutliers>\n");
 
   if (infinity_lms) {
     *infinity_lms = num_landmarks_at_infinity;
@@ -268,7 +259,6 @@ void LiftTrackingData(const CameraRigPtr& rig,
 
 
 bool EstimateRelativePose(const ReferenceFrameId &frame_id,
-                          const FeatureHandler::Options &options,
                           LocalMap &working_set,
                           BackEnd &backend,
                           const FeatureImageVector &images,
@@ -299,26 +289,23 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   //=================================================================
   if (!no_tic) timer->Tic("MatchInTime");
   bool have_enough_matches = false;
-  float search_radius = CommonFrontEndConfig::getConfig()->initial_search_radius;
+  float search_radius = CommonFrontEndConfig::getConfig()->getInitialSearchRadius();
   int matching_attempts = 0;
-  int max_attempts = CommonFrontEndConfig::getConfig()->num_match_in_time_attempts;
+  int max_attempts = CommonFrontEndConfig::getConfig()->getNumMatchInTimeAttempts();
   while (!have_enough_matches && ++matching_attempts <= max_attempts) {
     // compute matches
     system_status.num_mit_matches =
-        MatchInTime(frame_id, images, working_set, options, new_measurements,
+        MatchInTime(frame_id, images, working_set, new_measurements,
                     feature_matches, search_radius);
 
-    PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                 "MATCH-IN-TIME num tentative matches: %d\n",
-                 system_status.num_mit_matches);
+    ROS_DEBUG_NAMED("MatchInTime", "MATCH-IN-TIME num tentative matches: %d", system_status.num_mit_matches);
 
     have_enough_matches =
         system_status.num_mit_matches >= TrackingConfig::getConfig()->min_tracked_features;
     if (!have_enough_matches) {
       // increase search area
-      PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                   "MIT FAILURE -> Increasing Search area \n");
-      search_radius *= CommonFrontEndConfig::getConfig()->search_radius_grow_rate;
+      ROS_DEBUG_NAMED("MatchInTime", "MIT FAILURE -> Increasing Search area");
+      search_radius *= CommonFrontEndConfig::getConfig()->getSearchRadiusGrowRate();
     }
   }
   if (!no_tic) timer->Toc("MatchInTime");
@@ -376,8 +363,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   // any, then consider this failed.
   if (num_finite_lmks != 0 && points_2d.size() < 16) {
     if (!no_tic) timer->Toc("RANSAC");
-    LOG(WARNING) << "Not enough points to estimate relative pose: "
-                 << points_2d.size();
+    ROS_WARN("Not enough points to estimate relative pose: %d", (int)points_2d.size());
     return false;
   }
 
@@ -395,7 +381,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   // How many landmarks are at infinity
   int infinity_lms = 0;
   system_status.num_inliers =
-      FlagOutliers( CommonFrontEndConfig::getConfig()->ransac_outlier_threshold,
+      FlagOutliers( CommonFrontEndConfig::getConfig()->getRansacOutlierThreshold(),
                     RansacOutlier,
                     working_set,
                     ransac_t_ab,
@@ -408,12 +394,11 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
                "RANSAC inliers: %d, inlierPercent: %f\n",
                system_status.num_inliers,
                float(system_status.num_inliers) /
-               CommonFrontEndConfig::getConfig()->num_features_to_track);
+               CommonFrontEndConfig::getConfig()->getNumFeaturesToTrack());
 
   // failure case
   if (system_status.num_inliers + infinity_lms < 16) {
-    LOG(ERROR) << "WARNING: RANSAC failure, using motion "
-               << "model alone if possible";
+    ROS_ERROR("WARNING: RANSAC failure, using motion model alone if possible");
     if(!no_tic) timer->Toc("RANSAC");
     return false;
   }

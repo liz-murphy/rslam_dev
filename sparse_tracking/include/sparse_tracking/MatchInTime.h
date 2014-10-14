@@ -24,7 +24,6 @@
 int MatchInTime(const ReferenceFrameId                &frame_id,
                 const FeatureImageVector              &images,
                 const LocalMap                        &working_set,
-                const FeatureHandler::Options         &feature_options,
                 std::vector<MultiViewMeasurement>     &new_measurements,
                 std::vector< std::vector<Feature*> >  &feature_matches,
                 float                                 search_radius);

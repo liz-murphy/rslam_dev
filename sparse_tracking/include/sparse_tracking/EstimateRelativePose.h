@@ -100,7 +100,6 @@ void LiftTrackingData(const CameraRigPtr& rig,
 /// \return
 ///
 bool EstimateRelativePose(const ReferenceFrameId &frame_id,
-    const FeatureHandler::Options         &options,
     LocalMap                              &working_set,
     BackEnd                               &backend,
     const FeatureImageVector              &images,

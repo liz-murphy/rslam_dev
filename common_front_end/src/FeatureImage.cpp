@@ -45,7 +45,7 @@ FeatureImage::FeatureImage(unsigned int num_pyramid_levels,
       image_pyramid_(new pb::ImagePyramid(num_pyramid_levels,
                                           level_scaling_factor))
       {
-        std::cout << num_pyramid_levels << "," << level_scaling_factor << ", " << num_quadtree_levels << ", " << num_features_to_track << ", " << max_features_in_cell << ", " << use_buckets << "\n";
+        std::cout << "FeatureImage.cpp: " <<  num_pyramid_levels << "," << level_scaling_factor << ", " << num_quadtree_levels << ", " << num_features_to_track << ", " << max_features_in_cell << ", " << use_buckets << "\n";
   factor_at_level_.resize(num_pyramid_levels_);
   factor_at_level_[0] = 1.0;
   for (unsigned int ii = 1; ii < num_pyramid_levels_; ++ii) {

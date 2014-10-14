@@ -216,12 +216,8 @@ inline bool InitLandmark(
   lmId.landmark_index = frame->NumLandmarks();
   lmId.ref_frame_id    = frame->id();
 
-  if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D || CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_SIMULATION)
-  {
-    lmId.track2d_id = matches.vFeatures[ref_camera_id]->id;
-  } else {
-    lmId.track2d_id = 0;
-  }
+
+  lmId.track2d_id = 0;
 
   MeasurementId zId;
   zId.frame_id     = frame->id();
@@ -287,7 +283,6 @@ void StartNewLandmarks(
     const std::shared_ptr<SlamMap>   &map,
     SlamFramePtr                     current_frame,
     FeatureImageVector               &images,
-    const FeatureHandler::Options    &feature_options,
     unsigned int                     &num_tracked_landmarks,
     unsigned int                     &num_new_landmarks,
     sparse::FeatureMask              &feature_mask)
@@ -300,7 +295,7 @@ void StartNewLandmarks(
   FeatureMatches<> matches;
   const size_t num_cameras = rig.cameras.size();
   const unsigned int desired_num_landmarks =
-      CommonFrontEndConfig::getConfig()->num_features_to_track;
+      CommonFrontEndConfig::getConfig()->getNumFeaturesToTrack();
   unsigned int ref_camera_id = TrackingConfig::getConfig()->ref_cam_id;
   unsigned int num_feat_tested = 0;
   bool use_frustrum   = false;
@@ -386,8 +381,8 @@ void StartNewLandmarks(
                                       feature,
                                       matches,
                                       patch_orientation,
-                                      radius_at_cam_plane,
-                                      feature_options) == false ) {
+                                      radius_at_cam_plane
+                                      ) == false ) {
       continue;
     }
 

@@ -12,11 +12,12 @@
 #include <utility>
 #include <string>
 
-#include <common_front_end/CommonFrontEndConfig.h>
 #include <sparse_tracking/TrackingConfig.h>
-#include <common_front_end/CommonFrontEndParamsConfig.h>
+
+#include <common_front_end/CommonFrontEndConfig.h>
 #include <common_front_end/EssentialMatrix.h>
 #include <common_front_end/PatchMatch.h>
+
 #include <slam_map/MapVisitor/RelativePoseMapVisitor.h>
 #include <slam_map/ProtobufIO.h>
 #include <slam_map/ReferenceFrame.h>
@@ -33,6 +34,10 @@
 #include <pb_msgs/frontend.pb.h>
 #include <miniglog/logging.h>
 #include <condition_variable>
+
+#include <dynamic_reconfigure/DoubleParameter.h>
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure/Config.h>
 
 namespace rslam {
 namespace sparse {
@@ -93,41 +98,45 @@ void FrontEnd::Toc(const std::string &name) {
 }
 
 void FrontEnd::SetupFeatureHandlers() {
-  if (is_simulation_) {
-    CommonFrontEndConfig::getConfig()->feature_detector = common_front_end::CommonFrontEndParams_SIMULATION;
-  }
-  /*options_.feature_detector   =
-      FeatureHandler::StrToDetectorType(CommonFrontEndConfig::getConfig()->feature_detector);
-  options_.feature_descriptor =
-      FeatureHandler::StrToDescriptorType(CommonFrontEndConfig::getConfig()->feature_descriptor);*/
+  // We need to update the dynamic reconfigure server
+  dynamic_reconfigure::ReconfigureRequest srv_req;
+  dynamic_reconfigure::ReconfigureResponse srv_resp;
+  dynamic_reconfigure::DoubleParameter double_param;
+  dynamic_reconfigure::BoolParameter bool_param;
+  dynamic_reconfigure::IntParameter int_param;
+  dynamic_reconfigure::Config conf;
 
-  if (options_.feature_detector == DOG) {
-    CommonFrontEndConfig::getConfig()->do_subpixel_refinement   = false;
-    CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
-    CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
-  } else if (options_.feature_detector == TRACK_2D) {
-    TrackingConfig::getConfig()->do_rethreading         = false;
-    CommonFrontEndConfig::getConfig()->fast_level_factor        = 1.0;
-    CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
-    CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
-    CommonFrontEndConfig::getConfig()->esm_threshold            = 30.0;
-    CommonFrontEndConfig::getConfig()->ransac_outlier_threshold = 2.0;
-  } else if (options_.feature_detector == FLYBY) {
-    CommonFrontEndConfig::getConfig()->do_subpixel_refinement   = false;
-    CommonFrontEndConfig::getConfig()->use_feature_buckets      = false;
-    CommonFrontEndConfig::getConfig()->num_quadtree_levels      = 1;
-    TrackingConfig::getConfig()->do_rethreading         = true;
-    CommonFrontEndConfig::getConfig()->esm_threshold            = 30.0;
-    CommonFrontEndConfig::getConfig()->ransac_outlier_threshold = 2.0;
-  }
+  if (CommonFrontEndConfig::getConfig()->getFeatureDetector() == common_front_end::CommonFrontEndParams_DOG) 
+  {
+    bool_param.name = "do_subpixel_refinement";
+    bool_param.value = false;
+    conf.bools.push_back(bool_param);
+    CommonFrontEndConfig::getConfig()->setSubPixelRefinement(false);
 
-  options_.dog_edge_threshold  = CommonFrontEndConfig::getConfig()->dog_edge_threshold;
+    bool_param.name = "use_feature_buckets";
+    bool_param.value = false;
+    conf.bools.push_back(bool_param);
+    CommonFrontEndConfig::getConfig()->setUseFeatureBuckets(false);
+  
+    int_param.name = "num_quadtree_levels";
+    int_param.value = 1;
+    conf.ints.push_back(int_param);
+    CommonFrontEndConfig::getConfig()->setNumQuadTreeLevels(1);
+
+  } 
+  srv_req.config = conf;
+  ros::service::call("/rslam_engine_node/set_parameters", srv_req, srv_resp);
+
+ /* options_.dog_edge_threshold  = CommonFrontEndConfig::getConfig()->dog_edge_threshold;
   options_.dog_threshold       = CommonFrontEndConfig::getConfig()->dog_threshold;
   options_.dog_num_octaves     = CommonFrontEndConfig::getConfig()->dog_octaves;
   options_.dog_sigma           = CommonFrontEndConfig::getConfig()->dog_sigma;
 
-  options_.freak_num_octaves   = CommonFrontEndConfig::getConfig()->freak_octaves;
-  options_.freak_pattern_scale = CommonFrontEndConfig::getConfig()->freak_pattern_scale;
+  options_.freak_orientation_normalized = CommonFrontEndConfig::getConfig->freakOrientationNormalized();
+  options_.freak_scale_normalized = CommonFrontEndConfig::getConfig->freakScaleNormalized();
+  options_.freak_num_octaves   = CommonFrontEndConfig::getConfig()->getFreakOctaves();
+  options_.freak_pattern_scale = CommonFrontEndConfig::getConfig()->getFreakPatternScale();
+
 
   options_.fast_threshold      = CommonFrontEndConfig::getConfig()->fast_threshold;
   options_.fast_levels         = CommonFrontEndConfig::getConfig()->fast_levels;
@@ -138,13 +147,10 @@ void FrontEnd::SetupFeatureHandlers() {
   options_.brisk_num_octaves           = CommonFrontEndConfig::getConfig()->brisk_octaves;
   options_.brisk_is_rotation_invariant = CommonFrontEndConfig::getConfig()->is_rotation_invariant;
   options_.brisk_do_3d_refinement      = false;
-
+*/
   // initialize handlers (this takes a while, just done once)
   for (size_t ii = 0; ii < rig_.cameras.size(); ++ii) {
-    if (is_simulation_) {
-      options_.sim_camera_id = ii;
-    }
-    feature_handler_[ii].Init(options_);
+    feature_handler_[ii].Init();
   }
 }
 
@@ -163,7 +169,7 @@ bool FrontEnd::Init(
   Clear();
 
   // Random Seed (for repeatability).
-  system_state_.rng.seed(CommonFrontEndConfig::getConfig()->ransac_seed);
+  system_state_.rng.seed(CommonFrontEndConfig::getConfig()->getRansacSeed());
 
   //=========================================================
   // Set map, place matcher, timer, vehicle configuration,
@@ -189,7 +195,7 @@ bool FrontEnd::Init(
   if (frames->Size() > 0) {
     unsigned int wide_fov_cam_id = calibu::LargestFrustum(rig_);
     dense_aligner_.Init(rig_.cameras[wide_fov_cam_id].camera, 32,
-                        CommonFrontEndConfig::getConfig()->dense_align_threshold);
+                        CommonFrontEndConfig::getConfig()->getDenseAlignThreshold());
     std::shared_ptr<pb::Image> ref_img = frames->at(wide_fov_cam_id);
     dense_aligner_.SetRefImage(*ref_img);
   }
@@ -216,38 +222,7 @@ bool FrontEnd::Init(
         ba::Gravity);
     ROS_INFO("Setting starting frame gravity to %s", boost::lexical_cast<std::string>(current_frame_->g_r().transpose()).c_str() );
 
-    // Peanut joe2
-    // current_frame_->set_b((Eigen::Vector6t() << 0.000763685,
-    //                                       0.00166136, 5.67922e-05, -0.21448, 0.127014, 0.492636).finished());
-
-    if(CommonFrontEndConfig::getConfig()->peanut_name == "jimmy") {
-      // Jimmy
-      current_frame_->set_b((
-          Eigen::Vector6t() <<
-          0.00374971, 0.00282816, 0.00178017, -0.129637, -0.0427762, 000.851411
-                             ).finished());
-    } else if(CommonFrontEndConfig::getConfig()->peanut_name == "joe") {
-      // Joe
-      current_frame_->set_b((
-          Eigen::Vector6t() <<
-          0.00127123, 0.0012352, 0.000321202, -0.0115163, 0.381063, 0.876788
-                             ).finished());
-    } else if(CommonFrontEndConfig::getConfig()->peanut_name == "john") {
-      //John
-      current_frame_->set_b((
-          Eigen::Vector6t() <<
-          .00151518, 0.00136494, 0.00245388, -0.180428, 0.0668865, 0.455055
-                             ).finished());
-    }
-
-    // for corridor
-    // current_frame_->set_b( (Eigen::Vector6t() << -0.000657972,
-    // 0.00104263, 0.0010285, -0.170381, 0.260713, 0.430895).finished());
-
-    // For loop
-    //current_frame_->set_b( (Eigen::Vector6t() << 0.000989608,
-    //0.00161033, 0.00163137, 4.84568, 0.0729798, -0.38888).finished());
-    ROS_INFO("Setting starting frame bias to %s", boost::lexical_cast<std::string>(current_frame_->b().transpose()).c_str() );
+     ROS_INFO("Setting starting frame bias to %s", boost::lexical_cast<std::string>(current_frame_->b().transpose()).c_str() );
   }
   current_frame_->set_t_vs(rig_.cameras[0].T_wc);
   current_frame_->set_cam_params(rig_.cameras[0].camera.GenericParams());
@@ -259,28 +234,23 @@ bool FrontEnd::Init(
 
   for (size_t ii = 0; ii < rig_.cameras.size(); ii++) {
     current_feature_images_[ii] = std::make_shared<FeatureImage>(
-        CommonFrontEndConfig::getConfig()->fast_levels,
-        CommonFrontEndConfig::getConfig()->fast_level_factor,
-        CommonFrontEndConfig::getConfig()->num_quadtree_levels,
-        CommonFrontEndConfig::getConfig()->num_features_to_track,
-        CommonFrontEndConfig::getConfig()->max_features_in_cell,
-        CommonFrontEndConfig::getConfig()->use_feature_buckets);
+        CommonFrontEndConfig::getConfig()->getPyramidLevels(),
+        CommonFrontEndConfig::getConfig()->getPyramidLevelFactor(),
+        CommonFrontEndConfig::getConfig()->getNumQuadtreeLevels(),
+        CommonFrontEndConfig::getConfig()->getNumFeaturesToTrack(),
+        CommonFrontEndConfig::getConfig()->getMaxFeaturesInCell(),
+        CommonFrontEndConfig::getConfig()->useFeatureBuckets());
     keyframe_images_[ii] = std::make_shared<FeatureImage>(
-        CommonFrontEndConfig::getConfig()->fast_levels,
-        CommonFrontEndConfig::getConfig()->fast_level_factor,
-        CommonFrontEndConfig::getConfig()->num_quadtree_levels,
-        CommonFrontEndConfig::getConfig()->num_features_to_track,
-        CommonFrontEndConfig::getConfig()->max_features_in_cell,
-        CommonFrontEndConfig::getConfig()->use_feature_buckets);
+        CommonFrontEndConfig::getConfig()->getPyramidLevels(),
+        CommonFrontEndConfig::getConfig()->getPyramidLevelFactor(),
+        CommonFrontEndConfig::getConfig()->getNumQuadtreeLevels(),
+        CommonFrontEndConfig::getConfig()->getNumFeaturesToTrack(),
+        CommonFrontEndConfig::getConfig()->getMaxFeaturesInCell(),
+        CommonFrontEndConfig::getConfig()->useFeatureBuckets());
   }
 
   // Add first frame to the place matcher object.
   ExtractFeatures(frames, current_feature_images_);
-
-  // We need to extract features again to prime the FlyBy 2d tracker
-  if (options_.feature_detector == FLYBY) {
-    ExtractFeatures(frames, current_feature_images_);
-  }
 
   if (!frames->Empty()) {
     std::shared_ptr<pb::Image> place = frames->at(0);
@@ -298,7 +268,7 @@ bool FrontEnd::Init(
   feature_mask_.Clear();
   // Function in StartNewLandmarks.h
   StartNewLandmarks(rig_, map_, current_frame_, current_feature_images_,
-                    options_, system_state_.num_tracked_landmarks,
+                    system_state_.num_tracked_landmarks,
                     system_state_.num_new_landmarks,
                     feature_mask_);
 
@@ -431,18 +401,15 @@ void FrontEnd::ProcessKeyframe(
   // If using 2d tracked features,flag features that failed tracking as
   // not used so that start new landmarks can use them.
   //=========================================================
-  if (!CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D ||
-      !CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_FLYBY ||
-      is_simulation_) {
-    ProcessFailedTracks(*new_measurements, feature_matches);
-  }
-
+  // ALWAYS using 2d tracked features now ...
+  ProcessFailedTracks(*new_measurements, feature_matches);
+  
   //=========================================================
   // Start new landmarks if needed
   //=========================================================
   Tic("StartNewLandmarks");
   StartNewLandmarks(rig_, map_, current_frame_, current_feature_images_,
-                    options_, system_state_.num_tracked_landmarks,
+                    system_state_.num_tracked_landmarks,
                     system_state_.num_new_landmarks,
                     feature_mask_);
 
@@ -576,7 +543,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
   //=========================================================
 
   Tic("ComputeWorkingSet");
-  if (CommonFrontEndConfig::getConfig()->do_marginalization) {
+  if (CommonFrontEndConfig::getConfig()->doMarginalization()) {
     // If we are doing marginalization, we wish to match everything that was
     // seen in the current optimization window, but nothing more, which is why
     // the local_only flag is set on the lift operation, and the lift window
@@ -658,7 +625,6 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
   ROS_ERROR_COND(!map_->GetCamera(current_frame_->id().session_id), "No camera rig found for given frame");
 
   bool failed = !EstimateRelativePose(current_frame_->id(),
-                                      options_,
                                       work_set_,
                                       front_end_opt,
                                       current_feature_images_,
@@ -729,7 +695,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
    
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
-                        CommonFrontEndConfig::getConfig()->tracker_hold_depth,
+                        CommonFrontEndConfig::getConfig()->getTrackerHoldDepth(),
                         true);
   } else {
     ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Iterate: Updating edge between %d and %d", reference_frame_->id().id, current_frame_->id().id);
@@ -744,7 +710,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     }
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
-                        CommonFrontEndConfig::getConfig()->tracker_hold_depth,
+                        CommonFrontEndConfig::getConfig()->getTrackerHoldDepth(),
                         true);
   }
 
@@ -883,10 +849,9 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
   MatchInTime(current_frame_->id(),
               current_feature_images_,
               work_set_,
-              options_,
               new_measurements,
               feature_matches,
-              CommonFrontEndConfig::getConfig()->initial_search_radius);
+              CommonFrontEndConfig::getConfig()->getInitialSearchRadius());
   Toc("MatchInTime");
   ROS_DEBUG_NAMED("sparse_front_end::Iterate", "Made %d new measurements", (int)new_measurements.size());
 
@@ -1052,7 +1017,7 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
 
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
-                        CommonFrontEndConfig::getConfig()->tracker_hold_depth,
+                        CommonFrontEndConfig::getConfig()->getTrackerHoldDepth(),
                         true);
   } else {
     if (SlamEdgePtr edge = map_->GetEdgePtr(reference_frame_->id(),
@@ -1061,7 +1026,7 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
     }
     map_->SetHoldFrames(hold_frame_token_,
                         reference_frame_->id(),
-                        CommonFrontEndConfig::getConfig()->tracker_hold_depth,
+                        CommonFrontEndConfig::getConfig()->getTrackerHoldDepth(),
                         true);
   }
 
@@ -1078,7 +1043,7 @@ bool FrontEnd::Initialization(const std::shared_ptr<pb::ImageArray>& frames,
     Tic("StartNewLandmarks");
     feature_mask_.Clear();
     StartNewLandmarks(rig_, map_, current_frame_, current_feature_images_,
-                      options_, system_state_.num_tracked_landmarks,
+                      system_state_.num_tracked_landmarks,
                       system_state_.num_new_landmarks, feature_mask_);
     Toc("StartNewLandmarks");
     Tic("BA");

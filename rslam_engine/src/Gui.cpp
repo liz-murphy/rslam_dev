@@ -213,7 +213,7 @@ bool Gui::GetMap(visualization_msgs::Marker &map)
   global_view_->LinesForGL(&edge_ids_, &line_points_, &maps_, &num_maps_);
 
   // Set up colors for each edge
-  static const Eigen::Vector4d base_colors[6] =
+  static const Eigen::Vector4f base_colors[6] =
       {{1.0, 1.0, 0.0, 0.5},  // Yellow
        {0.8, 0.8, 0.8, 0.2},  // Gray
        {0.5, 1.0, 1.0, 1.0},  // Cyan
@@ -260,10 +260,11 @@ bool Gui::GetMap(visualization_msgs::Marker &map)
       
       continue;
     }*/   
-    for (int i = 0; i < 2; ++i) {
+    // THIS IS BROKEN !!!
+    for (int j = 0; j < 2; ++j) {
       edge_colors.insert(edge_colors.end(),
-                         &base_colors[cindex][0],
-                         &base_colors[cindex][path_color_size]);
+                         &(base_colors[cindex][0]),
+                         &(base_colors[cindex][path_color_size-1])+1);
     }
   }
 

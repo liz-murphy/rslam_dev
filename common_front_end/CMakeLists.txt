@@ -25,8 +25,12 @@ find_package(Eigen REQUIRED)
 find_package(OpenCV REQUIRED)
 
 message("\n\n common_front_end opencv: ${OpenCV_LIBRARIES} \n\n")
+
 generate_dynamic_reconfigure_options(
   cfg/CommonFrontEndParams.cfg
+  cfg/FREAK.cfg
+  cfg/SURF.cfg
+  cfg/FAST.cfg
 )
 
 set(SRCS 

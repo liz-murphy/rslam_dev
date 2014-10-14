@@ -223,8 +223,7 @@ class FeatureImage {
   /// Assumes the top level of the pyramid (level 0) is set, and
   /// builds out the rest of the pyramid
   void _BuildPyramid();
-  void _AddKeyPoints(std::vector<cv::KeyPoint> &keypoints,
-                     const FeatureHandler::Options &options);
+  void _AddKeyPoints(std::vector<cv::KeyPoint> &keypoints);
 
   void _BucketKeyPoints(std::vector<cv::KeyPoint>& keypoints);
 

@@ -302,7 +302,6 @@ private:
   common::SystemStatus          system_state_;
   Scalar                        learning_rate_;
   calibu::CameraRigT<Scalar>    rig_;
-  FeatureHandler::Options       options_;
   std::shared_ptr<PlaceMatcher> place_matcher_;
   std::shared_ptr<SlamMap>      map_;
   std::shared_ptr<Timer>        timer_;

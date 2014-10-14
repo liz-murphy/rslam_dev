@@ -7,6 +7,7 @@
 #include <common_front_end/FeatureHandler.h>
 #include <common_front_end/PatchMatch.h>
 #include <common_front_end/SparseSimData.h>
+#include <common_front_end/CommonFrontEndConfig.h>
 #include <miniglog/logging.h>
 #include <opencv2/nonfree/features2d.hpp>
 
@@ -45,35 +46,25 @@ private:
   unsigned int cam_id_;
 };
 
-bool FeatureHandler::Init(const Options& options) {
-  m_Options = options;
+//bool FeatureHandler::Init(const Options& options) {
+bool FeatureHandler::Init() {
+  //m_Options = options;
 
   // Initialize the feature detector
-  switch(options.feature_detector) {
-    case DOG:
+  switch(CommonFrontEndConfig::getConfig()->getFeatureDetector()) {
+    case common_front_end::CommonFrontEndParams_DOG:
       ROS_INFO("Using DOG feature detector");
       m_pFeatureDetector = std::shared_ptr<cv::FeatureDetector>(
-          new cv::SurfFeatureDetector(400));
+          new cv::SurfFeatureDetector(CommonFrontEndConfig::getConfig()->getSurfHessianThreshold()));
       break;
-    case FAST:
+    case common_front_end::CommonFrontEndParams_FAST:
       ROS_INFO("Using FAST feature detector");
       m_pFeatureDetector =
           std::shared_ptr<cv::FeatureDetector>(
-              new FastPyramidDetector(options.fast_threshold,
-                                      options.fast_do_nms,
-                                      options.fast_skip_level0));
+              new FastPyramidDetector(CommonFrontEndConfig::getConfig()->getFastThreshold(),
+                CommonFrontEndConfig::getConfig()->fastDoNonMaxSuppression(),
+                CommonFrontEndConfig::getConfig()->fastSkipLevel0()) );
       break;
-   // case TRACK_2D:
-    //  m_pFeatureDetector = std::make_shared<Track2dFeatureDetector>();
-     // break;
-    case SIMULATION:
-      m_pFeatureDetector = std::shared_ptr<cv::FeatureDetector>(
-          new SimFeatureDetector(options.sim_camera_id));
-      break;
-    /*case FLYBY:
-      m_pFeatureDetector = std::make_shared<FlybyPyramidFeatureDetector>(
-          options.fast_skip_level0);
-      break;*/
     default:
       std::cerr << " Feature detector not recognized. ";
       std::cerr << " valid: [FAST] " << std::endl;
@@ -81,33 +72,37 @@ bool FeatureHandler::Init(const Options& options) {
   }
 
   // Initialize descriptor extractor
-  switch (options.feature_descriptor)
+  //switch (options.feature_descriptor)
+  switch (CommonFrontEndConfig::getConfig()->getFeatureDescriptor())
   {
-    case PATCH:
+    case common_front_end::CommonFrontEndParams_PATCH:
       {
+        ROS_INFO("Using PATCH descriptors");
         // No descriptor is needed, we are using patch-matching
         m_pDescriptorExtractor = NULL;
         break;
       }
-    case FREAK:
+    case common_front_end::CommonFrontEndParams_FREAK:
       {
+        ROS_INFO("Using FREAK descriptors");
         m_pDescriptorExtractor =
             std::shared_ptr<cv::DescriptorExtractor>(
-                new cv::FREAK(options.freak_is_rotation_invariant,
-                              options.freak_is_scale_invariant,
-                              options.freak_pattern_scale,
-                              options.freak_num_octaves,
-                              options.freak_selected_pairs));
+                new cv::FREAK(
+                  CommonFrontEndConfig::getConfig()->freakOrientationNormalized(),
+                  CommonFrontEndConfig::getConfig()->freakScaleNormalized(),
+                  CommonFrontEndConfig::getConfig()->getFreakPatternScale(),
+                  CommonFrontEndConfig::getConfig()->getFreakNOctaves()) );
         break;
       }
-    case SURF:
+    case common_front_end::CommonFrontEndParams_SURF:
       {
+        ROS_INFO("Using SURF descriptors");
         m_pDescriptorExtractor = std::shared_ptr<cv::DescriptorExtractor>( new cv::SURF(
-            options.surf_fHessianThreshold,
-            options.surf_nOctaves,
-            options.surf_nOctaveLayers,
-            options.surf_bExtended,
-            options.surf_bUpright ) );
+            CommonFrontEndConfig::getConfig()->getSurfHessianThreshold(),
+            CommonFrontEndConfig::getConfig()->getSurfNOctaves(),
+            CommonFrontEndConfig::getConfig()->getSurfNOctaveLayers(),
+            CommonFrontEndConfig::getConfig()->surfExtended(),
+            CommonFrontEndConfig::getConfig()->surfUpright()) );
         break;
       }
     default:
@@ -123,17 +118,15 @@ bool FeatureHandler::Init(const Options& options) {
 void FeatureHandler::DetectFeatures(
     const std::shared_ptr<pb::ImagePyramid>& pyramid,
     std::vector<cv::KeyPoint>& keypoints) {
-  if(m_Options.feature_detector == FAST) {
-    auto* ptr =
-        reinterpret_cast<FastPyramidDetector*>(m_pFeatureDetector.get());
-    ptr->SetImagePyramidPtr(pyramid);
-    ptr->detect(pyramid->at(0), keypoints);
-  } /*else if(m_Options.feature_detector == FLYBY) {
+  //if(m_Options.feature_detector == FAST) {
+    if(CommonFrontEndConfig::getConfig()->getFeatureDetector() == common_front_end::CommonFrontEndParams_FAST)
+    {
       auto* ptr =
-          reinterpret_cast<FlybyPyramidFeatureDetector*>(m_pFeatureDetector.get());
+          reinterpret_cast<FastPyramidDetector*>(m_pFeatureDetector.get());
       ptr->SetImagePyramidPtr(pyramid);
       ptr->detect(pyramid->at(0), keypoints);
-  }*/ else {
+  } 
+  else {
     m_pFeatureDetector->detect(pyramid->at(0), keypoints);
   }
 }
@@ -147,7 +140,7 @@ void FeatureHandler::ComputeDescriptors(
   }
 }
 
-DetectorType FeatureHandler::StrToDetectorType(std::string s) {
+/*DetectorType FeatureHandler::StrToDetectorType(std::string s) {
   if (!s.compare("FAST")) {
     return FAST;
   } else if(!s.compare("FLYBY")) {
@@ -161,10 +154,10 @@ DetectorType FeatureHandler::StrToDetectorType(std::string s) {
   } else {
     return DET_UNDEFINED;
   }
-}
+}*/
 
 ////////////////////////////////////////////////////////////////////////////////
-DescriptorType FeatureHandler::StrToDescriptorType(std::string s )
+/*DescriptorType FeatureHandler::StrToDescriptorType(std::string s )
 {
   if (!s.compare("PATCH")) {
     return PATCH;
@@ -175,10 +168,10 @@ DescriptorType FeatureHandler::StrToDescriptorType(std::string s )
   } else {
     return DES_UNDEFINED;
   }
-}
+}*/
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string FeatureHandler::DetectorTypeStr() const
+/*std::string FeatureHandler::DetectorTypeStr() const
 {
   switch (m_Options.feature_detector) {
     case FAST: return "FAST";
@@ -199,4 +192,4 @@ std::string FeatureHandler::DescriptorTypeStr() const
     case SURF: return "SURF";
     default: return "ERROR: Descriptor type not recognized";
   }
-}
+}*/

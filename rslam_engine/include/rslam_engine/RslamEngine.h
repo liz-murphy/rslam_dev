@@ -20,6 +20,8 @@
 #include <utils/ImageProcessing.h>
 #include <dynamic_reconfigure/server.h>
 #include <sparse_front_end/SparseFrontEndConfig.h>
+#include <common_front_end/CommonFrontEndConfig.h>
+#include <common_front_end/CommonFrontEndParamsConfig.h>
 #include <sparse_front_end/FrontEnd.h>
 namespace geocon {
 class geodetic2local;
@@ -77,9 +79,16 @@ class RslamEngine {
   // Public access objects
   //std::shared_ptr<rslam::FrontEndInterface> frontend_;
   std::shared_ptr<sparse::FrontEnd> frontend_;
-  
-  std::shared_ptr<dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig> > frontend_dr_srv_;
-  dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>::CallbackType cb;
+ 
+  // ROS pollution for dynamic reconfigure
+  std::shared_ptr<dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig> > sparse_frontend_dr_srv_;
+  std::shared_ptr<dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig> > common_frontend_dr_srv_;
+ 
+  dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>::CallbackType sparse_front_end_cb;
+  dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>::CallbackType common_front_end_cb;
+  /*dynamic_reconfigure::Server<common_front_end::FREAKConfig>::CallbackType freak_cb;
+  dynamic_reconfigure::Server<common_front_end::FASTConfig>::CallbackType fast_cb;
+  dynamic_reconfigure::Server<common_front_end::SURFConfig>::CallbackType surf_cb;*/
  
   std::shared_ptr<SlamMap> map_;
   calibu::CameraRigT<Scalar> rig_;
@@ -121,5 +130,6 @@ class RslamEngine {
   std::shared_ptr<SlamServerProxy> server_proxy_;
   RslamTracker                   tracker_type_;
   std::unique_ptr<geocon::geodetic2local> lla2local_;
+  CommonFrontEndConfig* common_front_end_config_;
 };
 }

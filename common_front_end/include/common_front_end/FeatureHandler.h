@@ -13,19 +13,12 @@
 
 enum DetectorType
 {
-
-  DET_UNDEFINED = common_front_end::CommonFrontEndParams_UNDEFINED,
   FAST          = common_front_end::CommonFrontEndParams_FAST,
-  AGAST         = common_front_end::CommonFrontEndParams_AGAST,
   DOG           = common_front_end::CommonFrontEndParams_DOG,
-  TRACK_2D      = common_front_end::CommonFrontEndParams_TRACK_2D,
-  SIMULATION    = common_front_end::CommonFrontEndParams_SIMULATION,
-  FLYBY         = common_front_end::CommonFrontEndParams_FLYBY
 };
 
 enum DescriptorType
 {
-  DES_UNDEFINED = common_front_end::CommonFrontEndParams_UNDEFINED,
   PATCH         = common_front_end::CommonFrontEndParams_PATCH,
   FREAK         = common_front_end::CommonFrontEndParams_FREAK,
   BRISK         = common_front_end::CommonFrontEndParams_BRISK,
@@ -38,7 +31,7 @@ class FeatureHandler
 
 public:
 
-  struct Options
+/*  struct Options
   {
     Options() :
       feature_detector(FAST),
@@ -122,9 +115,10 @@ public:
     bool  surf_bUpright;
 
   };
-
+*/
 public:
-  bool Init( const Options& options );
+  //bool Init( const Options& options );
+  bool Init( );
 
   void DetectFeatures(
       const std::shared_ptr<pb::ImagePyramid>& image_pyramid,
@@ -136,20 +130,20 @@ public:
       cv::Mat& descriptors
       );
 
-  const Options& GetOptions() { return m_Options; }
+ // const Options& GetOptions() { return m_Options; }
 
   static DetectorType   StrToDetectorType( std::string s );
   static DescriptorType StrToDescriptorType( std::string s );
 
-  std::string DetectorTypeStr() const;
-  std::string DescriptorTypeStr() const;
+  //std::string DetectorTypeStr() const;
+  //std::string DescriptorTypeStr() const;
 
   std::shared_ptr<cv::FeatureDetector> GetDetector() {
     return m_pFeatureDetector;
   }
 
 private:
-  Options                                  m_Options;
+  //Options                                  m_Options;
   std::shared_ptr<cv::FeatureDetector>     m_pFeatureDetector;
   std::shared_ptr<cv::DescriptorExtractor> m_pDescriptorExtractor;
 };

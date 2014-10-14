@@ -20,7 +20,9 @@
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
 #include <utils/Utils.h>
+
 #include <common_front_end/CommonFrontEndConfig.h>
+#include <common_front_end/CommonFrontEndParamsConfig.h>
 
 #ifdef HAVE_SEMIDENSE_FRONTEND
 #include <semidense_front_end/semi_dense_frontend.h>
@@ -53,6 +55,7 @@ RslamEngine::RslamEngine() : images_(pb::ImageArray::Create()),
  // CVarUtils::AttachCVar<unsigned int>("SkipNFrames", &g_skip_nframes );
  // CVarUtils::AttachCVar<int>("ErrorLevel", &google::log_severity_global);
  // CVarUtils::AttachCVar<int>("debug.RslamEngine", &g_debug_level );
+ common_front_end_config_ = CommonFrontEndConfig::getConfig();
 }
 
 RslamEngine::~RslamEngine() {}
@@ -108,7 +111,7 @@ void RslamEngine::PrintAppInfo() {
   LOG(INFO) << "==============================================";
   LOG(INFO) << "RslamEngine - Initial State.";
   LOG(INFO) << "==============================================";
-  LOG(INFO) << "Feat detector: "   << CommonFrontEndConfig::getConfig()->feature_detector;
+  LOG(INFO) << "Feat detector: "   << CommonFrontEndConfig::getConfig()->getFeatureDetector();
   LOG(INFO) << "Work dir: "        << working_directory_;
   LOG(INFO) << "Map persistence: " << (persist_map_ ? "true." : "false.");
   LOG(INFO) << "Using imu: "       << (have_imu_ ? "true." : "false.");
@@ -122,13 +125,9 @@ void RslamEngine::PrintAppInfo() {
 bool RslamEngine::Reset(const RslamEngineOptions& options,
                         const calibu::CameraRigT<Scalar>& rig_in) {
   // Cleanup and initialization of config variables
+  common_front_end_config_ = CommonFrontEndConfig::getConfig();
   ResetVars();
   // If we are using TRACK_2D, we only need the first camera.
-  if (CommonFrontEndConfig::getConfig()->feature_detector == common_front_end::CommonFrontEndParams_TRACK_2D) {
-    active_camera_id_ = 0;
-  } else {
-  }
-
   working_directory_ = options.working_dir;
 #ifdef ANDROID
   if (working_directory_.empty()) {
@@ -173,14 +172,21 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   map_->AddCamera(mid, rig_ptr);
 
   place_matcher_ = PlaceMatcherFactory::Create(options.place_matcher_options);
+
+  ros::NodeHandle nh_common_fe("/common_front_end");
+  ros::NodeHandle nh_sparse_fe("/sparse_front_end");
+
+  //common_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>(nh_common_fe));
+  //common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback, common_front_end_config_, _1, _2);
+  //common_frontend_dr_srv_->setCallback(common_front_end_cb);
+
   if (options.tracker_type_ == Tracker_Sparse) {
     LOG(INFO) << "Creating sparse front-end.";
     frontend_ = std::make_shared<sparse::FrontEnd>();
 
-    frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>());
-    cb = boost::bind(&sparse::FrontEnd::configCallback, frontend_, _1, _2);
-    frontend_dr_srv_->setCallback(cb);
-
+    sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
+    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, frontend_, _1, _2);
+    sparse_frontend_dr_srv_->setCallback(sparse_front_end_cb);
   } 
   else {
 #ifdef HAVE_SEMIDENSE_FRONTEND

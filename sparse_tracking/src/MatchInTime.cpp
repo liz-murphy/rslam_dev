@@ -42,7 +42,6 @@ inline bool  _MatchLandmarkInTime(
     const Landmark                &landmark,
     const std::vector<Homography> &homographies,
     const FeatureImageVector      &images,
-    const FeatureHandler::Options &feature_options,
     MultiViewMeasurement          &z,
     std::vector<Feature*>         &matches,
     float                         search_radius)
@@ -64,14 +63,12 @@ inline bool  _MatchLandmarkInTime(
     PatchHomography<CANONICAL_PATCH_SIZE> H = homographies[cam_id];
     const Eigen::Vector2t hx = H.CenterPixel();
 
-    LOG(TrackingConfig::getConfig()->matchintime_debug_level)
-        << "\tMIT: Predicted [ << " << hx[0] << ", " << hx[1]
-        << "] in camera-" << cam_id;
+    ROS_DEBUG_NAMED("MatchInTime","MIT: Predicted [%f,%f] in camera-%d", hx[0],hx[1],cam_id);
 
     // if predicted outside the image try next camera (if any)
     if (H.GetState() ==
         PatchHomography<CANONICAL_PATCH_SIZE>::eOutsideFOV) {
-      LOG(TrackingConfig::getConfig()->matchintime_debug_level) <<  "\tOut of Bounds";
+      ROS_DEBUG_NAMED("MatchInTime","Out of Bounds");
       z.SetFlag( cam_id, OutsideFOV );
       continue;
     }
@@ -84,7 +81,6 @@ inline bool  _MatchLandmarkInTime(
                                           search_radius,
                                           search_radius,
                                           search_image,
-                                          feature_options,
                                           match_score,
                                           match_flag);
 
@@ -94,11 +90,7 @@ inline bool  _MatchLandmarkInTime(
     matches[cam_id] = pMIT;
 
     if (pMIT) {
-      LOG(TrackingConfig::getConfig()->matchintime_debug_level)
-          << "\tMIT: Initial match " <<  MatchStr(match_flag)
-          << " [ " << pMIT->x << ", " << pMIT->y << ", " << pMIT->scale << "] "
-          << "(predicted [" << hx[0] << ", " << hx[1] << "]) "
-          << "in camera-" << cam_id << " (score " << match_score << ")";
+      ROS_DEBUG_NAMED("MIT: Initial match %s [%f,%f,%f] (predicted [%f,%f]) in camera-%d (score %f)", MatchStr(match_flag),pMIT->x,pMIT->y,pMIT->scale,hx[0],hx[1],cam_id,match_score);
 
       // we found a match ( either good or bad, just save matching info )
       H.SetTranslation(pMIT->x, pMIT->y);
@@ -115,12 +107,9 @@ inline bool  _MatchLandmarkInTime(
     if (match_flag != GoodMatch) {
       if (pMIT == nullptr) {
         // In this case no match was found
-        LOG(TrackingConfig::getConfig()->matchintime_debug_level)
-            << "\tNo match found int camera: " << cam_id;
+        ROS_DEBUG_NAMED("MatchInTime","No match found int camera: %d");
       } else {
-        PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                     "    Bad temporal-match [%.2f %.2f] in camera: %d "
-                     "score: %.2f [%s], skipping\n",
+        ROS_DEBUG_NAMED("MatchInTime","Bad temporal-match [%.2f %.2f] in camera: %d score: %.2f [%s], skipping",
                      pMIT->x, pMIT->y, cam_id, match_score,
                      MatchStr(match_flag));
       }
@@ -132,15 +121,13 @@ inline bool  _MatchLandmarkInTime(
     float refined_y = pMIT->y;
     float scale     = H.scale();
 
-    if (CommonFrontEndConfig::getConfig()->do_subpixel_refinement) {
+    if (CommonFrontEndConfig::getConfig()->doSubpixelRefinement()) {
 
       double error =
           search_image.RefineSubPixelXY(landmark.patch(), H,
                                         refined_x, refined_y);
 
-      PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                   "    MIT: ESM (error %f) match refined by [%.2f, %.2f] "
-                   "from [%.2f, %.2f] to [%.2f, %.2f]\n",
+      ROS_DEBUG_NAMED("MatchInTime","MIT: ESM (error %f) match refined by [%.2f, %.2f] from [%.2f, %.2f] to [%.2f, %.2f]",
                    error, pMIT->x - refined_x, pMIT->y - refined_y,
                    pMIT->x, pMIT->y, refined_x, refined_y);
 
@@ -153,15 +140,14 @@ inline bool  _MatchLandmarkInTime(
       z.SetMatchingError(cam_id , error);
 
       // ESM error can help to spot bad matches
-      Scalar scaled_error = CommonFrontEndConfig::getConfig()->esm_subpixel_threshold*scale;
+      Scalar scaled_error = CommonFrontEndConfig::getConfig()->getEsmSubpixelThreshold()*scale;
       if (fabs(refined_x - pMIT->x) > scaled_error ||
           fabs(refined_y - pMIT->y) > scaled_error) {
-        PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                     "    ESM Error above threshold, skipping\n");
+        ROS_DEBUG_NAMED("MatchInTime","ESM Error above threshold, skipping");
         z.SetFlag(cam_id, LowSubPixInRegion);
         continue; // try next camera (if any)
       }
-      if (error > CommonFrontEndConfig::getConfig()->esm_threshold) {
+      if (error > CommonFrontEndConfig::getConfig()->getEsmThreshold()) {
         z.SetFlag(cam_id, BadScoreAfterESM);
         continue; // try next camera (if any)
       }
@@ -286,11 +272,9 @@ Sophus::SE3t _RDF( const Sophus::SE3t& Tab )
 int MatchInTime(const ReferenceFrameId                &frame_id,
                 const FeatureImageVector              &images,
                 const LocalMap                        &working_set,
-                const FeatureHandler::Options         &feature_options,
                 std::vector<MultiViewMeasurement>     &new_measurements,
                 std::vector< std::vector<Feature*> >  &feature_matches,
                 float                                 search_radius) {
-  PrintMessage( TrackingConfig::getConfig()->matchintime_debug_level, "<MatchInTime>\n" );
 
   // Reset output vars
   new_measurements.clear();
@@ -325,27 +309,22 @@ int MatchInTime(const ReferenceFrameId                &frame_id,
       continue;
     }
 
-    PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                 "\n    -------------------------------------\n"
-                 "    Matching LM %d:%d\n", lm.id().ref_frame_id, lm.id().landmark_index);
+    ROS_DEBUG_NAMED("MatchInTime","Matching LM %d:%d", lm.id().ref_frame_id, lm.id().landmark_index);
 
     bool success = _MatchLandmarkInTime(lm, lm_container->tracking_homographies,
-                                        images, feature_options, z,  matches,
+                                        images, z,  matches,
                                         search_radius);
 
     feature_matches.push_back(matches);
 
     if (!success) {
-      PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-                   "    MIT: FAILED\n");
+      ROS_DEBUG_NAMED("MatchInTime", "MIT: FAILED");
       continue;
     }
     num_matches++;
   }
 
-  PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level,
-               "    Tracked %d features\n", num_matches);
-  PrintMessage(TrackingConfig::getConfig()->matchintime_debug_level, "</MatchInTime>\n\n");
+  ROS_DEBUG_NAMED("MatchInTime", "Tracked %d features\n", num_matches);
 
   return num_matches;
 }

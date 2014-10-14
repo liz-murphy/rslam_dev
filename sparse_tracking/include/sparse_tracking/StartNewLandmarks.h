@@ -28,7 +28,6 @@ void StartNewLandmarks(const calibu::CameraRigT<Scalar> &rig,
                        const std::shared_ptr<SlamMap>   &map,
                        SlamFramePtr                     current_frame,
                        FeatureImageVector               &images,
-                       const FeatureHandler::Options    &feature_options,
                        unsigned int                     &num_tracked_landmarks,
                        unsigned int                     &num_new_landmarks,
                        sparse::FeatureMask              &feature_mask

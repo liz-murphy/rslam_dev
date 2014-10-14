@@ -1,4 +1,5 @@
 #include <rslam_engine/RslamApp.h>
+#include <common_front_end/CommonFrontEndConfig.h>
 
 using namespace rslam;
 using namespace sensor_msgs;
@@ -144,7 +145,7 @@ void RslamApp::stereo_callback(const ImageConstPtr& left_image, const CameraInfo
     map_trans.transform.rotation.w = out->data()[3];
     map_broadcaster_.sendTransform(map_trans);
   }
-  //engine->timer_->PrintToTerminal(2);
+  engine->timer_->PrintToTerminal(2);
   std::vector<std::vector<cv::KeyPoint> > keypoints;
   engine->frontend_->GetCurrentKeypointsForDisplay(keypoints);
   gui_->Update(images_, engine->frontend_->current_frame()->id(), keypoints);

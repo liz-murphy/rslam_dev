@@ -53,7 +53,6 @@ Feature* FindBestFeatureInRegion(
     const int            search_width,
     const int            search_height,
     const FeatureImage&  search_image,
-    const FeatureHandler::Options& featureOptions,
     float&               match_score,
     MatchFlag&           match_flag);
 
