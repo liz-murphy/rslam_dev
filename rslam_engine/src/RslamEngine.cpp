@@ -108,18 +108,15 @@ void RslamEngine::SetupSimulator(const RslamEngineOptions& options) {
 
 // Print app  info
 void RslamEngine::PrintAppInfo() {
-  LOG(INFO) << "==============================================";
-  LOG(INFO) << "RslamEngine - Initial State.";
-  LOG(INFO) << "==============================================";
-  LOG(INFO) << "Feat detector: "   << CommonFrontEndConfig::getConfig()->getFeatureDetector();
-  LOG(INFO) << "Work dir: "        << working_directory_;
-  LOG(INFO) << "Map persistence: " << (persist_map_ ? "true." : "false.");
-  LOG(INFO) << "Using imu: "       << (have_imu_ ? "true." : "false.");
-  LOG(INFO) << "Using sim data: "  << (is_using_sim_data_ ? "true." : "false.");
+  ROS_INFO("RslamEngine - Initial State.");
+  ROS_INFO("Feat detector: %s", CommonFrontEndConfig::getConfig()->getFeatureDetectorStr().c_str());
+  ROS_INFO("Work dir: %s", working_directory_.c_str());
+  ROS_INFO("Map persistence: %s", persist_map_ ? "true." : "false.");
+  ROS_INFO("Using imu: %s", have_imu_ ? "true." : "false.");
+  ROS_INFO("Using sim data: %s", is_using_sim_data_ ? "true." : "false.");
   if (map_) {
-    LOG(INFO) << "Building map "     << map_->id();
+    ROS_INFO("Building map %s", map_->id().uuid);
   }
-  LOG(INFO) << "==============================================";
 }
 
 bool RslamEngine::Reset(const RslamEngineOptions& options,
@@ -138,10 +135,9 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   if (!working_directory_.empty()) {
     mkdir(working_directory_.c_str(), S_IRWXU);
     if (chdir(working_directory_.c_str())) {
-      LOG(FATAL) << "Could not change working directory to "
-                 << working_directory_;
+      ROS_ERROR("Could not change working directory to %s",working_directory_.c_str());
     } else {
-      LOG(INFO) << "Changed working directory to " << working_directory_;
+      ROS_INFO("Changed working directory to %s", working_directory_.c_str());
     }
   }
 
@@ -173,15 +169,32 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
 
   place_matcher_ = PlaceMatcherFactory::Create(options.place_matcher_options);
 
+  /* Set up dynamic reconfigure */
+
   ros::NodeHandle nh_common_fe("/common_front_end");
   ros::NodeHandle nh_sparse_fe("/sparse_front_end");
+  ros::NodeHandle nh_FAST("/common_front_end/FAST");
+  ros::NodeHandle nh_FREAK("/common_front_end/FREAK");
+  ros::NodeHandle nh_SURF("/common_front_end/SURF");
 
-  //common_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>(nh_common_fe));
-  //common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback, common_front_end_config_, _1, _2);
-  //common_frontend_dr_srv_->setCallback(common_front_end_cb);
+  common_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>(nh_common_fe));
+  common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback, common_front_end_config_, _1, _2);
+  common_frontend_dr_srv_->setCallback(common_front_end_cb);
+
+  FAST_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::FASTConfig>(nh_FAST));
+  FAST_cb = boost::bind(&CommonFrontEndConfig::configFASTCallback, common_front_end_config_, _1, _2);
+  FAST_dr_srv_->setCallback(FAST_cb);
+
+  FREAK_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::FREAKConfig>(nh_FREAK));
+  FREAK_cb = boost::bind(&CommonFrontEndConfig::configFREAKCallback, common_front_end_config_, _1, _2);
+  FREAK_dr_srv_->setCallback(FREAK_cb);
+
+  SURF_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::SURFConfig>(nh_SURF));
+  SURF_cb = boost::bind(&CommonFrontEndConfig::configSURFCallback, common_front_end_config_, _1, _2);
+  SURF_dr_srv_->setCallback(SURF_cb);
 
   if (options.tracker_type_ == Tracker_Sparse) {
-    LOG(INFO) << "Creating sparse front-end.";
+    ROS_INFO("Creating sparse front-end.");
     frontend_ = std::make_shared<sparse::FrontEnd>();
 
     sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
@@ -190,10 +203,10 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   } 
   else {
 #ifdef HAVE_SEMIDENSE_FRONTEND
-    LOG(INFO) << "Creating semi-dense front-end.";
+    ROS_INFO("Creating semi-dense front-end.");
     frontend_ = std::make_shared<SemiDenseFrontEnd>();
 #else
-    LOG(FATAL) << "Semi-dense front-end is not enabled in this build.";
+    ROS_ERROR("Semi-dense front-end is not enabled in this build.");
 #endif  // HAVE_SEMIDENSE_FRONTEND
   }
 
@@ -208,7 +221,7 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
           std::make_shared<NodeSlamClient>());
       frontend_->set_server_proxy(server_proxy_);
 #else  // HAVE_NODE
-      LOG(FATAL) << "Node SlamServer client is not available!";
+      ROS_ERROR("Node SlamServer client is not available!");
 #endif
     }
   }
@@ -371,12 +384,12 @@ void RslamEngine::SaveFrames() const {
 
 // Save data to disk.
 void RslamEngine::Save() {
-  LOG(g_debug_level) << "Saving rslam data";
+  ROS_INFO("Saving rslam data");
   map_->Save();
   place_matcher_->Save(places_log);
   frontend_->Save(frontend_log);
   SaveFrames();
-  LOG(g_debug_level) <<  "Finished saving rslam data";
+  ROS_INFO("Finished saving rslam data");
 }
 
 // Get data timestamp.
@@ -439,7 +452,7 @@ void RslamEngine::PosysCallbackHandler(const pb::PoseMsg& ref) {
         std::numeric_limits<Scalar>::max());
 #endif
   } else {
-    LOG(WARNING) << "Could not register PoseMsg of type " << ref.type();
+    ROS_WARN("Could not register PoseMsg of type %d", ref.type());
     return;
   }
 
@@ -500,7 +513,7 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
   }
 
   if (!is_mono_tracking_) {
-    LOG(INFO) << "Initializing in stereo mode... ";
+    ROS_INFO("Initializing in stereo mode... ");
     // detect if we are rectified
     Eigen::Vector3t fl =
         crig.cameras[0].T_wc.matrix().block<3,1>(0,1);
@@ -526,16 +539,14 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
                     sr == "calibu_fu_fv_u0_v0");
     bLinear |= (sl == "calibu_f_u0_v0" && sr == "calibu_f_u0_v0");
     if (angle < 1e-6  && bLinear && pl == pr) {
-      LOG(INFO) << "Rectified cameras detected.";
+      ROS_INFO("Rectified cameras detected.");
       is_rectified_ = true;
     } else {
-      LOG(INFO) << "Cameras are NOT rectified. Linear: "
-                << bLinear << " pl: " << pl.transpose() << " pr: "
-                << pr.transpose() << " angle: " << angle;
+      ROS_INFO("Cameras are NOT rectified. Linear: %s, pl: %s, pr: %s, angle: %f",bLinear ? "True":"False", boost::lexical_cast<std::string>(pl.transpose()).c_str(), boost::lexical_cast<std::string>(pr.transpose()).c_str(), angle);
       is_rectified_ = false;
     }
   } else {
-    LOG(INFO) << "Initializing in mono mode... ";
+    ROS_INFO("Initializing in mono mode... ");
   }
 
   Sophus::SE3t M_rv;
@@ -543,7 +554,7 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
   for (calibu::CameraModelAndTransformT<Scalar>& model : crig.cameras) {
     model.T_wc = model.T_wc*M_rv;
   }
-  LOG(INFO) << "Starting Tvs: " << crig.cameras[0].T_wc.matrix();
+  ROS_INFO("Starting Tvs: %s",boost::lexical_cast<std::string>(crig.cameras[0].T_wc.matrix()).c_str());
 
   // this is temporary and for calibration only
   //    for( CameraModelAndTransformT<Scalar>& model : crig.cameras){
@@ -560,13 +571,13 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
     bounds = GetFrustrumBoundingBox( crig, 0, 1 );
     rois_[1] = bounds.cast<int>();
 
-    LOG(INFO) << "Valid ROI left camera: [" << rois_[0].transpose() << "]";
-    LOG(INFO) << "Valid ROI right camera: [" << rois_[1].transpose() << "]";
+    ROS_INFO("Valid ROI left camera: [%s]", boost::lexical_cast<std::string>(rois_[0].transpose()).c_str());
+    ROS_INFO("Valid ROI right camera: [%s]",boost::lexical_cast<std::string>(rois_[1].transpose()).c_str());
 
     if (crig.cameras.size() == 2) {
       rig_ = crig;
     } else {
-      LOG(ERROR) << "Camera models not initialized. ";
+      ROS_ERROR("Camera models not initialized. ");
       return false;
     }
 
@@ -575,17 +586,14 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
     if (active_camera_id_ < (int)crig.cameras.size()) {
       rig_.Add( crig.cameras[active_camera_id_]);
     } else {
-      LOG(ERROR) << "Camera index out of bounds!";
+      ROS_ERROR("Camera index out of bounds!");
       return false;
     }
   }
 
   for (size_t ii=0; ii < rig_.cameras.size(); ++ii) {
-    LOG(INFO) << ">>>>>>>> Camera " << ii << ":"  << std::endl
-              << "Model: " << std::endl
-              << rig_.cameras[ii].camera.K() << std::endl
-              << "Pose: " << std::endl
-              << rig_.cameras[ii].T_wc.matrix();
+    ROS_INFO("Camera %d, Model: %s, Pose: %s", (int)ii,boost::lexical_cast<std::string>(rig_.cameras[ii].camera.K()).c_str(),
+              boost::lexical_cast<std::string>(rig_.cameras[ii].T_wc.matrix()).c_str());
   }
 
   return true;

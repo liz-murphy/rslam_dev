@@ -10,6 +10,20 @@
 class CommonFrontEndConfig
 {
   public:
+
+    std::string getFeatureDetectorStr()
+    {
+      switch(feature_detector_)
+      {
+        case common_front_end::CommonFrontEndParams_DOG:
+          return "SURF";
+        case common_front_end::CommonFrontEndParams_FAST:
+          return "FAST";
+        default:
+          return "OOPS";
+      }
+    }
+
     static CommonFrontEndConfig * getConfig()
     {
       if(!m_configInstance)

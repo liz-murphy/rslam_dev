@@ -63,7 +63,7 @@ inline bool  _MatchLandmarkInTime(
     PatchHomography<CANONICAL_PATCH_SIZE> H = homographies[cam_id];
     const Eigen::Vector2t hx = H.CenterPixel();
 
-    ROS_DEBUG_NAMED("MatchInTime","MIT: Predicted [%f,%f] in camera-%d", hx[0],hx[1],cam_id);
+    ROS_DEBUG_NAMED("MatchInTime","MIT: Predicted [%f,%f] in camera-%d", hx[0],hx[1],(int)cam_id);
 
     // if predicted outside the image try next camera (if any)
     if (H.GetState() ==
@@ -107,10 +107,10 @@ inline bool  _MatchLandmarkInTime(
     if (match_flag != GoodMatch) {
       if (pMIT == nullptr) {
         // In this case no match was found
-        ROS_DEBUG_NAMED("MatchInTime","No match found int camera: %d");
+        ROS_DEBUG_NAMED("MatchInTime","No match found int camera: %d", (int)cam_id);
       } else {
         ROS_DEBUG_NAMED("MatchInTime","Bad temporal-match [%.2f %.2f] in camera: %d score: %.2f [%s], skipping",
-                     pMIT->x, pMIT->y, cam_id, match_score,
+                     pMIT->x, pMIT->y, (int)cam_id, match_score,
                      MatchStr(match_flag));
       }
       continue;
@@ -309,7 +309,7 @@ int MatchInTime(const ReferenceFrameId                &frame_id,
       continue;
     }
 
-    ROS_DEBUG_NAMED("MatchInTime","Matching LM %d:%d", lm.id().ref_frame_id, lm.id().landmark_index);
+    ROS_DEBUG_NAMED("MatchInTime","Matching LM %d:%d", lm.id().ref_frame_id.id, lm.id().landmark_index);
 
     bool success = _MatchLandmarkInTime(lm, lm_container->tracking_homographies,
                                         images, z,  matches,
