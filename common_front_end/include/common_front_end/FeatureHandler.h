@@ -7,7 +7,6 @@
 #include <vector>
 #include <memory>
 
-#include <features/Features.h>
 #include <pb_msgs/ImagePyramid.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
 

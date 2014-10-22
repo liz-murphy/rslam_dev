@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   back_end
   calibu
   common_front_end
-  features
   miniglog
   pb_msgs
   place_matching
@@ -22,7 +21,6 @@ find_package(catkin REQUIRED COMPONENTS
   sophus
   sparse_front_end
   utils
-  geocon
   sensor_msgs
   camera_calibration_parsers
   image_transport
@@ -111,7 +109,7 @@ configure_file(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rslam_engine
-  CATKIN_DEPENDS ba back_end calibu common_front_end features miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils geocon
+  CATKIN_DEPENDS ba back_end calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils 
   #DEPENDS opencv 
 )
 

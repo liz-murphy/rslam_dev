@@ -36,11 +36,18 @@ class CommonFrontEndConfig
       fast_threshold_ = config.fast_threshold;
       fast_do_nms_ = config.do_nms;
       fast_skip_level0_ = config.skip_level0;
+      reset_required_ = true; // any changes to features need a reset
     }
 
     void configFREAKCallback(common_front_end::FREAKConfig &config, uint32_t level)
     { 
+      freak_orientation_normalized_ = config.orientation_normalized;
+      freak_scale_normalized_ = config.scale_normalized;
+      freak_pattern_scale_ = config.pattern_scale;
+      freak_n_octaves_ = config.n_octaves;  
+
       // If these change you need to reset tracking ...
+      reset_required_ = true;
     }
 
     void configSURFCallback(common_front_end::SURFConfig &config, uint32_t level)
@@ -50,6 +57,7 @@ class CommonFrontEndConfig
       surf_n_octave_layers_ = config.n_octave_layers;
       surf_extended_ = config.extended;
       surf_upright_ = config.upright; 
+      reset_required_ = true;
     }
 
     void configCallback(common_front_end::CommonFrontEndParamsConfig &config, uint32_t level)
@@ -79,6 +87,12 @@ class CommonFrontEndConfig
       ransac_probability_ = config.ransac_probability;
     
       use_feature_buckets_ = config.use_feature_buckets;
+
+      if(feature_detector_ != config.feature_detector)
+        reset_required_ = true;
+
+      if(feature_descriptor_ != config.feature_descriptor)
+        reset_required_ = true;
 
       feature_detector_ = config.feature_detector;
       feature_descriptor_ = config.feature_descriptor;
@@ -134,7 +148,13 @@ class CommonFrontEndConfig
     bool fastSkipLevel0(){return fast_skip_level0_;};
 
     int getNumMatchInTimeAttempts(){return num_match_in_time_attempts_;};
+
+    // have any of the parameters that have been modified caused a need to restart the front end
+    bool resetRequired(){return reset_required_;};
+    void resetDone(){reset_required_ = false;};
+
   private:
+    bool reset_required_;
     int initial_search_radius_;
     double search_radius_grow_rate_;
 

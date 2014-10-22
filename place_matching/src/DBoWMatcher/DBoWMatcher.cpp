@@ -39,6 +39,7 @@ void DBoWMatcher::setVocabulary(const std::string &voc_file,
                                 std::string detector,
                                 std::string descriptor)
 {
+  std::cout << "Trying to open\n" << voc_file << "\n";
   if(voc_file.empty())
     throw std::invalid_argument("No vocabulary given");
 

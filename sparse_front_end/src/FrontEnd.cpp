@@ -154,6 +154,11 @@ void FrontEnd::SetupFeatureHandlers() {
   }
 }
 
+void FrontEnd::reset()
+{
+  ROS_ERROR("Front end reset NOT IMPLEMENTED!!!");
+}
+
 bool FrontEnd::Init(
     const calibu::CameraRigT<Scalar>    &rig,
     const std::shared_ptr<pb::ImageArray> &frames,

@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   common
   dynamic_reconfigure
   cmake_modules
-  features
   pb_msgs
   slam_map
 )
@@ -118,7 +117,7 @@ set(SRCS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES common_front_end
-  CATKIN_DEPENDS roscpp common pb_msgs features 
+  CATKIN_DEPENDS roscpp common pb_msgs 
 #  DEPENDS system_lib
 )
 

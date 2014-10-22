@@ -26,18 +26,10 @@
 #include <common_front_end/FASTConfig.h>
 #include <common_front_end/SURFConfig.h>
 #include <sparse_front_end/FrontEnd.h>
-namespace geocon {
-class geodetic2local;
-}
 
 class PlaceMatcher;
 class Timer;
 namespace rslam {
-/*
-namespace sparse {
-  class FrontEnd;
-}
-*/
 class RslamEngine {
  public:
   RslamEngine();
@@ -135,7 +127,7 @@ class RslamEngine {
   std::map<unsigned int, ReferenceFrameId> sim_frames_;
   std::shared_ptr<SlamServerProxy> server_proxy_;
   RslamTracker                   tracker_type_;
-  std::unique_ptr<geocon::geodetic2local> lla2local_;
+  //std::unique_ptr<geocon::geodetic2local> lla2local_;
   CommonFrontEndConfig* common_front_end_config_;
 };
 }

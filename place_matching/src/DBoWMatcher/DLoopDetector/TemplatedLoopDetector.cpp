@@ -5,7 +5,8 @@
 DLoopDetector::Parameters::Parameters(float frequency):
   image_rows(0), image_cols(0),
   use_nss(true), alpha(0.3), k(3), geom_check(GEOM_DI), di_levels(2),
-  geom_algorithm(GEOM_ALG_FUNDAMENTAL_MATRIX)
+  //geom_algorithm(GEOM_ALG_FUNDAMENTAL_MATRIX)
+  geom_algorithm(GEOM_ALG_HOMOGRAPHY)
 {
   set(frequency);
 }

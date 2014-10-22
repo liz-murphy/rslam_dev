@@ -20,7 +20,7 @@ class PlaceMatcherFactory {
 
   struct Options {
     Options();
-    MatcherType type = kTemplateMatcherType;
+    MatcherType type = kDBoWMatcherType;
 
     // DBoW and MultiDBoW Options
     std::string vocab_filename;      // DBoW and MultiDBoW. Compile-time default

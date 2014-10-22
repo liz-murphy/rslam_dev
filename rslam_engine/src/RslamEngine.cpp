@@ -29,7 +29,7 @@
 #endif  // HAVE_SEMIDENSE_FRONTEND
 
 //#ifdef HAVE_GEOCON
-#include <geocon/geodetic2local.h>
+//#include <geocon/geodetic2local.h>
 //#endif  // HAVE_GECON
 
 using namespace rslam;
@@ -434,7 +434,7 @@ void RslamEngine::PosysCallbackHandler(const pb::PoseMsg& ref) {
   const auto& cov = ref.covariance().data();
   if (ref.type() == pb::PoseMsg::LatLongAlt) {
 #ifdef HAVE_GEOCON
-    if (!lla2local_) {
+/*    if (!lla2local_) {
       lla2local_.reset(geocon::geodetic2local::Create(
           data.Get(0), data.Get(1), data.Get(2)));
     }
@@ -449,7 +449,7 @@ void RslamEngine::PosysCallbackHandler(const pb::PoseMsg& ref) {
     Scalar spherical_std = acc.sphericalError90() / 1.64;
     pose.cov.diagonal().head<3>().setConstant(spherical_std * spherical_std);
     pose.cov.diagonal().tail<3>().setConstant(
-        std::numeric_limits<Scalar>::max());
+        std::numeric_limits<Scalar>::max());*/
 #endif
   } else {
     ROS_WARN("Could not register PoseMsg of type %d", ref.type());
@@ -467,6 +467,13 @@ bool RslamEngine::IterateBa() {
 void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
   CHECK(images);
   images_ = images;
+
+  if(common_front_end_config_->getConfig()->resetRequired())
+  {
+    // Something has changed in the front end that requires a reset (eg feature detector changed)
+    frontend_->reset();
+    common_front_end_config_->getConfig()->resetDone();
+  }
 
   bool should_process = true;
   if (is_using_sim_data_) {

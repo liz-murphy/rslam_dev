@@ -17,17 +17,90 @@ find_package(OpenCV REQUIRED)
 
 set(PLACEMATCH_SRCS src/PlaceMatcher.cpp src/PlaceMatcherFactory.cpp src/TemplateMatcher/TemplateMatcher.cpp)
 
-#add_subdirectory(src/TemplateMatcher)
-add_subdirectory(src/DBoWMatcher)
-add_subdirectory(src/MultiDBoWMatcher)
+set(TEMPLATE_MATCHER_SRCS src/TemplateMatcher/TemplateMatcher.cpp)
+
+set(DBOW_SRCS 
+  src/DBoWMatcher/DBoWMatcher.cpp
+  src/DBoWMatcher/FMat32F.cpp
+  src/DBoWMatcher/FMat8UBinary.cpp
+  src/DBoWMatcher/DUtils/BinaryFile.cpp
+  src/DBoWMatcher/DUtils/ConfigFile.cpp
+  src/DBoWMatcher/DUtils/DebugFunctions.cpp
+  src/DBoWMatcher/DUtils/FileFunctions.cpp
+  src/DBoWMatcher/DUtils/LineFile.cpp
+  src/DBoWMatcher/DUtils/LUT.cpp
+  src/DBoWMatcher/DUtils/Profiler.cpp
+  src/DBoWMatcher/DUtils/Random.cpp
+  src/DBoWMatcher/DUtils/StringFunctions.cpp
+  src/DBoWMatcher/DUtils/TimeManager.cpp
+  src/DBoWMatcher/DUtils/Timestamp.cpp
+
+  src/DBoWMatcher/DUtilsCV/Drawing.cpp
+  src/DBoWMatcher/DUtilsCV/Geometry.cpp
+  src/DBoWMatcher/DUtilsCV/GUI.cpp
+  src/DBoWMatcher/DUtilsCV/IO.cpp
+  src/DBoWMatcher/DUtilsCV/Mat.cpp
+  src/DBoWMatcher/DUtilsCV/Transformations.cpp
+  src/DBoWMatcher/DUtilsCV/Types.cpp
+
+  src/DBoWMatcher/DVision/BundleCamera.cpp
+  src/DBoWMatcher/DVision/FSolver.cpp
+  src/DBoWMatcher/DVision/HSolver.cpp
+  src/DBoWMatcher/DVision/ImageFunctions.cpp
+  src/DBoWMatcher/DVision/Matches.cpp
+  src/DBoWMatcher/DVision/PatchFile.cpp
+  src/DBoWMatcher/DVision/PixelPointFile.cpp
+  src/DBoWMatcher/DVision/PLYFile.cpp
+  src/DBoWMatcher/DVision/PMVSCamera.cpp
+  src/DBoWMatcher/DVision/SurfSet.cpp
+
+  src/DBoWMatcher/DBoW2/BowVector.cpp
+  src/DBoWMatcher/DBoW2/FeatureVector.cpp
+  src/DBoWMatcher/DBoW2/FSurf64.cpp
+  src/DBoWMatcher/DBoW2/QueryResults.cpp
+  src/DBoWMatcher/DBoW2/ScoringObject.cpp
+  src/DBoWMatcher/DLoopDetector/TemplatedLoopDetector.cpp
+)
+
+configure_file(
+  src/DBoWMatcher/dbow_config.h.in
+  include/place_matching/DBoWMatcher/dbow_config.h
+)
+
+set(MULTI_DBOW_SRCS
+  src/MultiDBoWMatcher/MultiDBoWMatcher.cpp
+  src/MultiDBoWMatcher/AdjacencyWindow.cpp
+  src/MultiDBoWMatcher/AdjacencyWindowManager.cpp
+  src/MultiDBoWMatcher/Parameters.cpp
+  src/MultiDBoWMatcher/LandmarkVisitor.cpp
+  src/MultiDBoWMatcher/WindowVisitor.cpp
+  src/MultiDBoWMatcher/WindowTrack.cpp
+  src/MultiDBoWMatcher/Session.cpp
+  src/MultiDBoWMatcher/Node.cpp
+  src/MultiDBoWMatcher/Persistence.cpp
+)
+
+option(DOWNLOAD_DBoWMatcher_ORB_Voc
+  "Download ORB vocabulary for DBoWMatcher loop detector"
+  ON)
+
+set(DBOW_ORB_VOC_FILE vocabularies/ORB_k10L5.voc.gz)
+if(DOWNLOAD_DBoWMatcher_ORB_Voc)
+file(DOWNLOAD
+  http://arpg.colorado.edu/Internal/resources/DBoWMatcher_vocs/ORB_k10L5.voc.gz
+  ${DBOW_ORB_VOC_FILE}
+  EXPECTED_MD5 b6d561716dc3799eb594026986f68020
+  SHOW_PROGRESS)
+
+#add_subdirectory(src/MultiDBoWMatcher)
 
 #configure_file ("${PROJECT_SOURCE_DIR}/include/place_matching/DBoWMatcher/dbow_config.h.in"
 #  "${PROJECT_SOURCE_DIR}/include/place_matching/DBoWMatcher/dbow_config.h" )
 
 #option(BUILD_DBoWMatcher "Build DBoWMatcher loop detector" OFF)
 #if(BUILD_DBoWMatcher)
-#    add_subdirectory(src/DBoWMatcher)      # DBM_ vars
-#  endif()
+#    add_subdirectory(src/DBoWMatcher/DBoWMatcher)      # DBM_ vars
+endif()
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
@@ -36,6 +109,9 @@ include_directories(
 
 add_library(place_matching
   ${PLACEMATCH_SRCS}
+  ${TEMPLATE_MATCHER_SRCS}
+  ${DBOW_SRCS}
+  ${MULTI_DBOW_SRCS}
 )
 
 target_link_libraries(place_matching ${OpenCV_LIBRARIES})
@@ -126,11 +202,11 @@ include_directories(
 
 ## Declare a cpp library
 # add_library(place_matching
-#   src/${PROJECT_NAME}/place_matching.cpp
+#   src/DBoWMatcher/${PROJECT_NAME}/place_matching.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(place_matching_node src/place_matching_node.cpp)
+# add_executable(place_matching_node src/DBoWMatcher/place_matching_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

@@ -1,8 +1,6 @@
 // Copyright (c) George Washington University, all rights reserved.  See the
 // accompanying LICENSE file for more information.
 
-#include <utils/PrintMessage.h>
-#include <features/Features.h>
 #include <common_front_end/PatchMatch.h>
 #include <assert.h>
 #include <math.h>

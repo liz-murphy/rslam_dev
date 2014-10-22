@@ -11,7 +11,7 @@
 
 
 PlaceMatcherFactory::Options::Options() :
-    vocab_filename(DBOW_ORB_VOC_FILE) {
+    vocab_filename("/home/liz/codescratch/rslam_dev/src/rslam_dev/place_matching/vocabularies/ORB_k10L5.voc.gz") {
 }
 
 std::shared_ptr<PlaceMatcher>

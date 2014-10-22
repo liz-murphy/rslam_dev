@@ -160,6 +160,9 @@ class FrontEnd : public FrontEndInterface{
   /// \brief Config callback for dynamic reconfigure server
   void configCallback(sparse_front_end::SparseFrontEndConfig &config, uint32_t level);
 
+  ///
+  void reset();
+
 protected:
  
   ///
