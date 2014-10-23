@@ -10,13 +10,13 @@
 #include <pb_msgs/Matrix.h>
 #include <pb_msgs/Pose.h>
 #include <calibu/cam/CameraRig.h>
-#include <miniglog/logging.h>
 #include <slam_map/LandmarkId.h>
 #include <slam_map/MeasurementId.h>
 #include <slam_map/Measurement.h>
 #include <slam_map/Landmark.h>
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/TransformEdge.h>
+#include <ros/ros.h>
 
 namespace pb {
 
@@ -109,9 +109,7 @@ template<int M, int N, typename Scalar>
 void pb::parse_message(const DoubleMatrixMsg& msg,
                        Eigen::Matrix<Scalar, M, N>* mat) {
   if (msg.rows() != M || msg.cols() != N) {
-    LOG(FATAL) << "Attempting to load mismatched matrices! "
-               << "Message has size " << msg.rows() << "x" << msg.cols()
-               << " and matrix is of size " << M << "x" << N << std::endl;
+    ROS_ERROR("Attempting to load mismatched matrices! Message has size %d x %d and matrix is of size %d x %d ", msg.rows(), msg.cols(), M, N);
   }
 
   for (int i = 0; i < M; ++i) {

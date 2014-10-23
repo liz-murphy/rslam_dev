@@ -20,11 +20,6 @@
 #include <slam_map/MapVisitor/NearbyNodesMapVisitor.h>
 #include <slam_map/SlamMapParamsConfig.h>
 
-//static int& g_hold_debug_level =
- //   CVarUtils::CreateCVar<>("map.hold_frames_debug", 1,
-  //                          "Debug level for SlamMap frame holding.");
-
-// This will disappear when we properly namespace this class
 using namespace rslam::map;
 
 SlamMap::SlamMap()
@@ -361,30 +356,25 @@ void SlamMap::SetHoldFrames(uint64_t token,
                             const ReferenceFrameId& root_id,
                             unsigned int depth,
                             bool with_covisible) {
-  LOG(hold_debug_level_) << "Holding frames: root : " << root_id
-                          << " to depth " << depth
-                          << (with_covisible ? "" : " not")
-                          << " including covisible" << std::endl;
-  {
-    std::lock_guard<std::mutex> lock(hold_mutex_);
-    auto found = holds_.find(token);
-    if (found != holds_.end()) {
-      HoldRequest& hold = found->second;
-      if (hold.root_id == root_id &&
-          hold.depth == depth &&
-          hold.with_covisible == with_covisible) {
-        return;
-      }
-
-      hold.root_id = root_id;
-      hold.depth = depth;
-      hold.with_covisible = with_covisible;
-
-    } else {
-      holds_[token] = {root_id, depth, with_covisible};
+  ROS_DEBUG_NAMED("slam_map_hold","Holding frames: root : %d to depth %d %s including covisible",root_id.id, depth, with_covisible ? "" : " not");
+  std::lock_guard<std::mutex> lock(hold_mutex_);
+  auto found = holds_.find(token);
+  if (found != holds_.end()) {
+    HoldRequest& hold = found->second;
+    if (hold.root_id == root_id &&
+        hold.depth == depth &&
+        hold.with_covisible == with_covisible) {
+      return;
     }
-    if (hold_updating_[token]) return;
+
+    hold.root_id = root_id;
+    hold.depth = depth;
+    hold.with_covisible = with_covisible;
+
+  } else {
+    holds_[token] = {root_id, depth, with_covisible};
   }
+  if (hold_updating_[token]) return;
   std::thread update_thread(std::bind(&SlamMap::UpdateHeldFrames, this, token));
   update_thread.detach();
 }
@@ -447,16 +437,11 @@ void SlamMap::UpdateHeldFrames(uint64_t token) {
     visitor.set_root_id(hold.root_id);
     visitor.set_depth(hold.depth);
     BFS(&visitor);
-    LOG(hold_debug_level_) << "Gathered " << new_holds.size()
-                            << " frames to be held from "
-                            << " root id " << hold.root_id
-                            << " at depth " << hold.depth
-                            << (hold.with_covisible ? "" : " not")
-                            << " including covisible" << std::endl;
+    ROS_DEBUG_NAMED("slam_map_hold","Gathered %d frames to be held from root id %d at depth %d %s including covisible",
+                            (int)new_holds.size(), hold.root_id.id, hold.depth,(hold.with_covisible ? "" : " not"));
   }
 
-  LOG(hold_debug_level_) << "Setting " << new_holds.size()
-                          << " frames to be held" << std::endl;
+  ROS_DEBUG_NAMED("slam_map_hold","Setting %d frames to be held",(int)new_holds.size());
 
   {
     std::lock_guard<std::mutex> lock(hold_update_mutex_);
@@ -520,11 +505,11 @@ void SlamMap::InternalBFS(MapVisitor* visitor, bool only_loaded) const {
   const bool depth_equals_count = visitor->depth_equals_count();
 
   if (!root_id.valid()) {
-    LOG(FATAL) << "BFS called with invalid frame id: " << root_id;
+    ROS_ERROR("BFS called with invalid frame id: %d",root_id.id);
     visitor->Finished();
     return;
   } else if (max_depth == 0) {
-    LOG(WARNING) << "Empty BFS called. Did you forget to set a depth?";
+    ROS_WARN("Empty BFS called. Did you forget to set a depth?"); 
     visitor->Finished();
     return;
   }
@@ -619,12 +604,11 @@ void SlamMap::ParentTraverse(MapVisitor* visitor) const {
   const bool ignore_broken = visitor->should_ignore_broken();
 
   if (!root_id.valid()) {
-    LOG(WARNING) << "ParentTraverse called with invalid frame id.";
+    ROS_WARN("ParentTraverse called with invalid frame id.");
     visitor->Finished();
     return;
   } else if (max_depth == 0) {
-    LOG(WARNING) << "Empty ParentTraverse called. "
-                 << "Did you forget to set a depth?";
+    ROS_WARN("Empty ParentTraverse called. Did you forget to set a depth?");
     visitor->Finished();
     return;
   }

@@ -14,11 +14,11 @@
 #include <utility>
 #include <vector>
 
-//#include <CVars/CVar.h>
-#include <miniglog/logging.h>
 #include <utils/AtomicQueue.h>
 
 #include <pb_msgs/rslam.pb.h>
+
+#include <ros/ros.h>
 
 template <typename TableT>
 class PersistentBackend {
@@ -138,7 +138,7 @@ PersistentBackend<TableT>::PersistentBackend(
     debug_level_(1) {
 
   if (pthread_rwlock_init(&map_lock_, NULL)) {
-    LOG(FATAL) << "Initializing rwlocks in PersistentBackend failed.";
+    ROS_ERROR("Initializing rwlocks in PersistentBackend failed.");
   }
 
   for (int i = 0; i < num_connections_; ++i) {
@@ -161,7 +161,7 @@ PersistentBackend<TableT>::~PersistentBackend() {
   Flush();
 
   if (pthread_rwlock_destroy(&map_lock_)) {
-    LOG(FATAL) << "Destroying rwlock in PersistentBackend failed.";
+    ROS_ERROR("Destroying rwlock in PersistentBackend failed.");
   }
 
   while (!tables_.empty()) {
@@ -189,7 +189,7 @@ void PersistentBackend<TableT>::Flush() {
       table->Write(pair.first, pair.second);
     }
     success = table->CommitTransaction();
-    LOG_IF(ERROR, !success) << "Flush failed. Retrying.";
+    ROS_ERROR_COND(!success, "Flush failed. Retrying.");
   }
   tables_.push(table);
 }
@@ -320,9 +320,7 @@ void PersistentBackend<TableT>:: CheckConsistency() {
   CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   if (queue_size != store_size) {
-    LOG(FATAL) << "Queue and store are out of sync: [ "
-               << queue_size << ", " << store_size
-               << "]. Abort().";
+    ROS_ERROR("Queue and store are out of sync: [ %d, %d]. Abort().", (int)queue_size, (int)store_size);
   }
 }
 
@@ -375,7 +373,7 @@ void PersistentBackend<TableT>::WriteBatchAndErase(
 
     // If the transaction fails, we need to reinsert all the erased pointers
     if (!table->CommitTransaction()) {
-      LOG(ERROR) << "WriteBatchAndErase commit failed. Replacing objects";
+      ROS_ERROR("WriteBatchAndErase commit failed. Replacing objects");
       CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
       objects_in_use_.insert(erased.begin(), erased.end());
       for (const auto& pair : erased) {
@@ -443,8 +441,7 @@ void PersistentBackend<TableT>::GatherUnused(
 
     pointer_type ptr = Find(id);
     if (!ptr) {
-      LOG(WARNING) << "Queued ID (" << id
-                   << ")does not exist in map anymore.";
+      ROS_WARN("Queued ID (%d)does not exist in map anymore.",id.id);
       id_queue_.pop();
       continue;
     }

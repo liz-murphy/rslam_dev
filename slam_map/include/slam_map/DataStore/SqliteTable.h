@@ -7,9 +7,10 @@
 #include <string>
 #include <utility>
 
-#include <miniglog/logging.h>
 #include <slam_map/sqlite3/sqlite3.h>
 #include <slam_map/ProtobufIO.h>
+
+#include <ros/ros.h>
 
 int busy_handler(void*, int) {
   static const timespec ts = {0, 1000};
@@ -18,9 +19,7 @@ int busy_handler(void*, int) {
 }
 
 inline void PrintError(const std::string& op, int result, char* errmsg) {
-  LOG(FATAL) << "SqliteDataStore database " << op << "failed!"
-             << "\n\tExit code: " << result
-             << "\n\tError message: " << errmsg;
+  ROS_ERROR("SqliteDataStore database %s failed! Exit code: %d Error message: %s", op.c_str(), result, errmsg);
 }
 
 inline void CheckSqliteReturn(int expected,
@@ -53,9 +52,7 @@ class SqliteTable {
 
   void Init() {
     if (!sqlite3_threadsafe()) {
-      LOG(FATAL) << "Platform's sqlite3 is not threadsafe, "
-                 << "SqliteDataStore will "
-                 << "not work correctly.";
+      ROS_ERROR("Platform's sqlite3 is not threadsafe, SqliteDataStore will not work correctly.");
     }
 
     sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
@@ -104,8 +101,7 @@ class SqliteTable {
   bool CommitTransaction() {
     int sql_result = sqlite3_step(commit_stmt_);
     sqlite3_reset(commit_stmt_);
-    LOG_IF(ERROR, (sql_result != SQLITE_DONE)) << "Commit transaction failed. "
-                                               << "Error code: " << sql_result;
+    ROS_ERROR_COND(sql_result != SQLITE_DONE,"Commit transaction failed. Error code: %d",sql_result);
     return sql_result == SQLITE_DONE;
   }
 
@@ -150,8 +146,7 @@ class SqliteTable {
     if (sql_result == SQLITE_ROW) {
       LoadFromQuery(load_stmt_, out);
     } else {
-      LOG(debug_level_) << "No object found in select on table " << name_
-                        << " with Id";
+      ROS_DEBUG_NAMED("slam_map_sqlite","No object found in select on table %s with given Id", name_.c_str());
       found = false;
     }
     sqlite3_reset(load_stmt_);
@@ -289,10 +284,9 @@ class SqliteTable {
 
   void build() {
     if (initialized_) {
-      LOG(FATAL) << "ERROR: Table " << name_
-                 << "already initialized.";
+      ROS_ERROR("Table %s name_ already initialized.", name_.c_str());
     } else if (id_headers_.empty()) {
-      LOG(FATAL) << "ERROR: No columns set.";
+      ROS_ERROR("SQLITE: No columns set.");
     } else if (Exists()) {
       initialized_ = true;
       return;

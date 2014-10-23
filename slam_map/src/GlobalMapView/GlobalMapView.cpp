@@ -2,8 +2,6 @@
 // accompanying LICENSE file for more information.
 
 #include <vector>
-
-#include <miniglog/logging.h>
 #include <slam_map/GlobalMapView/GlobalMapView.h>
 #include <slam_map/GlobalMapView/GlobalMapViewUpdater.h>
 #include <slam_map/MapVisitor/MapVisitor.h>
@@ -12,10 +10,6 @@
 #include <slam_map/SlamMapProxy.h>
 #include <slam_map/TransformEdge.h>
 #include <slam_map/SlamMapParamsConfig.h>
-
-/*static int g_debug_level =
-    CVarUtils::CreateCVar<>("debug.global_map_view", 1,
-                            "Debug level for GlobalMapView.");*/
 
 GlobalMapView::GlobalMapView(const std::shared_ptr<SlamMapProxy>& map)
     : map_(map), updater_(new GlobalMapViewUpdater(map, this)),
@@ -80,13 +74,13 @@ void GlobalMapView::AddEdgeInline(const TransformEdgeId& id) {
   UpdateEdgeId(id);
   edges_.insert(id);
 
-  LOG(debug_level_) << "Adding edge " << id;
+  ROS_DEBUG_NAMED("slam_map", "Adding edge");
 
   if (tree_.empty()) {
     set_root_id_inline(id.start);
     tree_[id.start].insert(id);
     UpdateEdgeFromMap(id.start, id.end);
-    LOG(debug_level_) << "Adding initial edge.";
+    ROS_DEBUG_NAMED("slam_map", "Adding initial edge");
   } else {
     // Check if this edge is a leaf, or between two existing nodes
     auto edge_start = frames_.find(id.start);
@@ -103,13 +97,11 @@ void GlobalMapView::AddEdgeInline(const TransformEdgeId& id) {
       auto end_tree = tree_.find(id.end);
       auto tree_end = tree_.end();
       if (start_tree == tree_end || end_tree == tree_end) {
-        LOG(debug_level_) <<
-            "Skipping end node's position because neither end exists";
+        ROS_DEBUG_NAMED("slam_map", "Skipping end node's position because neither end exists");
         return;
       } else if (end_tree->second.find(id) == end_tree->second.end() &&
                  start_tree->second.find(id) == start_tree->second.end()) {
-        LOG(debug_level_) <<
-            "Skipping end node's position because both ends exist";
+        ROS_DEBUG_NAMED("slam_map","Skipping end node's position because both ends exist");
         return;
       }
     }
@@ -117,16 +109,16 @@ void GlobalMapView::AddEdgeInline(const TransformEdgeId& id) {
     if (edge_start != frames_end) {
       tree_[id.start].insert(id);
       UpdateEdgeFromMap(id.start, id.end);
-      LOG(debug_level_) << "Update end";
+      ROS_DEBUG_NAMED("slam_map","Update end");
     } else if (edge_end != frames_end) {
       tree_[id.end].insert(id);
       UpdateEdgeFromMap(id.end, id.start);
-      LOG(debug_level_) << "Update start pose";
+      ROS_DEBUG_NAMED("slam_map","Update start pose");
     } else {
       // Neither end is in the tree, but the tree is also not
       // empty so there's nothing for us to do since we can't root
       // this node anywhere
-      LOG(debug_level_) << "Edge disconnected from current map";
+      ROS_DEBUG_NAMED("slam_map","Edge disconnected from current map");
       return;
     }
   }
@@ -204,7 +196,7 @@ bool GlobalMapView::UpdateEdge(const TransformEdgeId& edge,
 
   auto ait = frames_.find(a);
   if (ait == frames_.end()) {
-    LOG(ERROR) << "Cannot find " << a;
+    ROS_ERROR("slam map: Cannot find %d", a.id);
     return false;
   }
   frames_[b] = ait->second * t_ab;

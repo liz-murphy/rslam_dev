@@ -5,7 +5,6 @@ using namespace rslam;
 using namespace sensor_msgs;
 using namespace message_filters;
 
-BackEndConfig *BackEndConfig::s_instance = 0;
 ServerConfig *ServerConfig::m_configInstance = 0;
 CommonFrontEndConfig *CommonFrontEndConfig::m_configInstance = 0;
 TrackingConfig *TrackingConfig::m_configInstance = 0;

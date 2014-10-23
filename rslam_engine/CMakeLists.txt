@@ -9,7 +9,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mavx")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   ba
-  back_end
+  #back_end
   calibu
   common_front_end
   miniglog
@@ -109,7 +109,7 @@ configure_file(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rslam_engine
-  CATKIN_DEPENDS ba back_end calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils 
+  CATKIN_DEPENDS ba calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils 
   #DEPENDS opencv 
 )
 

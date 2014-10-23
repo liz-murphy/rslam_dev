@@ -14,6 +14,11 @@ find_package(catkin REQUIRED COMPONENTS
   slam_map
   common_front_end
   local_map 
+  dynamic_reconfigure
+)
+
+generate_dynamic_reconfigure_options(
+ cfg/Backend.cfg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -108,6 +113,10 @@ include_directories(
 add_library(back_end
   src/BackEnd.cpp
 )
+
+# make sure configure headers are built before any node using them
+add_dependencies(back_end ${PROJECT_NAME}_gencfg)
+
 
 ## Declare a cpp executable
 # add_executable(back_end_node src/back_end_node.cpp)

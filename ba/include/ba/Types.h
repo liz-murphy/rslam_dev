@@ -24,9 +24,8 @@
 #include <iostream>
 #include <Eigen/Eigen>
 #include <sophus/se3.hpp>
-#include "Utils.h"
+#include <ba/Utils.h>
 #include <calibu/cam/camera_crtp_interop.h>
-
 // #define IMU_GYRO_UNCERTAINTY 7.15584993e-5  // 0.00104719755 // 0.1 //
 // #define IMU_ACCEL_UNCERTAINTY 0.00159855109  // 0.0392266 // 10
 

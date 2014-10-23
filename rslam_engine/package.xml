@@ -41,7 +41,7 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>ba</build_depend>
-  <build_depend>back_end</build_depend>
+  <!-- <build_depend>back_end</build_depend> -->
   <build_depend>calibu</build_depend>
   <build_depend>common_front_end</build_depend>
   <build_depend>miniglog</build_depend>
@@ -66,7 +66,7 @@
   <build_depend>dynamic_reconfigure</build_depend>
 
   <run_depend>ba</run_depend>
-  <run_depend>back_end</run_depend>
+  <!-- <run_depend>back_end</run_depend> -->
   <run_depend>calibu</run_depend>
   <run_depend>common_front_end</run_depend>
   <run_depend>miniglog</run_depend>
