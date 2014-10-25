@@ -62,6 +62,9 @@ struct Options
   Scalar accel_sigma = IMU_ACCEL_SIGMA;
   Scalar gyro_bias_sigma = IMU_GYRO_BIAS_SIGMA;
   Scalar accel_bias_sigma = IMU_ACCEL_BIAS_SIGMA;
+  Scalar imu_weight;
+  Scalar imu_prior;
+  Scalar min_lm_observations;
 
   // Outlier thresholds
   Scalar projection_outlier_threshold = 1.0;

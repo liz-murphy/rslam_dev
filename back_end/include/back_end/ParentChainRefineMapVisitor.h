@@ -12,7 +12,7 @@
 #include <slam_map/pose_measurement.h>
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/TransformEdge.h>
-
+#include <ros/ros.h>
 /** Visitor to gather active frame set for BackEnd::RefineMap */
 template <typename BundleAdjuster>
 class ParentChainRefineMapVisitor : public MapVisitor {
@@ -90,12 +90,12 @@ class ParentChainRefineMapVisitor : public MapVisitor {
       std::vector<ba::ImuMeasurementT<Scalar> > meas =
           imu_buffer_->GetRange(child->time(), parent->time());
       if (meas.empty()) {
-        LOG(FATAL) << "No measurements in residual from "
-                   << child->time() << " to "
-                   << parent->time() << " buffer start t: "
-                   << imu_buffer_->start_time << " end time: "
-                   << imu_buffer_->end_time
-                   << " num elements: " << imu_buffer_->elements.size();
+        ROS_ERROR("No measurements in residual from %f to %f, buffer start t: %f, end time: %f, num elements: %d",
+            child->time(),
+            parent->time(),
+            imu_buffer_->start_time,
+            imu_buffer_->end_time,
+            (int)imu_buffer_->elements.size());
       }
       edge_ba = ba_->AddImuResidual(
           ba_frames_->at(child_id), ba_frames_->at(parent_id), meas,

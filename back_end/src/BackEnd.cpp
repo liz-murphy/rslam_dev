@@ -10,7 +10,6 @@
 #include <back_end/GatherLandmarkFramesRefineMapVisitor.h>
 #include <back_end/ParentChainRefineMapVisitor.h>
 #include <back_end/PushMap.h>
-//#include <CVars/CVar.h>
 #include <back_end/BackEndConfig.h>
 #include <slam_map/SlamMap.h>
 #include <slam_map/TransformEdge.h>
@@ -18,69 +17,16 @@
 #include <slam_map/MapVisitor/TransformMapVisitor.h>
 #include <common_front_end/Triangulation.h>
 #include <utils/MathTypes.h>
+#include <ros/ros.h>
 
 using rslam::backend::LiftResults;
-
-/*static double& g_adaptive_threshold =
-    CVarUtils::CreateCVar<>("backend.Adaptive.Threshold", 0.1, "");
-
-static double& g_damping_factor =
-    CVarUtils::CreateCVar<>("backend.Damping", 1.0, "");
-
-static bool& g_error_increase_allowd =
-    CVarUtils::CreateCVar<>("backend.AllowErrorIncrease", false, "");
-
-static bool& g_do_dogleg =
-    CVarUtils::CreateCVar<>("backend.DoDogleg", true, "");
-
-static double& g_dImuWeight =
-    CVarUtils::CreateCVar<>("backend.ImuWeight", 1e3, "");
-
-static double& g_dImuPrior =
-    CVarUtils::CreateCVar<>("backend.ImuPrior", 10.0, "");
-
-static double& g_trust_region_init_size =
-    CVarUtils::CreateCVar<>( "backend.TrustRegionInitSize", 5.0, "" );
-
-static unsigned int& g_debug_level =
-    CVarUtils::CreateCVar<>( "debug.BackEnd", 1u,
-                             "Debug backend optimizations" );
-
-static double& g_min_frames_for_imu =
-    CVarUtils::CreateCVar<>("backend.MinFramesForImu", 15.0, "");
-
-static double& g_gyro_sigma =
-    CVarUtils::CreateCVar<>("backend.GyroSigma",
-                            IMU_GYRO_SIGMA, "");
-
-static double& g_gyro_bias_sigma =
-    CVarUtils::CreateCVar<>("backend.GyroBiasSigma",
-                            IMU_GYRO_BIAS_SIGMA, "");
-
-static bool& g_do_imu_conditioning =
-    CVarUtils::CreateCVar<>("backend.DoImuConditioning", true, "");
-
-static double& g_accel_sigma =
-    CVarUtils::CreateCVar<>("backend.AccelSigma",
-                            IMU_ACCEL_SIGMA, "");
-
-static double& g_accel_bias_sigma =
-    CVarUtils::CreateCVar<>("backend.AccelBiasSigma",
-                            IMU_ACCEL_BIAS_SIGMA, "");
-
-static int& g_min_lm_observations =
-    CVarUtils::CreateCVar<>("tracker.MinLandmarkObservations", 3, "");
-
-static int& g_adaptive_depth_increase =
-    CVarUtils::CreateCVar<int>("backend.AdaptiveDepthIncrease", 30, "");
-*/
 
 BackEnd::BackEnd() :
   is_running_(false),
   map_(nullptr) {
   Clear();
-  ba::debug_level_threshold = google::log_severity_global;
-  ba::debug_level = BackEndConfig::getConfig()->debug_level;
+  //ba::debug_level_threshold = google::log_severity_global;
+  //ba::debug_level = BackEndConfig::getConfig()->debug_level;
 }
 
 BackEnd::~BackEnd() {}
@@ -93,9 +39,10 @@ void BackEnd::Clear() {
 void BackEnd::RegisterImuMeasurement(const Eigen::Vector3t &w,
                                      const Eigen::Vector3t &a,
                                      const double time) {
-  LOG(BackEndConfig::getConfig()->debug_level)
-      << "Registering IMU measurement @t=" << time << " with w = "
-      << w.transpose() << " and a = " << a.transpose();
+  ROS_DEBUG_NAMED("back_end", "Registering IMU measurement @t=%f with w = %s and a = %s", 
+      time, 
+      boost::lexical_cast<std::string>(w.transpose()).c_str(),
+      boost::lexical_cast<std::string>(a.transpose()).c_str());
 
   imu_buffer_.AddElement(ba::ImuMeasurementT<Scalar>(w, a, time));
 }
@@ -129,9 +76,11 @@ void BackEnd::IntegrateLastPose(
   v_r_new =  new_pose.t_wp.so3().inverse() * new_pose.v_w;
   g_r_new =  new_pose.t_wp.so3().inverse() * g_r;
 
-  LOG(BackEndConfig::getConfig()->debug_level) <<
-      "Integrating last pose from " << start_time <<
-      " to " << end_time << " with x_ab: " << t_ab.translation().transpose();
+  ROS_DEBUG_NAMED("back_end", "Integrating last pose from %f to %f with x_ab: %s", 
+      start_time,  
+      end_time, 
+      boost::lexical_cast<std::string>(t_ab.translation().transpose()).c_str());
+
   // current_pose_ = newPose;
 }
 
@@ -168,8 +117,10 @@ class LoadRelaxationMapVisitor : public TransformMapVisitor {
     // Transform from parent to child
     Sophus::SE3t t_pc;
     if (!edge->transform(parent_id, child_id, t_pc)) {
-      LOG(ERROR) << "Could not get transform between parent " << parent_id
-                 << " and child " << child_id << " from edge " << edge->id();
+      ROS_ERROR("Could not get transform between parent %s and child %s from edge %s",
+                 boost::lexical_cast<std::string>(parent_id).c_str(),
+                 boost::lexical_cast<std::string>(child_id).c_str(),
+                 boost::lexical_cast<std::string>(edge->id()).c_str());
     }
 
     const auto it_child = pose_ids_->find(child_id);
@@ -190,7 +141,7 @@ class LoadRelaxationMapVisitor : public TransformMapVisitor {
       loaded_cameras_.insert(frame_id.session_id);
       CameraRigPtr rig = map_->GetCamera(frame_id.session_id);
       if (!rig) {
-        LOG(ERROR) << "Could not find rig for " << frame_id;
+        ROS_ERROR("Could not find rig for %s",boost::lexical_cast<std::string>(frame_id).c_str());
       } else {
         for (unsigned int i = 0; i < rig->cameras.size(); ++i) {
           ba_->AddCamera(rig->cameras[i].camera, rig->cameras[i].T_wc);
@@ -245,12 +196,12 @@ void BackEnd::RelaxMap(const unsigned int depth,
                        const ReferenceFrameId& root_id,
                        const unsigned int max_iter,
                        const calibu::CameraRigT<Scalar> & rig) {
-  LOG(BackEndConfig::getConfig()->debug_level) << "<RelaxMap>";
+  ROS_DEBUG_NAMED("back_end","RelaxMap");
   Clear();
 
   ba::Options<Scalar> options;
   ba_.Init(options, depth, 0, 0, rig.cameras[0].T_wc);
-  LOG(BackEndConfig::getConfig()->debug_level) << "\tLoading poses";
+  ROS_DEBUG_NAMED("back_end","Loading poses");
 
   LoadRelaxationMapVisitor<decltype(ba_)> loader(&ba_, &pose_ids_, map_);
   loader.set_depth(depth);
@@ -261,22 +212,22 @@ void BackEnd::RelaxMap(const unsigned int depth,
   CHECK(pose_ids_.count(root_id));
   ba_.SetRootPoseId(pose_ids_[root_id]);
 
-  LOG(BackEndConfig::getConfig()->debug_level) << "\t\tDone loading poses";
+  ROS_DEBUG_NAMED("back_end","Done loading poses");
 
-  LOG(BackEndConfig::getConfig()->debug_level) << "\tSolvng map relaxation";
+  ROS_DEBUG_NAMED("back_end","Solving map relaxation");
   ba_.Solve(max_iter);
-  LOG(BackEndConfig::getConfig()->debug_level) << "\t\tDone solving map relaxation";
+  ROS_DEBUG_NAMED("back_end","Done solving map relaxation");
 
-  LOG(BackEndConfig::getConfig()->debug_level) << "\tPushing map";
+  ROS_DEBUG_NAMED("back_end","Pushing map");
 
   PushBAMapVisitor<decltype(ba_)> pusher(&ba_, &pose_ids_, map_);
   pusher.set_depth(depth);
   pusher.set_root_id(root_id);
   pusher.set_should_ignore_broken(true);
   map_->BFS(&pusher);
-  LOG(BackEndConfig::getConfig()->debug_level) << "\t\tDone pushing map";
+  ROS_DEBUG_NAMED("back_end","Done pushing map");
 
-  LOG(BackEndConfig::getConfig()->debug_level) << "<\\RelaxMap>";
+  ROS_DEBUG_NAMED("back_end","RelaxMap");
 }
 
 bool BackEnd::_AddImuResidualToEdge(const SlamEdgePtr &edge,
@@ -287,11 +238,13 @@ bool BackEnd::_AddImuResidualToEdge(const SlamEdgePtr &edge,
   const TransformEdgeId edge_id = edge->id();
   const auto ita = pose_ids_.find(edge_id.start);
   const auto itb = pose_ids_.find(edge_id.end);
-  LOG(BackEndConfig::getConfig()->debug_level) << "Adding imu residual between " << edge_id.start
-                     << " and " << edge_id.end <<  " with weight " << weight;
+  ROS_DEBUG_NAMED("back_end","Adding imu residual between %s and %s with weight %f", 
+      boost::lexical_cast<std::string>(edge_id.start).c_str(), 
+      boost::lexical_cast<std::string>(edge_id.end).c_str(), 
+      weight);
 
   if (ita == pose_ids_.end() || itb == pose_ids_.end()) {
-    LOG(ERROR) << "Pose not found when attempting to add imu residual to edge.";
+    ROS_ERROR("Pose not found when attempting to add imu residual to edge.");
     return false;
   }
 
@@ -299,33 +252,34 @@ bool BackEnd::_AddImuResidualToEdge(const SlamEdgePtr &edge,
   auto end_it = local_map.poses.find(edge_id.end);
 
   if (start_it == local_map.poses.end()) {
-    LOG(ERROR) << "When attempting to add imu residual, start pose not in ba: "
-               << edge->id();
+    ROS_ERROR("When attempting to add imu residual, start pose not in ba: %s",
+               boost::lexical_cast<std::string>(edge->id()).c_str());
     return false;
   } else if (end_it == local_map.poses.end()) {
-    LOG(ERROR) << "When attempting to add imu residual, end pose not in ba: "
-               << edge->id();
+    ROS_ERROR("When attempting to add imu residual, end pose not in ba: %s",
+               boost::lexical_cast<std::string>(edge->id()).c_str());
     return false;
   }
 
   const PoseContainerT& start_pose = start_it->second;
   const PoseContainerT& end_pose = end_it->second;
   if (end_pose.time <= start_pose.time) {
-    LOG(ERROR) << "IMU timestamps not sequential on edge "
-               << edge_id << " at times "
-               << start_pose.time << " to " << end_pose.time;
+    ROS_ERROR("IMU timestamps not sequential on edge %s at times %s to %s",
+               boost::lexical_cast<std::string>(edge_id).c_str(),
+               boost::lexical_cast<std::string>(start_pose.time).c_str(),
+               boost::lexical_cast<std::string>(end_pose.time).c_str());
     return false;
   }
 
   std::vector<ba::ImuMeasurementT<Scalar> > meas =
       imu_buffer_.GetRange(start_pose.time, end_pose.time);
   if (meas.empty()) {
-    LOG(ERROR) << "No measurements in residual from "
-               << start_pose.time << " to "
-               << end_pose.time << " buffer start t: "
-               << imu_buffer_.start_time << " end time: "
-               << imu_buffer_.end_time
-               << " num elements: " << imu_buffer_.elements.size();
+    ROS_ERROR("No measurements in residual from %f to %f. Buffer start t: %f, end time: %f, num elements: %d",
+               start_pose.time,
+               end_pose.time,
+               imu_buffer_.start_time,
+               imu_buffer_.end_time,
+               (int)imu_buffer_.elements.size());
     return false;
   }
   *ba_id = imu_ba_.AddImuResidual(start_pose.ba_id, end_pose.ba_id,
@@ -349,8 +303,8 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
   for (auto& pair: local_map.poses) {
     auto& local_pose = pair.second;
     if (local_pose.ba_id == UINT_MAX) {
-      LOG(BackEndConfig::getConfig()->debug_level) << "Skipping update for pose " << pair.first
-                         << " since ba_id = -1 ";
+      ROS_DEBUG_NAMED("back_end","Skipping update for pose %s since ba_id = -1", 
+          boost::lexical_cast<std::string>(pair.first).c_str());
       continue;
     }
 
@@ -415,9 +369,9 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
         anchor_t_wp_set = true;
         anchor_id = pair.first;
         last_anchor_t_wp = local_pose.t_wp;
-        LOG(BackEndConfig::getConfig()->debug_level) <<
-            "Setting anchord_t_wp to  " << std::endl <<
-            local_pose.t_wp.matrix() << " id " << anchor_id << std::endl;
+        ROS_DEBUG_NAMED("back_end","Setting anchor_t_wp to %s,  id: %s",
+            boost::lexical_cast<std::string>(local_pose.t_wp.matrix()).c_str(), 
+            boost::lexical_cast<std::string>(anchor_id).c_str());
       }
 
       if (is_using_imu) {
@@ -430,11 +384,12 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
         //               local_pose.b.transpose() << std::endl;
       }
 
-      LOG(BackEndConfig::getConfig()->debug_level) << "setting pose " << pair.first << " to: " << std::endl <<
-          local_pose.t_wp.matrix() << " with v: " <<
-          local_pose.v_w.transpose() << " and b: " <<
-          local_pose.b.transpose() << " from ba_id " <<
-          local_pose.ba_id << std::endl;
+      ROS_DEBUG_NAMED("back_end", "setting pose %s to %s with v: %s and b: %s from ba_id %s", 
+          boost::lexical_cast<std::string>(pair.first).c_str(), 
+          boost::lexical_cast<std::string>(local_pose.t_wp.matrix()).c_str(), 
+          boost::lexical_cast<std::string>(local_pose.v_w.transpose()).c_str(), 
+          boost::lexical_cast<std::string>(local_pose.b.transpose()).c_str(),
+          boost::lexical_cast<std::string>(local_pose.ba_id).c_str()); 
     }
   }
 
@@ -483,15 +438,11 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
       //          << " from: " << pair.second.x_w.transpose();
 
       if (fabs(pair.second->x_w[3]) < 1e-6) {
-        LOG(BackEndConfig::getConfig()->debug_level) <<
-            "WARNING --> abs(inverse depth) < 1e-6, possible division"
-            " by zero to follow" << std::endl;
+        ROS_WARN("back_end: --> abs(inverse depth) < 1e-6, possible division by zero to follow");
       }
       pair.second->x_w /= pair.second->x_w[3];
 
-      LOG(BackEndConfig::getConfig()->debug_level + 1) <<
-          "setting lm " << pair.first << " to: " <<
-          pair.second->x_w.transpose() << std::endl;
+      ROS_DEBUG_NAMED("back_end","setting lm %s to: %s", boost::lexical_cast<std::string>(pair.first).c_str(), boost::lexical_cast<std::string>(pair.second->x_w.transpose()).c_str());
 
     } else {
       // Remove this landmark from the local map so that it doesn't get updated
@@ -502,7 +453,7 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
 
   if (remove_unused_landmarks) {
     for (const LandmarkId& id : to_delete) {
-      LOG(BackEndConfig::getConfig()->debug_level + 1) << "Deleting lm " << id << std::endl;
+      ROS_DEBUG_NAMED("back_end", "Deleting lm %s", boost::lexical_cast<std::string>(id).c_str());
       local_map.landmarks.erase(id);
     }
   }
@@ -533,9 +484,10 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
       root_delta_norm[ii] = root_delta[ii] * (1.0/cov[ii]) * root_delta[ii];
     }
 
-    LOG(BackEndConfig::getConfig()->debug_level) << "mean delta norm: "  << mean_delta_norm.norm() << std::endl;
-    LOG(BackEndConfig::getConfig()->debug_level) << "root delta norm: " << root_delta_norm.norm() <<
-        "root delta: " << root_delta_norm.transpose() << std::endl;
+    ROS_DEBUG_NAMED("back_end", "mean delta norm: %f", mean_delta_norm.norm());
+    ROS_DEBUG_NAMED("back_end", "root delta norm: %f,  root delta %s", 
+        root_delta_norm.norm(),
+        boost::lexical_cast<std::string>(root_delta_norm.transpose()).c_str());
 
     //    LOG(debug_level) << "diff: "  << mean.transpose() << std::endl;
     //    LOG(g_debug_level) << "cov: "  << cov.transpose() << std::endl;
@@ -545,7 +497,7 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
 
     //if (mahalanobis_dist > 8.0) {
     //if (root_delta_norm.norm() > g_adaptive_threshold/*mean_delta_norm.norm()*/) {
-    if (root_delta_norm.norm() > mean_delta_norm.norm() * BackEndConfig::getConfig()->adaptive_threshold) {
+    if (root_delta_norm.norm() > mean_delta_norm.norm() * BackEndConfig::getConfig()->getAdaptiveThreshold()) {
       status = OptStatus_DiffOverThreshold;
     } else {
       status = OptStatus_DiffBelowThreshold;
@@ -609,7 +561,7 @@ bool BackEnd::LoadPoseIntoBa(
     const std::map<SessionId, std::map<uint32_t, uint32_t> >& ba_cam_ids,
     bool init_new_landmarks) {
 
-  LOG(BackEndConfig::getConfig()->debug_level) << "Analyzing pose " << id << " for addition";
+  ROS_DEBUG_NAMED("back_end","Analyzing pose %s for addition", boost::lexical_cast<std::string>(id).c_str());
 
   // First we must add this pose, if there are any measurements and/or ref
   // landmarks.
@@ -631,13 +583,14 @@ bool BackEnd::LoadPoseIntoBa(
   pose_ids_[id] = pose_container.ba_id =
       AddPoseIntoBa(is_using_imu, is_active, pose_container);
 
-  LOG(BackEndConfig::getConfig()->debug_level)
-      << "Adding " << (is_active ? "active pose: " : "inactive pose: ")
-      << id << " with meas.size:" << pose_container.measurements.size()
-      << " and ref_lm.size: " << pose_container.ref_landmarks.size()
-      << " and t_wp: " << std::endl << pose_container.t_wp.matrix()
-      << " and b: " << pose_container.b.transpose()
-      << " and ba_id " << pose_container.ba_id << std::endl;
+  ROS_DEBUG_NAMED("back_end", "Adding %s %s with meas.size %d and ref_lm.size %d and t_wp: %s and b: %s and ba_id: %s",
+      (is_active ? "active pose: " : "inactive pose: "),
+      boost::lexical_cast<std::string>(id).c_str(),
+      (int)pose_container.measurements.size(),
+      (int)pose_container.ref_landmarks.size(),
+      boost::lexical_cast<std::string>(pose_container.t_wp.matrix()).c_str(),
+      boost::lexical_cast<std::string>(pose_container.b.transpose()).c_str(),
+      boost::lexical_cast<std::string>(pose_container.ba_id).c_str());
 
   bool is_lmks_active = !pose_container.is_static_set_pose;
 
@@ -645,20 +598,19 @@ bool BackEnd::LoadPoseIntoBa(
   // tests.
   for (const std::shared_ptr<LandmarkContainer>& lmk_container :
            pose_container.ref_landmarks) {
-    LOG_IF(FATAL, lmk_container->id.ref_frame_id != id)
-        << "Landmark " << lmk_container->id
-        << " has mismatched ref id  to localmap ref id: " << id;
+    ROS_ERROR_COND(lmk_container->id.ref_frame_id != id, "Landmark %s has mismatched ref id to localmap ref id: %s",
+        boost::lexical_cast<std::string>(lmk_container->id).c_str(),
+        boost::lexical_cast<std::string>(id).c_str());
 
     auto cam_ids_it = ba_cam_ids.find(id.session_id);
     if (cam_ids_it == ba_cam_ids.end()) {
-      LOG(WARNING) << "Could not find cam id for " << id;
+      ROS_WARN("Could not find cam id for %s",boost::lexical_cast<std::string>(id).c_str()); 
       continue;
     }
 
     auto lm_cam_id_it = cam_ids_it->second.find(lmk_container->base_camera_id);
     if (lm_cam_id_it == cam_ids_it->second.end()) {
-      LOG(WARNING) << "Could not find lm cam id for "
-                   << lmk_container->base_camera_id;
+      ROS_WARN("Could not find lm cam id for %d", lmk_container->base_camera_id);
       continue;
     }
     const unsigned int lm_ba_cam_id = lm_cam_id_it->second;
@@ -666,7 +618,7 @@ bool BackEnd::LoadPoseIntoBa(
     // need at least two measurements
     bool test1 = (lmk_container->state == eLmkAtInfinity &&
                   lmk_container->measurements.size() >=
-                  (size_t)BackEndConfig::getConfig()->min_lm_observations);
+                  (size_t)BackEndConfig::getConfig()->getMinLMObservations());
 
     bool test2 = (lmk_container->state != eLmkAtInfinity &&
                   lmk_container->measurements.size() > 1 &&
@@ -678,19 +630,20 @@ bool BackEnd::LoadPoseIntoBa(
       lmk_container->ba_id = AddLandmarkIntoBa(
           is_using_imu, is_lmks_active, lm_ba_cam_id,
           pose_container.ba_id, *lmk_container);
-      LOG(BackEndConfig::getConfig()->debug_level + 1) << "Adding landmark." << lmk_container->id
-                             << " with ba_id: " << lmk_container->ba_id
-                             << " state: "
-                             << LandmarkStateToString(lmk_container->state);
+      ROS_DEBUG_NAMED("back_end","Adding landmark. %s with ba_id: %s state: %s",
+          boost::lexical_cast<std::string>(lmk_container->id).c_str(),
+          boost::lexical_cast<std::string>(lmk_container->ba_id).c_str(),
+          LandmarkStateToString(lmk_container->state).c_str());
     }
   }
 
   // Add all measurements taken at this frame as constraints
   for (std::shared_ptr<MeasurementContainer> meas_container :
            pose_container.measurements) {
-    LOG_IF(FATAL, meas_container->id.frame_id != id)
-        << "Meas: " << meas_container->id << " has mismatched pose id: "
-        << meas_container->id.frame_id << " to localmap ref id: " << id;
+    ROS_ERROR_COND(meas_container->id.frame_id != id, "Meas %s has mismatched pose id: %s to local map ref id: %s",
+        boost::lexical_cast<std::string>(meas_container->id).c_str(),
+        boost::lexical_cast<std::string>(meas_container->id.frame_id).c_str(),
+        boost::lexical_cast<std::string>(id).c_str());
 
     LandmarkId lm_id = meas_container->id.landmark_id;
     if (lm_id.ref_frame_id.session_id != local_map.map->id()) {
@@ -698,22 +651,23 @@ bool BackEnd::LoadPoseIntoBa(
     }
 
     auto lmk_it = local_map.landmarks.find(lm_id);
-    LOG_IF(FATAL, lmk_it == local_map.landmarks.end())
-        << "Measurement " << meas_container->id
-        << " references landmark outside window.";
+    ROS_ERROR_COND(lmk_it == local_map.landmarks.end(),"Measurement %s references landmark outside window.",
+        boost::lexical_cast<std::string>(meas_container->id).c_str());
 
     const std::shared_ptr<LandmarkContainer>& lmk_container = lmk_it->second;
     if (lmk_container->ba_id == UINT_MAX) continue;
 
     auto cam_ids_it = ba_cam_ids.find(id.session_id);
     if (cam_ids_it == ba_cam_ids.end()) {
-      LOG(WARNING) << "Could not find cam id for " << id;
+      ROS_WARN("Could not find cam id for %s",
+          boost::lexical_cast<std::string>(id).c_str());
       continue;
     }
 
     auto z_cam_id_it = cam_ids_it->second.find(meas_container->cam_id);
     if (z_cam_id_it == cam_ids_it->second.end()) {
-      LOG(WARNING) << "Could not find z cam id for " << meas_container->cam_id;
+      ROS_WARN("Could not find z cam id for %s",
+          boost::lexical_cast<std::string>(meas_container->cam_id).c_str());
       continue;
     }
 
@@ -724,11 +678,12 @@ bool BackEnd::LoadPoseIntoBa(
         is_using_imu, meas_container->z, pose_container.ba_id,
         lmk_container->ba_id, z_ba_cam_id);
 
-    LOG(BackEndConfig::getConfig()->debug_level + 1) << "\tAdding projection residual with "
-        "fid: " << meas_container->id.frame_id.id <<
-        ", lm_id: " << lmk_container->id <<", lmk_ba_id: " <<
-        lmk_container->ba_id << ", cam_id: " <<
-        meas_container->cam_id << ", res_id: " << res_id << std::endl;
+    ROS_DEBUG_NAMED("back_end","Adding projection residual with fid: %s, lm_id: %s, lmk_ba_id: %s, cam_id: %s, res_id: %s", 
+        boost::lexical_cast<std::string>(meas_container->id.frame_id.id).c_str(),
+        boost::lexical_cast<std::string>(lmk_container->id).c_str(),
+        boost::lexical_cast<std::string>(lmk_container->ba_id).c_str(), 
+        boost::lexical_cast<std::string>(meas_container->cam_id).c_str(),
+        boost::lexical_cast<std::string>(res_id).c_str());
   }
   return true;
 }
@@ -746,11 +701,11 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
   min_active_pose_id_.session_id = min_pose_id_.session_id = map_->id();
 
   ba::Options<Scalar> options;
-  options.trust_region_size = BackEndConfig::getConfig()->trust_region_init_size;
-  options.gyro_sigma = BackEndConfig::getConfig()->gyro_sigma;
-  options.gyro_bias_sigma = BackEndConfig::getConfig()->gyro_bias_sigma;
-  options.accel_sigma = BackEndConfig::getConfig()->accel_sigma;
-  options.accel_bias_sigma = BackEndConfig::getConfig()->accel_bias_sigma;
+  options.trust_region_size = BackEndConfig::getConfig()->getTrustRegionInitSize();
+  options.gyro_sigma = BackEndConfig::getConfig()->getGyroSigma();
+  options.gyro_bias_sigma = BackEndConfig::getConfig()->doIMUConditioning();
+  options.accel_sigma = BackEndConfig::getConfig()->getAccelSigma();
+  options.accel_bias_sigma = BackEndConfig::getConfig()->getAccelBiasSigma();
 
   // initialize the bundle adjuster
   if (is_using_imu && !init_new_landmarks) {
@@ -801,7 +756,7 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
   }
 
   if (pose_ids_.empty()) {
-    LOG(BackEndConfig::getConfig()->debug_level) << "pose_ids_ is empty. Returning false.";
+    ROS_DEBUG_NAMED("back_end","pose_ids_ is empty. Returning false.");
     return false;
   }
 
@@ -833,12 +788,12 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
           pose_ids_.count(edge_id.end) &&
           local_map.parent_chain_ids.count(edge_id.start) &&
           local_map.parent_chain_ids.count(edge_id.end)) {
-        LOG(BackEndConfig::getConfig()->debug_level) << "Attempting to add imu residual to edge id "
-                           << edge_id;
+        ROS_DEBUG_NAMED("back_end", "Attempting to add imu residual to edge id %s", boost::lexical_cast<std::string>(edge_id).c_str());
+            
 
-        if (!_AddImuResidualToEdge(edge, local_map, BackEndConfig::getConfig()->imu_weight,
+        if (!_AddImuResidualToEdge(edge, local_map, BackEndConfig::getConfig()->getIMUWeight(),
                                    &pair.second.id)) {
-          LOG(FATAL) << "Failed to add IMU residual to edge " << edge_id;
+          ROS_ERROR("Failed to add IMU residual to edge %s", boost::lexical_cast<std::string>(edge_id).c_str());
         }
       }
     }
@@ -848,15 +803,12 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
     // the previous pose by adding a constraint.
 
     if (!init_new_landmarks &&
-        imu_ba_.GetNumImuResiduals() > 0 && BackEndConfig::getConfig()->do_imu_conditioning) {
+        imu_ba_.GetNumImuResiduals() > 0 && BackEndConfig::getConfig()->doIMUConditioning()) {
       // Add imu prior edge
       const SlamFramePtr frame = map_->GetFramePtr(min_active_pose_id_);
       TransformEdgeId parent_edge = frame->parent_edge_id();
 
-      LOG(BackEndConfig::getConfig()->debug_level) << "Attempting to add prior edge with min_pose_id: "
-                         << min_active_pose_id_ << " and parent edge id: "
-                         << parent_edge << ". Other end is "
-                         << (parent_edge.OtherEnd(min_active_pose_id_));
+      ROS_DEBUG_NAMED("back_end", "Attempting to add prior edge with min_pose_id: %s and parent edge id: %s. Other end is %s", boost::lexical_cast<std::string>(min_active_pose_id_).c_str(), boost::lexical_cast<std::string>(parent_edge).c_str(), boost::lexical_cast<std::string>(parent_edge.OtherEnd(min_active_pose_id_)).c_str());
 
       if (parent_edge.valid()) {
         const SlamEdgePtr edge = map_->GetEdgePtr(parent_edge);
@@ -869,24 +821,20 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
 
           const ba::PoseT<Scalar>& pose = imu_ba_.GetPose(it_start->second);
           if (pose.is_active && !pose.inertial_residuals.empty()) {
-            LOG(FATAL) << "Pose in prior imu constraint cannot be active."
-                       << "min_active_pose_id_: " << min_active_pose_id_
-                       << " and parent edge id: " << parent_edge;
+            ROS_ERROR("Pose in prior imu constraint cannot be active. min_active_pose_id_: %s and parent edge id: %s", boost::lexical_cast<std::string>(min_active_pose_id_).c_str(), boost::lexical_cast<std::string>(parent_edge).c_str());
             return false;
           }
 
-          LOG(BackEndConfig::getConfig()->debug_level) << "Adding prior IMU constraint for edge"
-                             << parent_edge << " with minPoseId "
-                             << min_active_pose_id_.id;
+          ROS_DEBUG_NAMED("back_end","Adding prior IMU constraint for edge %s with minPoseId %s", boost::lexical_cast<std::string>(parent_edge).c_str(), boost::lexical_cast<std::string>(min_active_pose_id_.id).c_str());
 
           unsigned int id = 0;
           if (!_AddImuResidualToEdge(edge, local_map,
                                      imu_ba_.IsTranslationEnabled() ?
-                                     BackEndConfig::getConfig()->imu_prior : BackEndConfig::getConfig()->imu_prior/100.0, &id)) {
-            LOG(FATAL) << "Failed to add prior IMU residual " << edge->id();
+                                     BackEndConfig::getConfig()->getIMUPrior() : BackEndConfig::getConfig()->getIMUPrior()/100.0, &id)) {
+            ROS_ERROR("Failed to add prior IMU residual %s", boost::lexical_cast<std::string>(edge->id()).c_str());
             return false;
           }
-          LOG(BackEndConfig::getConfig()->debug_level) << "Added prior with ID " << id;
+          ROS_DEBUG_NAMED("back_end","Added prior with ID %d", id);
         }
       }
     }
@@ -901,13 +849,11 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
 
     // Before checking last_min_pose_id, make sure it's initialized.
     if (!last_min_pose_id_.valid()) {
-      LOG(BackEndConfig::getConfig()->debug_level) << "Initializing last_min_id to: " <<
-          (last_min_pose_id_ = min_pose_id_) << std::endl;
+      ROS_DEBUG_NAMED("back_end", "Initializing last_min_id to: %s", boost::lexical_cast<std::string>(min_pose_id_).c_str());
+      last_min_pose_id_ = min_pose_id_;
     }
 
-    LOG(BackEndConfig::getConfig()->debug_level) << " init = " << init_new_landmarks <<
-        "last_nin_id = " << last_min_pose_id_.id <<
-        " min_id = " << min_pose_id_.id << std::endl;
+    ROS_DEBUG_NAMED("back_end", "init = %s, last_nin_id = %d, min_id = %d", (init_new_landmarks ? "True":"False"), last_min_pose_id_.id, min_pose_id_.id);
   }
 
   return true;
@@ -940,15 +886,15 @@ inline void LiftMap(uint32_t depth,
       &results->root_pose_id);
   parent_visitor.set_depth(depth);
   parent_visitor.set_root_id(root_id);
-  parent_visitor.set_imu_weight(BackEndConfig::getConfig()->imu_weight);
-  parent_visitor.set_imu_prior_weight(BackEndConfig::getConfig()->imu_prior);
+  parent_visitor.set_imu_weight(options.imu_weight);
+  parent_visitor.set_imu_prior_weight(options.imu_prior);
   parent_visitor.set_disable_poses(do_landmark_init);
   parent_visitor.set_should_ignore_broken(imu_buffer != nullptr);
   map->ParentTraverse(&parent_visitor);
 
   GatherLandmarkFramesRefineMapVisitor<BundleAdjuster> lmk_visitor(
       do_landmark_init, map, ba, &results->pose_ba_ids,
-      &results->landmark_ba_ids);
+      &results->landmark_ba_ids, options.min_lm_observations);
   lmk_visitor.set_depth(300);
   lmk_visitor.set_root_id(root_id);
   lmk_visitor.set_use_imu(imu_buffer != nullptr);
@@ -962,12 +908,14 @@ void BackEnd::LiftMap(uint32_t depth,
                       bool use_imu,
                       LiftResults* results) {
   ba::Options<Scalar> options;
-  options.trust_region_size = BackEndConfig::getConfig()->trust_region_init_size;
-  options.gyro_sigma = BackEndConfig::getConfig()->gyro_sigma;
-  options.gyro_bias_sigma = BackEndConfig::getConfig()->gyro_bias_sigma;
-  options.accel_sigma = BackEndConfig::getConfig()->accel_sigma;
-  options.accel_bias_sigma = BackEndConfig::getConfig()->accel_bias_sigma;
-
+  options.trust_region_size = BackEndConfig::getConfig()->getTrustRegionInitSize();
+  options.gyro_sigma = BackEndConfig::getConfig()->getGyroSigma();
+  options.gyro_bias_sigma = BackEndConfig::getConfig()->doIMUConditioning();
+  options.accel_sigma = BackEndConfig::getConfig()->getAccelSigma();
+  options.accel_bias_sigma = BackEndConfig::getConfig()->getAccelBiasSigma();
+  options.imu_weight = BackEndConfig::getConfig()->getIMUWeight();
+  options.imu_prior = BackEndConfig::getConfig()->getIMUPrior();
+  options.min_lm_observations = BackEndConfig::getConfig()->getMinLMObservations();
   if (use_imu) {
     ::LiftMap<decltype(imu_ba_)>(depth, root_id, options, do_landmark_init,
                                  map_.get(), &imu_ba_, &imu_buffer_, results);
@@ -982,14 +930,14 @@ bool BackEnd::PushMap(bool use_imu, const LiftResults& results,
   bool success;
   if (use_imu) {
     success = rslam::PushMap(imu_ba_, results.edge_ba_ids, results.pose_ba_ids,
-                             results.landmark_ba_ids, &imu_buffer_, map_.get());
+                             results.landmark_ba_ids, &imu_buffer_, map_.get(), BackEndConfig::getConfig()->getIMUVisualizationTimeExtra());
     if (callbacks.visual_inertial_callback) {
       callbacks.visual_inertial_callback(imu_ba_, results);
     }
 
   } else {
     success = rslam::PushMap(ba_, results.edge_ba_ids, results.pose_ba_ids,
-                             results.landmark_ba_ids, nullptr, map_.get());
+                             results.landmark_ba_ids, nullptr, map_.get(), BackEndConfig::getConfig()->getIMUVisualizationTimeExtra());
     if (callbacks.visual_callback) {
       callbacks.visual_callback(ba_, results);
     }
@@ -1001,7 +949,8 @@ template <typename BundleAdjuster>
 OptimizationStatus ComputeAdaptiveMetrics(const BundleAdjuster& ba,
                                           Scalar prev_cond_error,
                                           uint32_t root_imu_id,
-                                          Scalar* cond_error_out) {
+                                          Scalar* cond_error_out,
+                                          double adaptive_threshold) {
   CHECK(cond_error_out);
   const ba::SolutionSummary<Scalar>& summary = ba.GetSolutionSummary();
 
@@ -1011,9 +960,9 @@ OptimizationStatus ComputeAdaptiveMetrics(const BundleAdjuster& ba,
   }
 
   Scalar cond_v_chi2_dist =
-      chi2inv(BackEndConfig::getConfig()->adaptive_threshold, summary.num_cond_proj_residuals * 2);
+      chi2inv(adaptive_threshold, summary.num_cond_proj_residuals * 2);
   Scalar cond_i_chi2_dist =
-      chi2inv(BackEndConfig::getConfig()->adaptive_threshold, BundleAdjuster::kPoseDim);
+      chi2inv(adaptive_threshold, BundleAdjuster::kPoseDim);
 
   const Scalar cond_total_error = cond_inertial_error;
   const Scalar inertial_ratio = cond_inertial_error / cond_i_chi2_dist;
@@ -1045,19 +994,17 @@ bool BackEnd::RefineMap(unsigned int depth,
                         const RefineMapCallbacks& callbacks) {
   CHECK(map_) << "BackEnd::Init(map) must be called before RefineMap";
   if (!root_id.valid()) return false;
-  ba::debug_level_threshold = google::log_severity_global;
-  ba::debug_level = BackEndConfig::getConfig()->debug_level;
 
   if (adaptive_options.do_adaptive && adaptive_options.is_asynchronous &&
       map_->NumFrames() < adaptive_options.min_window_size) {
     return false;
   }
 
-  bool is_using_imu = use_imu && map_->NumFrames() >= BackEndConfig::getConfig()->min_frames_for_imu;
+  bool is_using_imu = use_imu && map_->NumFrames() >= (unsigned int)BackEndConfig::getConfig()->getMinFramesForIMU();
 
   if (do_landmark_init) {
     // First initialize any landmarks at infinity.
-    LOG(BackEndConfig::getConfig()->debug_level) << "Initializing landmarks..."  << std::endl;
+    ROS_DEBUG_NAMED("back_end","Initializing landmarks...");
 
     LiftResults results;
     LiftMap(depth, root_id, true, false, &results);
@@ -1065,8 +1012,8 @@ bool BackEnd::RefineMap(unsigned int depth,
 
     // No dogleg for landmark initialization.
     ba_.options().use_dogleg = false;
-    ba_.Solve(100, 1.0, BackEndConfig::getConfig()->error_increase_allowed);
-    ba_.options().use_dogleg = BackEndConfig::getConfig()->do_dogleg;
+    ba_.Solve(100, 1.0, BackEndConfig::getConfig()->errorIncreaseAllowed());
+    ba_.options().use_dogleg = BackEndConfig::getConfig()->doDogleg();
 
     if (!PushMap(false, results, callbacks)) return false;
   }
@@ -1075,7 +1022,7 @@ bool BackEnd::RefineMap(unsigned int depth,
   bool more_adaptive = true;
   int num_iterations = 0;
   while (more_adaptive && num_iterations < 10) {
-    LOG(BackEndConfig::getConfig()->debug_level) << "Solving ba...";
+    ROS_DEBUG_NAMED("back_end","Solving ba...");
 
     LiftResults results;
     LiftMap(depth, root_id, false, is_using_imu, &results);
@@ -1087,12 +1034,12 @@ bool BackEnd::RefineMap(unsigned int depth,
     }
 
     if (is_using_imu) {
-      imu_ba_.options().use_dogleg = BackEndConfig::getConfig()->do_dogleg;
-      imu_ba_.Solve(max_iter, BackEndConfig::getConfig()->damping_factor,
-                    BackEndConfig::getConfig()->error_increase_allowed);
+      imu_ba_.options().use_dogleg = BackEndConfig::getConfig()->doDogleg();
+      imu_ba_.Solve(max_iter, BackEndConfig::getConfig()->getDampingFactor(),
+                    BackEndConfig::getConfig()->errorIncreaseAllowed());
     } else {
-      ba_.options().use_dogleg = BackEndConfig::getConfig()->do_dogleg;
-      ba_.Solve(max_iter, BackEndConfig::getConfig()->damping_factor, BackEndConfig::getConfig()->error_increase_allowed);
+      ba_.options().use_dogleg = BackEndConfig::getConfig()->doDogleg();
+      ba_.Solve(max_iter, BackEndConfig::getConfig()->getDampingFactor(), BackEndConfig::getConfig()->errorIncreaseAllowed());
     }
     if (!PushMap(is_using_imu, results, callbacks)) return false;
 
@@ -1110,18 +1057,18 @@ bool BackEnd::RefineMap(unsigned int depth,
     OptimizationStatus status;
     if (is_using_imu) {
       status = ComputeAdaptiveMetrics<decltype(imu_ba_)>(
-          imu_ba_, prev_cond_error_, root_edge_id, &prev_cond_error_);
+          imu_ba_, prev_cond_error_, root_edge_id, &prev_cond_error_, BackEndConfig::getConfig()->getAdaptiveThreshold());
     } else {
       status = ComputeAdaptiveMetrics<decltype(ba_)>(
-          ba_, prev_cond_error_, root_edge_id, &prev_cond_error_);
+          ba_, prev_cond_error_, root_edge_id, &prev_cond_error_, BackEndConfig::getConfig()->getAdaptiveThreshold());
     }
     switch (status) {
       case OptStatus_DiffOverThreshold:
-        LOG(BackEndConfig::getConfig()->debug_level) << "Expanding window." << std::endl;
+        ROS_DEBUG_NAMED("back_end", "Expanding window.");
 
         // Only increase the depth if we have enough poses in the map.
-        depth += BackEndConfig::getConfig()->adaptive_depth_increase;
-        LOG(BackEndConfig::getConfig()->debug_level) << "\tIncrementing depth to " << depth;
+        depth += BackEndConfig::getConfig()->getAdaptiveDepthIncrease();
+        ROS_DEBUG_NAMED("back_end", "Incrementing depth to %d", depth);
         break;
 
       case OptStatus_DiffBelowThreshold:
@@ -1152,11 +1099,11 @@ bool BackEnd::GaussNewton(
     std::vector<ba::ImuMeasurementT<Scalar>>&   meas)
 {
   ba::Options<Scalar> options;
-  options.trust_region_size = BackEndConfig::getConfig()->trust_region_init_size;
-  options.gyro_sigma = BackEndConfig::getConfig()->gyro_sigma;
-  options.gyro_bias_sigma = BackEndConfig::getConfig()->gyro_bias_sigma;
-  options.accel_sigma = BackEndConfig::getConfig()->accel_sigma;
-  options.accel_bias_sigma = BackEndConfig::getConfig()->accel_bias_sigma;
+  options.trust_region_size = BackEndConfig::getConfig()->getTrustRegionInitSize();
+  options.gyro_sigma = BackEndConfig::getConfig()->getGyroSigma();
+  options.gyro_bias_sigma = BackEndConfig::getConfig()->doIMUConditioning();
+  options.accel_sigma = BackEndConfig::getConfig()->getAccelSigma();
+  options.accel_bias_sigma = BackEndConfig::getConfig()->getAccelBiasSigma();
 
   if (has_imu) {
     imu_ba_.Init(options, 1, measurements.size(), measurements.size());
@@ -1231,7 +1178,8 @@ bool BackEnd::GaussNewton(
 
   if ((has_imu && pose_id > imu_ba_.GetNumPoses()) ||
       (!has_imu && pose_id > ba_.GetNumPoses())) {
-    LOG(ERROR) << "pose_id " << pose_id << " is too large";
+    ROS_ERROR("pose_id %s is too large",
+      boost::lexical_cast<std::string>(pose_id).c_str());
     return false;
   }
 

@@ -13,7 +13,7 @@
 #include <slam_map/TransformEdge.h>
 
 #include <back_end/BackEndConfig.h>
-
+#include <ros/ros.h>
 /** Visitor to gather active frame set for BackEnd::RefineMap */
 template <typename BundleAdjuster>
 class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
@@ -32,7 +32,8 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
       const SlamMap* map,
       BundleAdjuster* ba,
       std::unordered_map<ReferenceFrameId, uint32_t>* ba_frames,
-      std::unordered_map<LandmarkId, uint32_t>* landmarks)
+      std::unordered_map<LandmarkId, uint32_t>* landmarks,
+      int min_lm_observations)
       : map_(map), ba_(ba), ba_frames_(ba_frames), landmarks_(landmarks) {
     CHECK(map);
     CHECK(ba);
@@ -55,7 +56,7 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
           !track ||
           !frame->GetLandmarkState(lm_id.landmark_index, &lm_state)) {
         ++it;
-        LOG(INFO) << "cant find landmark " << lm_id;
+        ROS_DEBUG_NAMED("back_end","Can't find landmark %s",boost::lexical_cast<std::string>(lm_id).c_str());
         continue;
       }
 
@@ -64,7 +65,7 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
       bool should_delete = false;
       if (lm_state == eLmkAtInfinity) {
         // We require a minimum number of observations before adding it
-        if (track->size() < (size_t)BackEndConfig::getConfig()->min_lm_observations) {
+        if (track->size() < min_lm_observations) {
           should_delete = true;
         }
       } else {
@@ -154,27 +155,26 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
 
       frame = map_->GetFramePtr(lm_id.ref_frame_id);
       if (!frame) {
-        LOG(WARNING) << "Cannot GetFramePtr for " << lm_id.ref_frame_id;
+        ROS_WARN("Cannot GetFramePtr for %s", boost::lexical_cast<std::string>(lm_id.ref_frame_id).c_str());
         continue;
       }
 
       auto ba_id_it = ba_frames_->find(lm_id.ref_frame_id);
       if (ba_id_it == ba_frames_->end()) {
-        LOG(WARNING) << "Cannot find BA ID for LM ref frame: "
-                     << lm_id.ref_frame_id;
+        ROS_WARN("Cannot find BA ID for LM ref frame: %s", boost::lexical_cast<std::string>(lm_id.ref_frame_id).c_str());
         continue;
       }
 
       uint32_t ba_id = ba_id_it->second;
       if (ba_id == UINT_MAX) {
-        LOG(WARNING) << "BA ID is UINT_MAX";
+        ROS_WARN("BA ID is UINT_MAX");
         continue;
       }
 
       auto cam_id_it = camera_ids_.find(lm_id.ref_frame_id.session_id);
       if (cam_id_it == camera_ids_.end()) {
-        LOG(WARNING) << "Missing camera for session "
-                     << lm_id.ref_frame_id.session_id;
+        ROS_WARN("Missing camera for session %s",
+                     boost::lexical_cast<std::string>(lm_id.ref_frame_id.session_id).c_str());
         continue;
       }
 

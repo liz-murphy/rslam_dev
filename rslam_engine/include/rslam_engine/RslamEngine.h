@@ -22,6 +22,8 @@
 #include <sparse_front_end/SparseFrontEndConfig.h>
 #include <common_front_end/CommonFrontEndConfig.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
+#include <back_end/BackEndConfig.h>
+#include <back_end/BackEndParamsConfig.h>
 #include <common_front_end/FREAKConfig.h>
 #include <common_front_end/FASTConfig.h>
 #include <common_front_end/SURFConfig.h>
@@ -78,12 +80,14 @@ class RslamEngine {
   // ROS pollution for dynamic reconfigure
   std::shared_ptr<dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig> > sparse_frontend_dr_srv_;
   std::shared_ptr<dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig> > common_frontend_dr_srv_;
+  std::shared_ptr<dynamic_reconfigure::Server<back_end::BackEndParamsConfig> > back_end_dr_srv_;
   std::shared_ptr<dynamic_reconfigure::Server<common_front_end::FREAKConfig> > FREAK_dr_srv_;
   std::shared_ptr<dynamic_reconfigure::Server<common_front_end::FASTConfig> > FAST_dr_srv_;
   std::shared_ptr<dynamic_reconfigure::Server<common_front_end::SURFConfig> > SURF_dr_srv_;
  
   dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>::CallbackType sparse_front_end_cb;
   dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>::CallbackType common_front_end_cb;
+  dynamic_reconfigure::Server<back_end::BackEndParamsConfig>::CallbackType back_end_cb;
   dynamic_reconfigure::Server<common_front_end::FREAKConfig>::CallbackType FREAK_cb;
   dynamic_reconfigure::Server<common_front_end::FASTConfig>::CallbackType FAST_cb;
   dynamic_reconfigure::Server<common_front_end::SURFConfig>::CallbackType SURF_cb;
@@ -129,5 +133,6 @@ class RslamEngine {
   RslamTracker                   tracker_type_;
   //std::unique_ptr<geocon::geodetic2local> lla2local_;
   CommonFrontEndConfig* common_front_end_config_;
+  BackEndConfig* back_end_config_;
 };
 }

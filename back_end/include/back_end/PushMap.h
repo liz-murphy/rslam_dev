@@ -5,12 +5,12 @@
 
 #include <ba/Types.h>
 #include <ba/InterpolationBuffer.h>
-//#include <CVars/CVar.h>
 #include <back_end/BackEndConfig.h>
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/SlamMap.h>
 #include <slam_map/TransformEdgeId.h>
 #include <slam_map/TransformEdge.h>
+#include <ros/ros.h>
 
 namespace rslam {
 
@@ -33,7 +33,8 @@ bool PushMap(const BundleAdjuster& ba,
              const LandmarkBaIds& landmark_ba_ids,
              const ba::InterpolationBufferT<ba::ImuMeasurementT<Scalar>,
              Scalar>* imu_buffer,
-             SlamMap* map) {
+             SlamMap* map,
+             double imu_visualization_time_extra) {
   //static double& g_imu_visualization_time_extra =
    //   CVarUtils::CreateGetCVar<>("gui.ImuVisualizationTimeExtra", 0.3, "");
 
@@ -83,14 +84,13 @@ bool PushMap(const BundleAdjuster& ba,
       const auto& res = ba.GetImuResidual(pair.second);
       std::vector<ba::ImuPoseT<Scalar> > poses;
       if (res.pose1_id >= ba.GetNumPoses()) {
-        LOG(ERROR) << "res.pose1_id is too large";
+        ROS_DEBUG_NAMED("back_end","res.pose1_id is too large");
         continue;
       }
 
       std::vector<ba::ImuMeasurementT<Scalar> > meas =
           imu_buffer->GetRange(res.measurements.front().time,
-                               res.measurements.back().time +
-                               BackEndConfig::getConfig()->imu_visualization_time_extra);
+                               res.measurements.back().time + imu_visualization_time_extra);
 
       const ba::PoseT<Scalar>& pose = ba.GetPose(res.pose1_id);
       res.IntegrateResidual(pose, meas,
@@ -118,8 +118,9 @@ bool PushMap(const BundleAdjuster& ba,
     const uint32_t& ba_id = pair.second;
     if (ba_id == UINT_MAX) continue;
     if (ba_id >= ba.GetNumLandmarks()) {
-      LOG(WARNING) << "LM ba_id too high: " << ba_id << " vs. "
-                   << ba.GetNumLandmarks();
+      ROS_WARN("LM ba_id too high: %s vs %d",
+          boost::lexical_cast<std::string>(ba_id).c_str(),
+          (int)ba.GetNumLandmarks());
       continue;
     }
 
@@ -134,18 +135,19 @@ bool PushMap(const BundleAdjuster& ba,
 
     Eigen::Vector4t lm_x_w = ba_lm.x_w;
     if (std::abs(lm_x_w[3]) < 1e-6) {
-      LOG(ERROR) << "WARNING --> abs(inverse depth) < 1e-6, possible division"
-                 << " by zero to follow."
-                 << "\n\tReliable: " << ba_lm.is_reliable
-                 << "\n\tx_w: " << ba_lm.x_w.transpose()
-                 << "\n\t# residuals: " << ba_lm.proj_residuals.size()
-                 << "\n\t# outliers: " << ba_lm.num_outlier_residuals;
+      ROS_ERROR("WARNING --> abs(inverse depth) < 1e-6, possible division by zero to follow.");
+      ROS_ERROR("Reliable: %s, x_w: %s, #residuals: %d, #outliers: %d",
+          boost::lexical_cast<std::string>(ba_lm.is_reliable).c_str(),
+          boost::lexical_cast<std::string>(ba_lm.x_w.transpose()).c_str(),
+          (int)ba_lm.proj_residuals.size(),
+          (int)ba_lm.num_outlier_residuals);
     }
     lm_x_w /= lm_x_w[3];
 
     auto pose_it = pose_ids.find(lm_id.ref_frame_id);
     if (pose_it == pose_ids.end()) {
-      LOG(ERROR) << "Landmark pose " << lm_id << " not in BA pose_ids";
+      ROS_ERROR("Landmark pose %s not in BA pose_ids",
+          boost::lexical_cast<std::string>(lm_id).c_str());
       continue;
     }
 

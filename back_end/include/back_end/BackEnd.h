@@ -14,6 +14,8 @@
 #include <local_map/LocalMap.h>
 #include <ba/InterpolationBuffer.h>
 
+#include <back_end/BackEndConfig.h>
+
 enum OptimizationStatus {
   OptStatus_DiffOverThreshold = 1,
   OptStatus_DiffBelowThreshold = 2,

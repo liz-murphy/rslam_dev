@@ -56,6 +56,7 @@ RslamEngine::RslamEngine() : images_(pb::ImageArray::Create()),
  // CVarUtils::AttachCVar<int>("ErrorLevel", &google::log_severity_global);
  // CVarUtils::AttachCVar<int>("debug.RslamEngine", &g_debug_level );
  common_front_end_config_ = CommonFrontEndConfig::getConfig();
+ back_end_config_ = BackEndConfig::getConfig();
 }
 
 RslamEngine::~RslamEngine() {}
@@ -123,6 +124,7 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
                         const calibu::CameraRigT<Scalar>& rig_in) {
   // Cleanup and initialization of config variables
   common_front_end_config_ = CommonFrontEndConfig::getConfig();
+  back_end_config_ = BackEndConfig::getConfig();
   ResetVars();
   // If we are using TRACK_2D, we only need the first camera.
   working_directory_ = options.working_dir;
@@ -176,9 +178,10 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   ros::NodeHandle nh_FAST("/common_front_end/FAST");
   ros::NodeHandle nh_FREAK("/common_front_end/FREAK");
   ros::NodeHandle nh_SURF("/common_front_end/SURF");
+  ros::NodeHandle nh_back_end("/back_end");
 
   common_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>(nh_common_fe));
-  common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback, common_front_end_config_, _1, _2);
+  common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback,common_front_end_config_, _1, _2);
   common_frontend_dr_srv_->setCallback(common_front_end_cb);
 
   FAST_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::FASTConfig>(nh_FAST));
@@ -192,6 +195,10 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   SURF_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::SURFConfig>(nh_SURF));
   SURF_cb = boost::bind(&CommonFrontEndConfig::configSURFCallback, common_front_end_config_, _1, _2);
   SURF_dr_srv_->setCallback(SURF_cb);
+
+  back_end_dr_srv_.reset(new dynamic_reconfigure::Server<back_end::BackEndParamsConfig>(nh_back_end));
+  back_end_cb = boost::bind(&BackEndConfig::configCallback, back_end_config_, _1, _2);
+  back_end_dr_srv_->setCallback(back_end_cb);
 
   if (options.tracker_type_ == Tracker_Sparse) {
     ROS_INFO("Creating sparse front-end.");

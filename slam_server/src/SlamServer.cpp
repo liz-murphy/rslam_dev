@@ -36,6 +36,7 @@ SlamServer::SlamServer(const std::shared_ptr<PlaceMatcher>& matcher,
   place_matcher_->Load(places_filename);
   backend_->Init(map_);
   PrintStats();
+  ROS_ERROR("SLAM SERVER CONSTRUCTED");
 }
 
 SlamServer::~SlamServer() {}
