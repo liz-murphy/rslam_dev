@@ -117,7 +117,7 @@ void PlaceMatcher::fillFrameId(std::vector<PlaceMatchCandidate>& matches) const
   }
 }
 
-void PlaceMatcher::saveFrameIndices(std::ofstream& os) const
+void PlaceMatcher::saveFrameIndices(std::ostream& os) const
 {
   os << std::endl;
   {
@@ -130,11 +130,11 @@ void PlaceMatcher::saveFrameIndices(std::ofstream& os) const
   os << std::endl;
 }
 
-void PlaceMatcher::loadFrameIndices(std::ifstream& is)
+void PlaceMatcher::loadFrameIndices(std::istream& is)
 {
   std::string line;
-  getline(is, line); // skip current line
-  getline(is, line); // get next line
+  std::getline(is, line); // skip current line
+  std::getline(is, line); // get next line
   std::stringstream ss(line);
 
   std::map<ReferenceFrameId, int> frames;

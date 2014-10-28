@@ -43,5 +43,15 @@ void LiftLocalMap(const SlamMap* map,
                   const bool  poses_only = false,
                   const bool  inside_only = false,
                   bool use_static_set = false);
+
+bool GetNodesInsideWindowBFS(
+  const SlamMap* map,
+  LocalMap&  local_map,
+  const bool ignore_broken,
+  const bool poses_only,
+  const bool inside_only,
+  const bool depth_equals_count,
+  bool use_static_set,
+  const ReferenceFrameId& ignore_frame);
 }  // namespace sparse
 }  // namespace rslam

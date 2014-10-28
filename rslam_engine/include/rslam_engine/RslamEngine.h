@@ -60,12 +60,10 @@ class RslamEngine {
   void PrintAppInfo();
 
   void tracking_stats(common::TrackingStats* ts) const {
-    CHECK_NOTNULL(ts);
     frontend_->tracking_stats(ts);
   }
 
   void system_status(common::SystemStatus *ss) const {
-    CHECK_NOTNULL(ss);
     frontend_->system_status(ss);
   }
 

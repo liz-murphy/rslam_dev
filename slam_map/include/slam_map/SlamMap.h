@@ -63,7 +63,7 @@ class SlamMap {
   SlamFramePtr AddFrame(const double time);
 
   /// Add an existing node to the map
-  void AddFrame(const SlamFramePtr& node);
+  bool AddFrame(const SlamFramePtr& node);
 
   /// Add edge between frames
   SlamEdgePtr AddEdge(const SlamFramePtr& pA,
@@ -72,14 +72,14 @@ class SlamMap {
                       bool is_loop_closure = false);
 
   /// Add an existing edge to the map
-  void AddEdge(const SlamEdgePtr& edge);
+  bool AddEdge(const SlamEdgePtr& edge);
 
   /// Update the relative transformation between frames already linked
   void UpdateEdgeImuPoints(const TransformEdgeId& edge_id,
                            const std::vector<ba::ImuPoseT<Scalar> > &vMeas,
                            const Eigen::Vector3t& g);
 
-  void SwapEdgeStartFrame(const TransformEdgeId& edge_id,
+  bool SwapEdgeStartFrame(const TransformEdgeId& edge_id,
                           const ReferenceFrameId& old_start_id,
                           const ReferenceFrameId& new_start_id,
                           const Sophus::SE3t new_tab);

@@ -2,7 +2,6 @@
 // accompanying LICENSE file for more information.
 
 #include <Utils/GetPot>
-#include <miniglog/logging.h>
 #include <PlaceMatching/DBoWMatcher/DBoWMatcher.h>
 #include <PlaceMatching/DBoWMatcher/DUtilsCV/DUtilsCV.h>
 #include "LoopApp.h"
@@ -30,7 +29,7 @@ int main(int argc, char** argv)
 {
   GetPot cl(argc, argv);
   if (cl.search("--help")) {
-    LOG(INFO) << g_usage;
+    ROS_INFO(g_usage);
     exit(-1);
   }
 
@@ -47,7 +46,7 @@ int main(int argc, char** argv)
       std::string voc_file = cl.follow("", "--dbow_voc_file");
       double frequency = cl.follow(1, "--frequency");
 
-      LOG(INFO) << "Loading vocabulary...";
+      ROS_INFO("Loading vocabulary...");
 
       // g_matcher.setVocabulary(voc_file) uses default parameters
       // that we can override:
@@ -80,14 +79,14 @@ int main(int argc, char** argv)
   }
   catch(std::string &ex)
   {
-    LOG(INFO) << "Error: " << ex;
+    ROS_INFO("Error: %s", ex.c_str());
   }
   catch(std::exception &ex)
   {
-    LOG(INFO) << "Error: " << ex.what();
+    ROS_INFO("Error: %s", ex.what());
   }
 
-  LOG(INFO) << "Done";
+  ROS_INFO("Done");
 
   return 0;
 }

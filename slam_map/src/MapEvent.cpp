@@ -2,7 +2,7 @@
 
 namespace rslam {
 namespace map {
-MapEventUpdate::MapEventUpdate() : event(kMapEventMax) {}
+//MapEventUpdate::MapEventUpdate() : event(kMapEventMax) {}
 MapEventUpdate::MapEventUpdate(const MapEventUpdate& u) {
   CopyFrom(u);
 }

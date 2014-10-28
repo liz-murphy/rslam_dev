@@ -9,7 +9,6 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
-#include <miniglog/logging.h>
 
 /** @todo Replace all calls to PrintMessage with GLog */
 #ifndef PrintMessage

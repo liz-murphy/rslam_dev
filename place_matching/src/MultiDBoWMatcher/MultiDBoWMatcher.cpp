@@ -1,14 +1,13 @@
 #include <string>
 #include <vector>
 #include <opencv2/opencv.hpp>
-#include <miniglog/logging.h>
 #include <slam_map/SlamMap.h>
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/ReferenceFrameId.h>
 #include <place_matching/DBoWMatcher/DUtils/DUtils.h>
 #include <place_matching/DBoWMatcher/DBoW2/DBoW2.h>
 #include <place_matching/MultiDBoWMatcher/MultiDBoWMatcher.h>
-
+#include <ros/ros.h>
 static int kDebugLevel = 2;
 
 MultiDBoWMatcher::MultiDBoWMatcher(std::shared_ptr<SlamMap> map):
@@ -143,7 +142,6 @@ void MultiDBoWMatcher::getFeatures(const ReferenceFrameId& id,
       DUtils::STL::copyIndices(lms, i_lms, good_lms);
       lms = std::move(good_lms);
     }
-    CHECK_EQ(keys.size(), lms.size());
   }
 }
 
@@ -176,8 +174,6 @@ void MultiDBoWMatcher::AddPlace(const ReferenceFrameId& id,
 {
   if(!m_database || keys.empty()) return;
 
-  CHECK_EQ(keys.size(), descs.size());
-  CHECK_EQ(keys.size(), lms.size());
 
   std::lock_guard<std::mutex> lock(m_mutex_database);
   auto fit = m_existing_frames.lower_bound(id);
@@ -275,8 +271,6 @@ void MultiDBoWMatcher::doDetection
 {
   vPlaceMatches.clear();
   if(!m_map || !m_database || keys.empty()) return;
-  CHECK_EQ(keys.size(), landmarks.size());
-  CHECK_EQ(keys.size(), descs.size());
 
   Session& session = getSession(id.session_id);
 
@@ -294,11 +288,11 @@ void MultiDBoWMatcher::doDetection
   DBoW2::QueryResults query;
   m_database->query(bowvec, query, m_params.max_db_results);
 
-  LOG(kDebugLevel) << "Query returned " << query.size() << " results";
+  ROS_DEBUG_NAMED("MultiDBoWMatcher", "Query returned %d results", (int)query.size());
 
   // remove results with low score or by dislocal
   pruneQuery(session, id, bowvec, query);
-  LOG(kDebugLevel) << "After prune " << query.size() << " results remain";
+  ROS_DEBUG_NAMED("MultiDBoWMatcher", "After prune %d results remain", (int)query.size());
 
   if(query.empty())
   {
@@ -334,14 +328,13 @@ void MultiDBoWMatcher::doDetection
 
       do_geom = window_tracked &&
           session.trackSize() >= static_cast<size_t>(m_params.k);
-      LOG(kDebugLevel) << "Was window tracked: " << window_tracked
-                       << " w/track size: " << session.trackSize();
+      ROS_DEBUG_NAMED("MultiDBoWMatcher","Window tracked?: %s, w/track size: %d", window_tracked ? "yes" : "no", (int)session.trackSize());
     }
 
     if(do_geom) {
       auto it = m_db_to_node.find(matched_eid);
       if (it == m_db_to_node.end()) {
-        LOG(FATAL) << "Matched node not found";
+        ROS_ERROR("Matched node not found");
       }
       auto match_it = it->second.landmarks.begin();
       auto query_it = landmarks.begin();
@@ -367,13 +360,15 @@ void MultiDBoWMatcher::doDetection
         isGeometricalConsistent(id, keys, descs, landmarks, fevec,
                                 matched_eid, data));
 
-      LOG(kDebugLevel) << "Geometry check result: " << geom_check;
+      ROS_DEBUG_NAMED("MultiDBoWMatcher","Geometry check result: %s", geom_check ? "true":"false");
 
       if(geom_check) // loop found
       {
-        LOG(kDebugLevel) << "Loop found between query " << id
-                         << " and matched " << matched_node
-                         << " with transformation\n" << data.Tqm.matrix();
+        ROS_DEBUG_NAMED("MultiDBoWMatcher","Loop found between query %s and matched %s with transformation %s",
+            boost::lexical_cast<std::string>(id).c_str(),
+            boost::lexical_cast<std::string>(matched_node).c_str(),
+            boost::lexical_cast<std::string>(data.Tqm.matrix()).c_str());
+
         vPlaceMatches.emplace_back(matched_node, matched_score);
         vPlaceMatches.back().query = std::move(data.query_keys);
         vPlaceMatches.back().match = std::move(data.match_keys);
@@ -488,7 +483,9 @@ void MultiDBoWMatcher::pruneQuery(const Session& session,
           if (!match_frame || !current_frame) continue;
 
           if(current_frame->time() == 0.)
-            LOG(kDebugLevel) << "Timestamp is 0";
+          {
+            ROS_DEBUG_NAMED("MultiDBoWMatcher","Timestamp is 0");
+          }
 
           double et = current_frame->time() - match_frame->time();
           if(et <= m_params.dislocal) i_remove.push_back(qidx);
@@ -561,7 +558,7 @@ bool MultiDBoWMatcher::isGeometricalConsistent(
   data.clear();
   auto it = m_db_to_node.find(match_eid);
   if (it == m_db_to_node.end()) {
-    LOG(FATAL) << "Matched node not found";
+    ROS_ERROR("MultiDBoWMatcher: Matched node not found");
   }
   const Node& match = it->second;
 
@@ -748,7 +745,7 @@ bool MultiDBoWMatcher::checkRigidTransformation(
 
   const CameraRigPtr& rig = m_map->GetCamera(cur_frameid.session_id);
   if (!rig) {
-    LOG(INFO) << "No camera available";
+    ROS_INFO("No camera available");
     return false;
   }
 
@@ -762,7 +759,7 @@ bool MultiDBoWMatcher::checkRigidTransformation(
   i_added_cur.reserve(i_cur.size());
   i_added_match.reserve(i_match.size());
 
-  LOG(kDebugLevel) << i_cur.size() << " putative landmarks";
+  ROS_DEBUG_NAMED("MultiDBoWMatcher","%d putative landmarks", (int)i_cur.size());
 
   // get reliable landmarks
   std::vector<Landmark> valid_landmarks;
@@ -794,10 +791,10 @@ bool MultiDBoWMatcher::checkRigidTransformation(
 
   // Store which frame -> [(landmark idx, keypoint idx)]
   if(img.size() < static_cast<size_t>(m_params.min_Fpoints)) {
-    LOG(kDebugLevel) << "Only " << img.size() << " good landmarks matched.";
+    ROS_DEBUG_NAMED("MultiDBoWMatcher","Only %d good landmarks matched", (int)img.size());
     return false;
   }else{
-    LOG(kDebugLevel) << img.size() << " good landmarks matched.";
+    ROS_DEBUG_NAMED("MultiDBoWMatcher"," %d good landmarks matched", (int)img.size());
   }
 
   // get the 3d position of the landmarks in the matched reference frame
@@ -811,7 +808,7 @@ bool MultiDBoWMatcher::checkRigidTransformation(
 
     if(!lost_landmarks.empty())
     {
-      LOG(kDebugLevel) << "Removing " << lost_landmarks.size() << " landmarks";
+      ROS_DEBUG_NAMED("MultiDBoWMatcher","Removing %d landmarks",(int)lost_landmarks.size());
 
       DUtils::STL::removeIndices(d3, lost_landmarks, false);
       DUtils::STL::removeIndices(img, lost_landmarks, false);
@@ -845,8 +842,7 @@ bool MultiDBoWMatcher::checkRigidTransformation(
 
   if(std::isnan(rot[0]) || std::isnan(rot[1]) || std::isnan(rot[2]) ||
      i_i_inliers.size() < static_cast<size_t>(m_params.min_Fpoints)) {
-    LOG(kDebugLevel) << "Only " << i_i_inliers.size()
-                     << " geometric inliers (or nan).";
+    ROS_DEBUG_NAMED("MultiDBoWMatcher","Only %d geometric inliers (or nan)", (int)i_i_inliers.size());
     return false;
   }
 

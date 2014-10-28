@@ -24,7 +24,8 @@ enum MapEvent {
   kMapEventMax  // Not an actual event
 };
 
-struct MapEventUpdate {
+class MapEventUpdate {
+  public:
   MapEvent event;
 
   // The payload. Type contained depends on MapEvent
@@ -34,7 +35,7 @@ struct MapEventUpdate {
     payload_t() {}
   } payload;
 
-  MapEventUpdate();
+  //MapEventUpdate();
   MapEventUpdate(const MapEventUpdate& u);
   MapEventUpdate& operator=(const MapEventUpdate& u);
  protected:

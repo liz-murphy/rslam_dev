@@ -61,8 +61,9 @@ SlamFramePtr SlamMap::AddFrame(const double time) {
   return frame;
 }
 
-void SlamMap::AddFrame(const SlamFramePtr& new_node) {
-  CHECK(new_node);
+bool SlamMap::AddFrame(const SlamFramePtr& new_node) {
+  if(new_node == NULL)
+    return false;
   if (SlamFramePtr existing = GetFramePtr(new_node->id())) {
     existing->Merge(*new_node);
   } else {
@@ -70,10 +71,12 @@ void SlamMap::AddFrame(const SlamFramePtr& new_node) {
     new_node->set_notification_center(notifier_);
     notifier_->Notify(kAddFrameMapEvent, new_node->id());
   }
+  return true;
 }
 
-void SlamMap::AddEdge(const SlamEdgePtr& new_edge) {
-  CHECK(new_edge);
+bool SlamMap::AddEdge(const SlamEdgePtr& new_edge) {
+  if(NULL == new_edge)
+    return false;
   TransformEdgeId edge_id = new_edge->id();
   bool added_new = false;
   if (SlamEdgePtr existing = GetEdgePtr(edge_id)) {
@@ -103,6 +106,7 @@ void SlamMap::AddEdge(const SlamEdgePtr& new_edge) {
   if (added_new) {
     notifier_->Notify(kAddEdgeMapEvent, new_edge->id());
   }
+  return true;
 }
 
 void SlamMap::Clear() {
@@ -202,11 +206,12 @@ bool SlamMap::HasEdge(const ReferenceFrameId& start_id,
   return _FindEdgeId(start_id, end_id, tmp);
 }
 
-void SlamMap::SwapEdgeStartFrame(const TransformEdgeId& old_edge_id,
+bool SlamMap::SwapEdgeStartFrame(const TransformEdgeId& old_edge_id,
                                  const ReferenceFrameId& old_start_id,
                                  const ReferenceFrameId& new_start_id ,
                                  const Sophus::SE3t new_t_ab) {
-  CHECK_EQ(old_edge_id.start, old_start_id);
+  if(old_edge_id.start != old_start_id)
+    return false;
   SlamEdgePtr edge = GetEdgePtr(old_edge_id);
   SlamFramePtr pOldStartFrame = GetFramePtr(old_start_id);
   SlamFramePtr pNewStartFrame = GetFramePtr(new_start_id);
@@ -220,6 +225,7 @@ void SlamMap::SwapEdgeStartFrame(const TransformEdgeId& old_edge_id,
   TransformEdgeId new_edge_id = edge->id();
   pNewStartFrame->AddNeighbor(new_edge_id);
   pEndFrame->AddNeighbor(new_edge_id);
+  return true;
 }
 
 SlamEdgePtr SlamMap::GetEdgePtr(const ReferenceFrameId& start_id,

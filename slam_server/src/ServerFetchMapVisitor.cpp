@@ -67,11 +67,11 @@ void ServerFetchMapVisitor::CheckMessageSize() {
   }
 
   if (server_) {
-    LOG(ServerConfig::getConfig()->debug_level)
-        << "Uploading map with " << current_msg_->map().nodes_size()
-        << " nodes, " << current_msg_->map().edges_size() << " edges, "
-        << current_msg_->dbow_places_size() << "dbow places and "
-        << current_msg_->templates_size() << " templates.";
+    ROS_DEBUG_NAMED("SlamServer", "Uploading map with %d nodes, %d edges, %d dbow places and %d templates",
+        current_msg_->map().nodes_size(),
+        current_msg_->map().edges_size(),
+        current_msg_->dbow_places_size(),
+        current_msg_->templates_size());
     server_->UploadMap(*current_msg_);
     current_msg_->Clear();
   } else {
@@ -106,14 +106,14 @@ void ServerFetchMapVisitor::ExploreEdge(const SlamFramePtr& parent,
                                         const SlamFramePtr& child) {
   if ((has_excluding_id_ && edge->id().session_id == excluding_id_) ||
       edge->last_modified_time() < last_map_fetch_time_) {
-    LOG(ServerConfig::getConfig()->debug_level)
-        << "Ignoring edge " << edge->id()
-        << " last modified at " << edge->last_modified_time()
-        << " which was before last fetch at " << last_map_fetch_time_;
+      ROS_DEBUG_NAMED("SlamServer","Ignoring edge %s last modified at %f which was before last fetch at %f",
+        boost::lexical_cast<std::string>(edge->id()).c_str(),
+        edge->last_modified_time(),
+        last_map_fetch_time_);
     return;
   }
 
-  LOG(ServerConfig::getConfig()->debug_level) << "Adding edge " << edge->id();
+  ROS_DEBUG_NAMED("SlamServer", "Adding edge %s", boost::lexical_cast<std::string>(edge->id()).c_str());
   pb::fill_message(*edge, current_msg_->mutable_map()->add_edges());
 
   explored_.insert(child->id());
@@ -123,20 +123,19 @@ void ServerFetchMapVisitor::ExploreEdge(const SlamFramePtr& parent,
 bool ServerFetchMapVisitor::Visit(const SlamFramePtr& cur_node) {
   explored_.erase(cur_node->id());
   if ((has_excluding_id_ && cur_node->id().session_id == excluding_id_)) {
-    LOG(ServerConfig::getConfig()->debug_level)
-        << "Ignoring node " << cur_node->id()
-        << " last modified at "
-        << cur_node->last_modified_time()
-        << " which was before last fetch at " << last_map_fetch_time_;
+    ROS_DEBUG_NAMED("SlamServer","Ignoring node %s last modified at %f which was before last fetch at %f",
+        boost::lexical_cast<std::string>(cur_node->id()).c_str(),
+        cur_node->last_modified_time(),
+        last_map_fetch_time_);
     return true;
   } else if (cur_node->last_modified_time() < last_map_fetch_time_) {
-    LOG(ServerConfig::getConfig()->debug_level)
-        << "Node " << cur_node->id() << " modification time @ "
-        << cur_node->last_modified_time() << " before last fetch @ "
-        << last_map_fetch_time_;
+    ROS_DEBUG_NAMED("SlamServer", "Node %s modification time @ %f before last fetch @ %f",
+        boost::lexical_cast<std::string>(cur_node->id()).c_str(),
+        cur_node->last_modified_time(),
+        last_map_fetch_time_);
     return false;
   }
-  LOG(ServerConfig::getConfig()->debug_level) << "Adding node " << cur_node->id();
+  ROS_DEBUG_NAMED("SlamServer","Adding node %s", boost::lexical_cast<std::string>(cur_node->id()).c_str());
   auto* node = current_msg_->mutable_map()->add_nodes();
   pb::fill_message(*cur_node, node);
 
@@ -145,7 +144,7 @@ bool ServerFetchMapVisitor::Visit(const SlamFramePtr& cur_node) {
     CameraRigPtr rig_ptr = map_->GetCamera(mid);
 
     // If we don't have a rig pointer for this, someone screwed up.
-    LOG_IF(FATAL, !rig_ptr) << "Rig not found for ID " << mid;
+    ROS_ERROR_COND(!rig_ptr,"Rig not found for ID %s", boost::lexical_cast<std::string>(mid).c_str());
 
     pb::fill_message(mid, current_msg_->mutable_map()->add_session_ids());
     pb::fill_message(*rig_ptr, current_msg_->mutable_map()->add_rigs());
@@ -193,11 +192,11 @@ bool ServerFetchMapVisitor::Visit(const SlamFramePtr& cur_node) {
 
 void ServerFetchMapVisitor::Finished() {
   if (server_ && current_msg_) {
-    LOG(ServerConfig::getConfig()->debug_level)
-        << "Uploading map with " << current_msg_->map().nodes_size()
-        << " nodes, " << current_msg_->map().edges_size() << " edges, "
-        << current_msg_->dbow_places_size() << "dbow places and "
-        << current_msg_->templates_size() << " templates.";
+    ROS_DEBUG_NAMED("SlamServer", "Uploading map with %d nodes, %d edges, %d dbow places and %d templates",
+        current_msg_->map().nodes_size(),
+        current_msg_->map().edges_size(),
+        current_msg_->dbow_places_size(),
+        current_msg_->templates_size());
     server_->UploadMap(*current_msg_);
     current_msg_->Clear();
   } else if (!finished_) {

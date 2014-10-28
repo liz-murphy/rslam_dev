@@ -8,7 +8,6 @@
 #include <common_front_end/PatchMatch.h>
 #include <common_front_end/SparseSimData.h>
 #include <common_front_end/CommonFrontEndConfig.h>
-#include <miniglog/logging.h>
 #include <opencv2/nonfree/features2d.hpp>
 
 //#include <HAL/config.h>

@@ -32,7 +32,6 @@
 #include <sparse_tracking/StartNewLandmarks.h>
 #include <utils/Utils.h>
 #include <pb_msgs/frontend.pb.h>
-#include <miniglog/logging.h>
 #include <condition_variable>
 
 #include <dynamic_reconfigure/DoubleParameter.h>

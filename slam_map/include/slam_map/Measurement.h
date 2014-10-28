@@ -10,7 +10,6 @@
 #include <vector>
 #include <slam_map/PatchHomography.h>
 #include <Eigen/Core>
-#include <miniglog/logging.h>
 #include <slam_map/MatchFlags.h>
 #include <slam_map/MeasurementId.h>
 #include <common/config.h>
@@ -74,32 +73,26 @@ class MultiViewMeasurement {
   }
 
   const unsigned char* patch(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return &(meas_[cam].patch[0]);
   }
 
   float Scale(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].scale;
   }
 
   float Orientation(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].orientation;
   }
 
   Scalar MatchingError(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].matching_error;
   }
 
   Scalar ReprojectionError(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].reprojection_error;
   }
 
   MatchFlag Flag(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].flag;
   }
 
@@ -108,28 +101,23 @@ class MultiViewMeasurement {
   }
 
   decltype(Measurement::patch)& PatchVector(int cam) {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].patch;
   }
 
   const decltype(Measurement::patch)& PatchVector(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].patch;
   }
 
   const Eigen::Matrix<Scalar, 2, 1>& Pixel(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].pixel;
   }
 
   const PatchHomography<CANONICAL_PATCH_SIZE>&
   GetPatchHomography(int cam) const {
-    CHECK_LT(cam, rig_size_);
     return meas_[cam].tracking_homography;
   }
 
   bool IsFlagged(int cam, MatchFlag Option) const {
-    CHECK_LT(cam, rig_size_);
     return (meas_[cam].flag == Option);
   }
 
@@ -139,38 +127,31 @@ class MultiViewMeasurement {
 
   // Setters
   void SetFlag(int cam, MatchFlag Option) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].flag = Option;
   }
 
   void SetScale(int cam, const float fScale) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].scale = fScale;
   }
 
   void SetOrientation(int cam, const float fOrientation) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].orientation = fOrientation;
   }
 
   void SetPixelInCam(int cam, Scalar U, Scalar V) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].pixel << U, V;
   }
 
   void SetMatchingError(int cam, const Scalar dError) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].matching_error = dError;
   }
 
   void SetReprojectionError(int cam, const Scalar dError) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].reprojection_error = dError;
   }
 
   void SetPatchHomography(int cam,
                           const PatchHomography<CANONICAL_PATCH_SIZE>& H) {
-    CHECK_LT(cam, rig_size_);
     meas_[cam].tracking_homography = H;
   }
 

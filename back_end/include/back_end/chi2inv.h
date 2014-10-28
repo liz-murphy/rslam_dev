@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <miniglog/logging.h>
 
 inline double normalCDF(double u) {
   static const double a[5] = {
@@ -30,8 +29,6 @@ inline double normalCDF(double u) {
     1.00000000000000000e00, 2.56852019228982242e00, 1.87295284992346047e00,
     5.27905102951428412e-1, 6.05183413124413191e-2, 2.33520497626869185e-3
   };
-  CHECK(!std::isnan(u));
-  CHECK(std::isfinite(u));
 
   double z;
   double y = std::abs(u);
@@ -88,8 +85,6 @@ inline double normalQuantile(double p) {
     2.445134137142996e+00,  3.754408661907416e+00
   };
 
-  CHECK(!std::isnan(p));
-  CHECK(p < 1.0 && p > 0.0);
 
   double q = std::min(p, 1 - p);
   double t, u;
@@ -118,8 +113,6 @@ inline double normalQuantile(double p) {
 }
 
 inline double chi2inv(double P, unsigned int dim) {
-  CHECK_GE(P, 0);
-  CHECK_LT(P, 1);
   if (P == 0) return 0;
   return dim * std::pow(1.0 - 2.0 / (9 * dim) +
                         std::sqrt(2.0 / (9 * dim)) *

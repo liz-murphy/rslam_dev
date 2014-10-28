@@ -3,11 +3,10 @@
 #include <common/config.h>
 #include <Eigen/Eigen>
 #include <calibu/cam/CameraModel.h>
-#include <utils/PrintMessage.h>
 #include <utils/MathTypes.h>
 
 #include <iomanip>
-
+#include <ros/ros.h>
 // #define IGNORE_PATCH_WARPING 1
 template<unsigned int PatchSize>
 class PatchHomography
@@ -212,8 +211,7 @@ public:
 
     // use scale change to decide which octave to sample from
     if( Hscale < 1.0 ){
-      PrintMessage(1,"WARNING. PatchHomography::GetSamplingHomographyAndLevel. "
-                   "hscale = %f < 1.0", Hscale);
+      ROS_WARN("PatchHomography::GetSamplingHomographyAndLevel. hscale = %f < 1.0", Hscale);
       uSamplingLevel = 0;
     }else{
       uSamplingLevel = round(log(1.0/Hscale)/log(fLevelFactor));

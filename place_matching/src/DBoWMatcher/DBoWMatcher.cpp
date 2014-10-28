@@ -8,7 +8,6 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <miniglog/logging.h>
 #include <slam_map/ProtobufIO.h>
 
 #include <place_matching/DBoWMatcher/dbow_protobuf.h>
@@ -18,6 +17,7 @@
 #include <place_matching/DBoWMatcher/FMat8UBinary.h>
 #include <place_matching/DBoWMatcher/DBoWMatcher.h>
 
+#include <ros/ros.h>
 DBoWMatcher::DBoWMatcher()
 {
 }
@@ -91,9 +91,7 @@ void DBoWMatcher::setVocabulary(const std::string &voc_file,
   {
     // the user load a vocabulary that seems created for a descriptor but
     // used a different one, that's suspicious
-    LOG(WARNING) << "Descriptor " << descriptor << " will be used with the "
-                 "vocabulary " << voc_name << "." << voc_ext << ", which "
-                 "seems created for descriptor " << guess_descriptor;
+    ROS_WARN("Descriptor %s will be used with the vocabulary %s.%s, which seems created for descriptor %s", descriptor.c_str(), voc_name.c_str(), voc_ext.c_str(), guess_descriptor.c_str());
   }
 
   // if the descriptor binary?
@@ -396,11 +394,9 @@ void DBoWMatcher::Save(const std::string& filename) const {
   using namespace google::protobuf::io;
   if(!m_loop_detector) return;
 
-  LOG(INFO) << "Saving DBoW places to " << filename;
+  ROS_INFO("Saving DBoW places to %s", filename.c_str());
 
   BinaryLoopDetector::InternalData loop_data = m_loop_detector->exportData();
-  CHECK_NOTNULL(loop_data.image_keys);
-  CHECK_NOTNULL(loop_data.image_descriptors);
 
   pb::DBoWPlaceMsg msg;
 
@@ -408,7 +404,7 @@ void DBoWMatcher::Save(const std::string& filename) const {
                 O_WRONLY | O_CREAT | O_TRUNC,
                 S_IRUSR | S_IWUSR | S_IRGRP);
   if (fd < 0) {
-    LOG(ERROR) << "Could not save DBoW places to " << filename;
+    ROS_ERROR("Could not save DBoW places to %s", filename.c_str());
     return;
   }
 
@@ -426,7 +422,7 @@ void DBoWMatcher::Save(const std::string& filename) const {
 
     auto msg_size = msg.ByteSize();
     if (msg_size > 64 << 20) {
-      LOG(ERROR) << "Message is too large, skipping.";
+      ROS_ERROR("Message is too large, skipping");
       continue;
     }
     coded_output->WriteVarint64(msg_size);
@@ -436,14 +432,13 @@ void DBoWMatcher::Save(const std::string& filename) const {
   delete coded_output;
   delete raw_output;
   int res = close(fd);
-  CHECK_GE(res, 0);
-  LOG(INFO) << "Finished saving " << m_entry_to_frame.size() << " DBoW places.";
+  ROS_INFO("Finished saving %d DBoW places", (int)m_entry_to_frame.size());
 }
 
 void DBoWMatcher::Load(const std::string& filename) {
   if(!m_loop_detector) return;
 
-  LOG(INFO) << "Loading DBoW places from " << filename;
+  ROS_INFO("Loading DBoW places from %s",filename.c_str());
 
   std::vector<std::vector<cv::KeyPoint> > image_keys;
   std::vector<std::vector<cv::Mat> > image_descriptors;
@@ -454,8 +449,7 @@ void DBoWMatcher::Load(const std::string& filename) {
 
   int fd = open(filename.c_str(), O_RDONLY);
   if (fd < 0) {
-    LOG(ERROR) << "Could not load DBoW places from " << filename
-               << "(" << strerror(fd) << ")";
+    ROS_ERROR("Could not load DBoW places from %s", filename.c_str());
     return;
   }
   FileInputStream* raw_input = new FileInputStream(fd);
@@ -475,7 +469,7 @@ void DBoWMatcher::Load(const std::string& filename) {
     } else if (!place.has_index() ||
                !place.has_keypoint_vector() ||
                !place.has_descriptor_vector()) {
-      LOG(ERROR) << "Place is missing pieces";
+      ROS_ERROR("Place is missing information!!!");
       break;
     }
 
@@ -513,6 +507,5 @@ void DBoWMatcher::Load(const std::string& filename) {
   delete coded_input;
   delete raw_input;
   int res = close(fd);
-  CHECK_GE(res, 0);
-  LOG(INFO) << "Finished loading " << index << " DBoW places.";
+  ROS_INFO("Finished loading %d DBoW places", index);
 }

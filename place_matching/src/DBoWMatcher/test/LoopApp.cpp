@@ -7,7 +7,6 @@
 #include <HAL/IMU/IMUDevice.h>
 #include <HAL/Camera/Drivers/Rectify/RectifyDriver.h>
 #include <ThirdParty/CameraDrivers.h>
-#include <miniglog/logging.h>
 
 #include "LoopApp.h"
 

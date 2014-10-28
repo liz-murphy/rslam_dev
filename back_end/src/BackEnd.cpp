@@ -209,7 +209,6 @@ void BackEnd::RelaxMap(const unsigned int depth,
   loader.set_should_ignore_broken(true);
   map_->BFS(&loader);
 
-  CHECK(pose_ids_.count(root_id));
   ba_.SetRootPoseId(pose_ids_[root_id]);
 
   ROS_DEBUG_NAMED("back_end","Done loading poses");
@@ -234,7 +233,6 @@ bool BackEnd::_AddImuResidualToEdge(const SlamEdgePtr &edge,
                                     LocalMap& local_map,
                                     const double weight,
                                     unsigned int* ba_id) {
-  CHECK_NOTNULL(ba_id);
   const TransformEdgeId edge_id = edge->id();
   const auto ita = pose_ids_.find(edge_id.start);
   const auto itb = pose_ids_.find(edge_id.end);
@@ -489,12 +487,6 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
         root_delta_norm.norm(),
         boost::lexical_cast<std::string>(root_delta_norm.transpose()).c_str());
 
-    //    LOG(debug_level) << "diff: "  << mean.transpose() << std::endl;
-    //    LOG(g_debug_level) << "cov: "  << cov.transpose() << std::endl;
-    //    LOG(g_debug_level) << "diff_root: "  << root_diff.transpose() << std::endl;
-    //    LOG(g_debug_level) << "Mahalanobis dis: " << mahalanobis_dist << std::endl;
-
-
     //if (mahalanobis_dist > 8.0) {
     //if (root_delta_norm.norm() > g_adaptive_threshold/*mean_delta_norm.norm()*/) {
     if (root_delta_norm.norm() > mean_delta_norm.norm() * BackEndConfig::getConfig()->getAdaptiveThreshold()) {
@@ -507,8 +499,6 @@ OptimizationStatus BackEnd::UpdateLocalMapFromBa(LocalMap &local_map,
 
 
   // const ba::ImuCalibrationT<Scalar>& calib = imu_ba_.GetImuCalibration();
-  // LOG(g_debug_level) << "bg: " << calib.b_g.transpose() << " ba: " <<
-  //             calib.b_a.transpose() << std::endl;
 
   //TODO: update the rig T_wc and params here
   return status;
@@ -744,10 +734,8 @@ bool BackEnd::LoadLocalMapIntoBa(LocalMap &local_map,
 
   ba::Tic();
 
-  // LOG(g_debug_level) << "Inserting poses." << std::endl;
   // Go through every pose in the local map.
   for (auto it = local_map.poses.begin(); it != local_map.poses.end(); ++it) {
-    CHECK_EQ(it->first.session_id, local_map.map->id());
 
     // Poses on the inside are always active.
     LoadPoseIntoBa(local_map, it->first, it->second,
@@ -951,7 +939,6 @@ OptimizationStatus ComputeAdaptiveMetrics(const BundleAdjuster& ba,
                                           uint32_t root_imu_id,
                                           Scalar* cond_error_out,
                                           double adaptive_threshold) {
-  CHECK(cond_error_out);
   const ba::SolutionSummary<Scalar>& summary = ba.GetSolutionSummary();
 
   Scalar cond_inertial_error = -1.0;
@@ -992,7 +979,6 @@ bool BackEnd::RefineMap(unsigned int depth,
                         bool do_landmark_init,
                         EdgeAttribute attribute,
                         const RefineMapCallbacks& callbacks) {
-  CHECK(map_) << "BackEnd::Init(map) must be called before RefineMap";
   if (!root_id.valid()) return false;
 
   if (adaptive_options.do_adaptive && adaptive_options.is_asynchronous &&
@@ -1188,8 +1174,6 @@ bool BackEnd::GaussNewton(
   if (has_imu) {
     imu_ba_.Solve(/*g_tracking_cvars.gn_max_num_iter*/10);
     imu_ba_.GetErrors(proj_error, unary_error, binary_error, inertial_error);
-    // LOG(debug_level) << "GN proj error: " << proj_error << " gn imu error: " <<
-    //             inertial_error;
   } else {
     ba_.Solve(/*g_tracking_cvars.gn_max_num_iter*/10);
     ba_.GetErrors(proj_error, unary_error, binary_error, inertial_error);

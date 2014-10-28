@@ -35,10 +35,6 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
       std::unordered_map<LandmarkId, uint32_t>* landmarks,
       int min_lm_observations)
       : map_(map), ba_(ba), ba_frames_(ba_frames), landmarks_(landmarks) {
-    CHECK(map);
-    CHECK(ba);
-    CHECK(ba_frames);
-    CHECK(landmarks);
     set_has_visit(true);
 
     std::vector<LandmarkId> to_delete;
@@ -180,7 +176,6 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
 
       uint32_t base_cam = UINT_MAX;
       frame->GetLandmarkBaseCamera(lm_id.landmark_index, &base_cam);
-      CHECK_LT(base_cam, cam_id_it->second.size());
       uint32_t cam_id = cam_id_it->second[base_cam];
 
       Eigen::Vector4t x_r;
@@ -210,7 +205,6 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
         auto cam_id_it = camera_ids_.find(zid.frame_id.session_id);
         const std::vector<uint32_t>& cam_ids = cam_id_it->second;
 
-        CHECK_EQ(z.NumCameras(), cam_ids.size());
         for (size_t ii = 0 ; ii < z.NumCameras(); ++ii) {
           if (z.HasGoodMeasurementInCam(ii)) {
             if (cam_id_it != camera_ids_.end()) {
@@ -254,7 +248,6 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
       ba_id = ba_->AddPose(t_wp, is_active);
     }
 
-    CHECK_NE(ba_id, UINT_MAX);
     ba_frames_->emplace(id, ba_id);
   }
 

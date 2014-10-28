@@ -43,8 +43,6 @@ bool PushMap(const BundleAdjuster& ba,
     const TransformEdgeId& edge_id = pair.first;
     auto start_it = pose_ids.find(edge_id.start);
     auto end_it = pose_ids.find(edge_id.end);
-    CHECK_NE(start_it, pose_ids.end());
-    CHECK_NE(end_it, pose_ids.end());
 
     const ba::PoseT<Scalar>& pose_start = ba.GetPose(start_it->second);
     const ba::PoseT<Scalar>& pose_end = ba.GetPose(end_it->second);
@@ -162,7 +160,6 @@ bool PushMap(const BundleAdjuster& ba,
 
     uint32_t base_cam = UINT_MAX;
     if (!frame->GetLandmarkBaseCamera(lm_index, &base_cam)) continue;
-    CHECK_LT(base_cam, rig->cameras.size());
 
     const Eigen::Vector4t x_c =
         Sophus::MultHomogeneous(rig->cameras[base_cam].T_wc.inverse(), lm_x_r);

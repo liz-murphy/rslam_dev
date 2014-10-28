@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   calibu
   utils
-  miniglog
   common
   dynamic_reconfigure
   cmake_modules

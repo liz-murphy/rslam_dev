@@ -1,6 +1,5 @@
 #pragma once
 
-#include <miniglog/logging.h>
 #include <pb_msgs/Image.h>
 
 namespace pb {
@@ -71,17 +70,14 @@ class ImagePyramid {
   }
 
   cv::Mat& operator[](size_t i) {
-    CHECK_LT(i, levels_.size());
     return levels_[i];
   }
 
   cv::Mat& at(size_t i) {
-    CHECK_LT(i, levels_.size());
     return levels_[i];
   }
 
   const cv::Mat& at(size_t i) const {
-    CHECK_LT(i, levels_.size());
     return levels_[i];
   }
 

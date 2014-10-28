@@ -144,7 +144,6 @@ class InMemoryDataStore : public SlamMapDataStore {
   }
 
   void sessions(std::vector<SessionId>* sessions) const override {
-    CHECK_NOTNULL(sessions);
     std::set<SessionId> ids;
     for (const auto& pair : frames_) {
       ids.insert(pair.first.session_id);

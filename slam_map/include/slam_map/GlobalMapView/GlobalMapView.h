@@ -68,7 +68,7 @@ class GlobalMapView {
   /**
    * Clears current contents and loads the entire map in through the proxy.
    */
-  void ResetAndLoadWholeMap();
+  bool ResetAndLoadWholeMap();
 
   void UpdateDebugLevel(int level){debug_level_=level;};
  protected:

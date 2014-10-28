@@ -135,7 +135,7 @@ protected:
    * @param os stream. A new line is written, followed by a line with the
    * frame indices and a new line
    */
-  void saveFrameIndices(std::ofstream& os) const;
+  void saveFrameIndices(std::ostream& os) const;
 
   /**
    * @brief Loads the frame indices from a stream. This function should be
@@ -143,7 +143,7 @@ protected:
    * @param is stream. It is assumed that the line next to current one is the
    * one that contains the frame indices
    */
-  void loadFrameIndices(std::ifstream& is);
+  void loadFrameIndices(std::istream& is);
 
   /**
    * @brief Retrieves keypoints from the tracks of a frame (requires a map)

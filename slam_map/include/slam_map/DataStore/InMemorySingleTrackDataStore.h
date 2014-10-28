@@ -26,8 +26,6 @@ class InMemorySingleTrackDataStore : public SlamMapDataStore {
   ///////////////////
   void AddFrame(const SlamFramePtr& frame) override {
     std::lock_guard<std::mutex> lock(mutex_);
-    DCHECK_EQ(frame->id().id, frames_.size()) << "# frames: " << frames_.size()
-                                              << ", id: " << frame->id();
     frames_.push_back(frame);
   }
 
@@ -44,7 +42,6 @@ class InMemorySingleTrackDataStore : public SlamMapDataStore {
   void SetFramePtr(const ReferenceFrameId& frame_id,
                    const SlamFramePtr& pFrame) override {
     std::lock_guard<std::mutex> lock(mutex_);
-    CHECK_LT(frame_id.id, frames_.size());
     frames_[frame_id.id] = pFrame;
   }
 
@@ -63,8 +60,6 @@ class InMemorySingleTrackDataStore : public SlamMapDataStore {
   //////////////////
   void AddEdge(const SlamEdgePtr& edge) override {
     std::lock_guard<std::mutex> lock(mutex_);
-    DCHECK_EQ(edge->id().id, edges_.size()) << "# edges: " << edges_.size()
-                                            << ", id: " << edge->id();
     edges_.push_back(edge);
   }
 
@@ -110,7 +105,6 @@ class InMemorySingleTrackDataStore : public SlamMapDataStore {
 
   void AddCamera(const SessionId& session_id, const _CameraRigPtr& cam) override {
     // This should only ever have a single camera.
-    CHECK(!session_);
     session_.reset(new SessionId(session_id));
     camera_ = cam;
   }
@@ -119,19 +113,15 @@ class InMemorySingleTrackDataStore : public SlamMapDataStore {
     if (!session_) {
       session_.reset(new SessionId(session_id));
     } else {
-      CHECK_EQ(*session_, session_id);
     }
     camera_ = cam;
   }
 
   CameraRigPtr GetCamera(const SessionId& session_id) const override {
-    CHECK(session_);
-    CHECK_EQ(*session_, session_id);
     return camera_;
   }
 
   void sessions(std::vector<SessionId>* sessions) const override {
-    CHECK_NOTNULL(sessions);
     sessions->clear();
     if (session_) {
       sessions->push_back(*session_);

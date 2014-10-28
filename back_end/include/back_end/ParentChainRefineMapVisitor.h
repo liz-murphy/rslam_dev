@@ -40,10 +40,6 @@ class ParentChainRefineMapVisitor : public MapVisitor {
       : ba_(ba), imu_buffer_(imu_buffer), ba_frames_(ba_frames),
         edge_ba_ids_(edge_ba_ids), landmarks_(landmarks),
         root_pose_id_(root_pose_id), root_edge_id_(root_edge_id) {
-    CHECK(ba);
-    CHECK(ba_frames);
-    CHECK(landmarks);
-    CHECK(edge_ba_ids);
     set_has_explore_node(true);
   }
 
@@ -54,7 +50,6 @@ class ParentChainRefineMapVisitor : public MapVisitor {
     const ReferenceFrameId child_id = child->id();
 
     if (num_poses_seen_ == 0) {
-      CHECK_EQ(parent_id, root_id());
       AddFrame(t_cur_, parent_id, parent, !disable_poses_);
       ++num_poses_seen_;
     }
@@ -152,7 +147,6 @@ class ParentChainRefineMapVisitor : public MapVisitor {
       ba_id = ba_->AddPose(t_wp, is_active);
     }
 
-    CHECK_NE(ba_id, UINT_MAX);
     ba_frames_->emplace(id, ba_id);
     AddObservedLandmarks(frame);
     AddPoseMeasurements(ba_id, frame);

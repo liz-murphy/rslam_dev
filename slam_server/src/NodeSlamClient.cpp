@@ -40,7 +40,7 @@ NodeSlamClient::~NodeSlamClient() {}
 
 void NodeSlamClient::UploadMap(const pb::PlaceMapMsg& map) {
   if (!node_.send(rpg::kServerEndpoint + "/" + rpg::kUploadMapEndpoint, map)) {
-    LOG(ERROR) << "Failed to UploadMap";
+    ROS_ERROR("Failed to UploadMap");
   }
 }
 

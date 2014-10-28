@@ -5,13 +5,19 @@
 #include <pthread.h>
 #include <queue>
 #include <mutex>
-#include <miniglog/logging.h>
+
+#include <boost/lockfree/queue.hpp>
+
+template <typename T>
+class AtomicQueue : public boost::lockfree::queue<T>
+{
+};
 /**
  * Adds basic thread-safe read/write wrapper around a queue
  *
  * Additionally, adds clear() and requeue_front().
  */
-template <typename T, typename QueueT = std::queue<T> >
+/*template <typename T, typename QueueT = std::queue<T> >
 class AtomicQueue {
  public:
   AtomicQueue() {
@@ -48,7 +54,7 @@ class AtomicQueue {
    * Get first value and pop from queue.
    * Returns false if the queue is empty.
    */
-  bool pop_front(T* out) {
+ /* bool pop_front(T* out) {
     CHECK_EQ(0, pthread_rwlock_wrlock(&lock_));
     bool empty = queue_.empty();
     if (!empty) {
@@ -61,7 +67,7 @@ class AtomicQueue {
   }
 
   /** Take object at head and push to the tail */
-  void requeue_front() {
+  /*void requeue_front() {
     CHECK_EQ(0, pthread_rwlock_wrlock(&lock_));
     queue_.push(queue_.front());
     queue_.pop();
@@ -93,4 +99,4 @@ class AtomicQueue {
  private:
   mutable pthread_rwlock_t lock_;
   QueueT queue_;
-};
+};*/

@@ -172,13 +172,11 @@ PersistentBackend<TableT>::~PersistentBackend() {
 
 template <typename TableT>
 void PersistentBackend<TableT>::Flush() {
-  CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
 
   std::vector<std::pair<id_type, pointer_type> > to_write;
   for (auto& it : objects_in_use_) {
     to_write.emplace_back(it.first, it.second);
   }
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   bool success = false;
 
@@ -197,11 +195,9 @@ void PersistentBackend<TableT>::Flush() {
 template <typename TableT>
 void PersistentBackend<TableT>::Add(const id_type& id,
                                     const pointer_type& ptr) {
-  CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
 
   // Need to skip if we've already added this id
   if (objects_in_use_.count(id) != 0) {
-    CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
     return;
   }
 
@@ -215,42 +211,34 @@ void PersistentBackend<TableT>::Add(const id_type& id,
   ++size_;
 
   id_queue_.push(id);
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   add_signal_.notify_all();
 }
 
 template <typename TableT>
 auto PersistentBackend<TableT>::Get(const id_type& id) -> pointer_type {
-  CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
   auto it = objects_in_use_.find(id);
   if (it != objects_in_use_.end()) {
     pointer_type ptr = it->second;
-    CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
     return ptr;
   }
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
   return Load(id);
 }
 
 template <typename TableT>
 void PersistentBackend<TableT>::Set(const id_type& id,
                                     const pointer_type& ptr) {
-  CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
 
   assert(objects_in_use_.count(id));
   objects_in_use_[id] = ptr;
 
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 }
 
 /** Find the object for a given ID if it exists in memory currently */
 template <typename TableT>
 auto PersistentBackend<TableT>::Find(const id_type& id) -> pointer_type {
-  CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
   auto it = objects_in_use_.find(id);
   auto end = objects_in_use_.end();
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   if (it == end) {
     return nullptr;
@@ -260,9 +248,7 @@ auto PersistentBackend<TableT>::Find(const id_type& id) -> pointer_type {
 
 template <typename TableT>
 bool PersistentBackend<TableT>::IsInMemory(const id_type& id) {
-  CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
   size_t count = objects_in_use_.count(id);
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
   return count > 0;
 }
 
@@ -289,12 +275,10 @@ void PersistentBackend<TableT>::Clear() {
   table->Clear();
   tables_.push(table);
 
-  CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
   objects_in_use_.clear();
   size_ = 0;
   id_queue_.clear();
 
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 }
 
 template <typename TableT>
@@ -314,10 +298,8 @@ void PersistentBackend<TableT>::UniqueIds(int column,
 
 template <typename TableT>
 void PersistentBackend<TableT>:: CheckConsistency() {
-  CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
   size_t queue_size = id_queue_.size();
   size_t store_size = objects_in_use_.size();
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   if (queue_size != store_size) {
     ROS_ERROR("Queue and store are out of sync: [ %d, %d]. Abort().", (int)queue_size, (int)store_size);
@@ -344,10 +326,8 @@ void PersistentBackend<TableT>::WriteBatchAndErase(
       const id_type& id = v.first;
       const pointer_type& ptr = v.second;
 
-      CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
       auto it = objects_in_use_.find(ptr->id());
       auto end = objects_in_use_.end();
-      CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
       // Make sure this pointer is actually still in memory
       if (it == end) {
@@ -355,17 +335,14 @@ void PersistentBackend<TableT>::WriteBatchAndErase(
         continue;
       }
 
-      CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
 
       // Use count should be only 2: this function and the main map
       if (ptr && ptr.use_count() == 2) {
         objects_in_use_.erase(id);
-        CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
         table->Write(id, ptr);
         erased.emplace_back(v);
       } else {
-        CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
         id_queue_.push(id);
       }
       to_write->pop_back();
@@ -374,12 +351,10 @@ void PersistentBackend<TableT>::WriteBatchAndErase(
     // If the transaction fails, we need to reinsert all the erased pointers
     if (!table->CommitTransaction()) {
       ROS_ERROR("WriteBatchAndErase commit failed. Replacing objects");
-      CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
       objects_in_use_.insert(erased.begin(), erased.end());
       for (const auto& pair : erased) {
         id_queue_.push(pair.first);
       }
-      CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
     }
   }
   tables_.push(table);
@@ -407,20 +382,17 @@ auto PersistentBackend<TableT>::Load(const id_type& id) -> pointer_type {
 template <typename TableT>
 auto PersistentBackend<TableT>::InsertExisting(
     const id_type& id, const pointer_type& to_insert) -> pointer_type {
-  CHECK_EQ(pthread_rwlock_wrlock(&map_lock_), 0);
 
   auto it = objects_in_use_.find(id);
   // Check again to prevent a data race...
   if (it != objects_in_use_.end()) {
     pointer_type ptr = it->second;
-    CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
     return ptr;
   }
 
   objects_in_use_[id] = to_insert;
   id_queue_.push(id);
 
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
   return to_insert;
 }
 
@@ -461,9 +433,7 @@ void PersistentBackend<TableT>::GatherUnused(
 
 template <typename TableT>
 bool PersistentBackend<TableT>::ShouldEvict(const id_type& id) const {
-  CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
   id_type last = last_id_;
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   return last.session_id != id.session_id || (last.id - id.id) > 50;
 }
@@ -482,9 +452,7 @@ void PersistentBackend<TableT>::WaitUntilAdd(
 
 template <typename TableT>
 uint64_t PersistentBackend<TableT>::Size() const {
-  CHECK_EQ(pthread_rwlock_rdlock(&map_lock_), 0);
   size_t map_size = size_;
-  CHECK_EQ(pthread_rwlock_unlock(&map_lock_), 0);
 
   return map_size;
 }

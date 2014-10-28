@@ -5,13 +5,11 @@
 #include <slam_map/ProtobufIO.h>
 #include <pb_msgs/Matrix.h>
 #include <pb_msgs/Pose.h>
-#include <miniglog/logging.h>
 
 namespace pb {
 
 void fill_message(const std::shared_ptr<FrameObject>& fo,
                   FrameObjectMsg* msg) {
-  CHECK_NOTNULL(msg);
   msg->set_uuid(rslam::uuid::uuid_begin(fo->id),
                 rslam::uuid::uuid_size(fo->id));
 
@@ -32,13 +30,12 @@ void fill_message(const std::shared_ptr<FrameObject>& fo,
                    msg->MutableExtension(TextObjectMsg::object));
       break;
     default:
-      LOG(FATAL) << "Unkown FrameObject type being serialized";
+      ROS_ERROR("Unknown FrameObject type being serialized");
   }
 }
 
 void fill_message(const std::shared_ptr<CubeObject>& fo,
                   CubeObjectMsg* msg) {
-  CHECK_NOTNULL(msg);
 
   WritePoseSE3(fo->t_po, msg->mutable_t_po());
   fill_message(fo->scale, msg->mutable_scale());
@@ -46,7 +43,6 @@ void fill_message(const std::shared_ptr<CubeObject>& fo,
 
 void fill_message(const std::shared_ptr<TextObject>& fo,
                   TextObjectMsg* msg) {
-  CHECK_NOTNULL(msg);
 
   WritePoseSE3(fo->t_po, msg->mutable_t_po());
   fill_message(fo->scale, msg->mutable_scale());
@@ -56,7 +52,6 @@ void fill_message(const std::shared_ptr<TextObject>& fo,
 
 void fill_message(const std::shared_ptr<TeapotObject>& fo,
                   TeapotObjectMsg* msg) {
-  CHECK_NOTNULL(msg);
 
   WritePoseSE3(fo->t_po, msg->mutable_t_po());
   fill_message(fo->scale, msg->mutable_scale());
@@ -64,7 +59,6 @@ void fill_message(const std::shared_ptr<TeapotObject>& fo,
 
 void parse_message(const FrameObjectMsg& msg,
                    std::shared_ptr<FrameObject>* fo) {
-  CHECK_NOTNULL(fo);
 
   switch (msg.type()) {
     case FrameObjectMsg::Cube:
@@ -77,7 +71,7 @@ void parse_message(const FrameObjectMsg& msg,
       parse_message(msg.GetExtension(TextObjectMsg::object), fo);
       break;
     default:
-      LOG(FATAL) << "Unkown FrameObject type being serialized";
+      ROS_ERROR("Unknown FrameObject type being serialized");
   }
 
   std::copy(msg.uuid().begin(), msg.uuid().end(),
@@ -86,7 +80,6 @@ void parse_message(const FrameObjectMsg& msg,
 
 void parse_message(const CubeObjectMsg& msg,
                    std::shared_ptr<FrameObject>* fo) {
-  CHECK_NOTNULL(fo);
 
   CubeObject* cube = new CubeObject;
   cube->type = FrameObject::Type::Cube;
@@ -98,7 +91,6 @@ void parse_message(const CubeObjectMsg& msg,
 
 void parse_message(const TeapotObjectMsg& msg,
                    std::shared_ptr<FrameObject>* fo) {
-  CHECK_NOTNULL(fo);
 
   TeapotObject* teapot = new TeapotObject;
   teapot->type = FrameObject::Type::Teapot;
@@ -110,7 +102,6 @@ void parse_message(const TeapotObjectMsg& msg,
 
 void parse_message(const TextObjectMsg& msg,
                    std::shared_ptr<FrameObject>* fo) {
-  CHECK_NOTNULL(fo);
 
   TextObject* text = new TextObject;
   text->type = FrameObject::Type::Text;

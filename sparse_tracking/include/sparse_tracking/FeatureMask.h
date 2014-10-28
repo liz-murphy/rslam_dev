@@ -21,7 +21,6 @@ class FeatureMask {
   }
 
   void SetMask(size_t cam, long x, long y) {
-    CHECK_LT(cam, feature_mask_.size());
 
     // set an area around the x/y coordinate as masked
     size_t min_col = std::max(0L, x - kFeatureMaskRadius);

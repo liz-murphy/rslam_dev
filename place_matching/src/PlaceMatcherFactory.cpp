@@ -3,12 +3,12 @@
 #include <place_matching/PlaceMatcherFactory.h>
 #include <place_matching/TemplateMatcher/TemplateMatcher.h>
 
-#include <miniglog/logging.h>
 #include <place_matching/TemplateMatcher/TemplateMatcher.h>
 #include <place_matching/DBoWMatcher/DBoWMatcher.h>
 #include <place_matching/MultiDBoWMatcher/MultiDBoWMatcher.h>
 #include <place_matching/DBoWMatcher/dbow_config.h>
 
+#include <ros/ros.h>
 
 PlaceMatcherFactory::Options::Options() :
     vocab_filename("/home/liz/codescratch/rslam_dev/src/rslam_dev/place_matching/vocabularies/ORB_k10L5.voc.gz") {
@@ -32,7 +32,7 @@ PlaceMatcherFactory::Create(const Options& options) {
                                                 multi_params,
                                                 options.descriptor);
     default:
-      LOG(FATAL) << "Unknown MatcherType passed to PlaceMatcherFactory";
+      ROS_ERROR("Unknown MatcherType passed to PlaceMatcherFactory");
   }
   return std::shared_ptr<PlaceMatcher>();
 }

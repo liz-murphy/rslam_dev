@@ -7,7 +7,7 @@
 namespace rslam {
 namespace sparse {
 
-inline void GetNodesInsideWindowBFS(
+bool GetNodesInsideWindowBFS(
     const SlamMap* map,
     LocalMap&  local_map,
     const bool ignore_broken,
@@ -45,7 +45,11 @@ inline void GetNodesInsideWindowBFS(
 
   for (const SessionId& session_id : local_map.maps) {
     if (CameraRigPtr rig = map->GetCamera(session_id)) {
-      CHECK(rig) << "No rig found for lifted pose";
+      if(!rig)
+      {
+       ROS_ERROR("No rig found for lifted pose");
+       return false;
+      }
       local_map.cameras[session_id] = rig;
     }
   }
@@ -66,6 +70,7 @@ inline void GetNodesInsideWindowBFS(
       }
     }
   }
+  return true;
 }
 
 bool LiftAllPoses(const SlamMap* map,

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <mutex>
-#include <miniglog/logging.h>
 #include <opencv2/opencv.hpp>
 #include <sophus/se3.hpp>
 #include <slam_map/SlamMap.h>
@@ -540,7 +539,6 @@ private:
     Node(const ReferenceFrameId& f, const std::vector<cv::KeyPoint>& k,
          const std::vector<cv::Mat>& d, const std::vector<LandmarkId>& l)
       : frameid(f), keys(k), descs(d), landmarks(l){
-      CHECK(!l.empty());
     }
 
     /**

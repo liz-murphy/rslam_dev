@@ -50,7 +50,6 @@ ReferenceFrame::~ReferenceFrame() {}
 void ReferenceFrame::Merge(const ReferenceFrame& frame) {
   LockGuardT lock(mutex_);
 
-  CHECK_EQ(id_.load(), frame.id());
   is_isolated_ = frame.is_isolated_.load();
   cam_params_ = frame.cam_params_;
   t_vs_ = frame.t_vs_;
@@ -212,7 +211,6 @@ void ReferenceFrame::RemoveNeighbor(const TransformEdgeId& edge_id) {
 
 TransformEdgeId
 ReferenceFrame::GetNeighborEdgeId(const unsigned int idx) const {
-  CHECK_LT(idx, neighbor_edge_ids_.size());
   LockGuardT lock(mutex_);
   return neighbor_edge_ids_[idx];
 }
@@ -226,7 +224,6 @@ bool ReferenceFrame::HasGoodMeasurementInCam(unsigned int z_index,
 
 bool ReferenceFrame::GetMeasurementId(unsigned int z_index,
                                       MeasurementId* id_out) const {
-  CHECK_NOTNULL(id_out);
   LockGuardT lock(mutex_);
   if (z_index < measurements_.size()) {
     *id_out = measurements_[z_index].id();
@@ -413,7 +410,6 @@ void ReferenceFrame::AddObject(const std::shared_ptr<FrameObject>& fo) {
 
 void ReferenceFrame::RemoveObject(size_t i) {
   LockGuardT lock(mutex_);
-  CHECK_LT(i, objects_.size());
   objects_.erase(objects_.begin() + i);
   MarkAsModified();
 }
@@ -421,15 +417,12 @@ void ReferenceFrame::RemoveObject(size_t i) {
 void ReferenceFrame::GetObject(size_t i,
                                std::shared_ptr<FrameObject>* o) const {
   LockGuardT lock(mutex_);
-  CHECK_LT(i, objects_.size());
-  CHECK_NOTNULL(o);
   *o = objects_[i];
 }
 
 void ReferenceFrame::GetObjects(
     std::vector<std::shared_ptr<FrameObject> >* objects) const {
   LockGuardT lock(mutex_);
-  CHECK_NOTNULL(objects);
   *objects = objects_;
 }
 
@@ -451,7 +444,6 @@ size_t ReferenceFrame::NumPoseMeasurements() const {
 
 bool ReferenceFrame::GetPoseMeasurement(size_t index,
                                         rslam::map::PoseMeasurement* z) const {
-  CHECK_NOTNULL(z);
   LockGuardT lock(mutex_);
   if (index < pose_measurements_.size()) {
     *z = pose_measurements_[index];

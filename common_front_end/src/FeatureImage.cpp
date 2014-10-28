@@ -7,8 +7,6 @@
 #include <vector>
 
 #include <common_front_end/CommonFrontEndParamsConfig.h>
-//#include <common_front_end/FlybyFeatureDetector.h>
-#include <miniglog/logging.h>
 #include <pb_msgs/Image.h>
 #include <pb_msgs/ImagePyramid.h>
 #include <utils/ESM.h>

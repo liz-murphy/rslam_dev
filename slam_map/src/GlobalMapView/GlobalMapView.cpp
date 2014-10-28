@@ -49,7 +49,7 @@ void GlobalMapView::set_root_id_inline(const ReferenceFrameId& id) {
 
 inline bool GlobalMapView::GetFramePoseInline(const ReferenceFrameId& uId,
                                               Sophus::SE3t* out) const {
-  CHECK_NOTNULL(out);
+  assert(out!=NULL);
   auto it = frames_.find(uId);
   if (it == frames_.end()) {
     return false;
@@ -187,7 +187,7 @@ bool GlobalMapView::UpdateEdge(const TransformEdgeId& edge,
                                const ReferenceFrameId& a,
                                const ReferenceFrameId& b,
                                const Sophus::SE3t& t_ab) {
-  CHECK_EQ(b, edge.OtherEnd(a));
+  assert(b == edge.OtherEnd(a));
   if (!has_root_id_) {
     std::cerr << "Must set root id of GlobalMapView before UpdateEdge."
               << std::endl;
@@ -217,8 +217,13 @@ class LoadWholeMapVisitor : public MapVisitor {
   GlobalMapView* view;
 };
 
-void GlobalMapView::ResetAndLoadWholeMap() {
-  CHECK(has_root_id_) << "Must set_root_id() before loading map";
+bool GlobalMapView::ResetAndLoadWholeMap() {
+
+  if(!has_root_id_)
+  {
+    ROS_ERROR("Must set_root_id() before loading map");
+    return false;
+  }
 
   Reset(map_);
   LockGuardT lock(mutex_);
@@ -227,6 +232,7 @@ void GlobalMapView::ResetAndLoadWholeMap() {
   visitor.set_depth(MapVisitor::kMaxDepth);
   visitor.set_should_ignore_broken(true);
   map_->BFS(&visitor);
+  return true;
 }
 
 void GlobalMapView::UpdateEdgeId(const TransformEdgeId& id) {

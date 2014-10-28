@@ -42,24 +42,17 @@ SlamServer::SlamServer(const std::shared_ptr<PlaceMatcher>& matcher,
 SlamServer::~SlamServer() {}
 
 void SlamServer::PrintStats() const {
-  LOG(INFO) << "**SlamServer Stats**";
-  LOG(INFO) << "Map stats:";
-  LOG(INFO) << "\t" << map_->NumFrames() << " frames";
-  LOG(INFO) << "\t" << map_->NumEdges() << " edges";
-  LOG(INFO) << "\t" << map_->NumCameras() << " cameras";
-  LOG(INFO) << std::endl;
-  LOG(INFO) << "PlaceMatcher stats:";
-  LOG(INFO) << "\t" << place_matcher_->NumPlaces() << " places";
-  LOG(INFO) << "****";
+  ROS_INFO("SlamServer Map Stats: %d frames, %d edges, %d cameras", (int)map_->NumFrames(), (int)map_->NumEdges(), (int)map_->NumCameras());
+  ROS_INFO("SlamServer PlaceMatcher stats: %d places", (int)place_matcher_->NumPlaces());
 }
 
 void SlamServer::UploadMap(const pb::PlaceMapMsg& place_map) {
   std::lock_guard<std::mutex> lock(mutex_);
   if (!place_map.has_map()) {
-    LOG(ERROR) << "Uploaded map does not have a SlamMap.";
+    ROS_ERROR("Uploaded map does not have a SlamMap.");
     return;
   } else if (place_map.map().session_ids_size() != place_map.map().rigs_size()) {
-    LOG(ERROR) << "Uploaded map has unequal number of rigs and map ids";
+    ROS_ERROR("Uploaded map has unequal number of rigs and map ids");
     return;
   }
 
@@ -79,9 +72,10 @@ double SlamServer::FetchToDepth(const pb::ReferenceFrameIdMsg& id_msg,
   ReferenceFrameId id;
   pb::parse_message(id_msg, &id);
 
-  LOG(ServerConfig::getConfig()->debug_level) << "Fetching map at " << id
-                                  << " to depth of " << depth
-                                  << " since " << last_fetch_time;
+  ROS_DEBUG_NAMED("SlamServer", "Fetching map at %s to depth of %d since %f",
+      boost::lexical_cast<std::string>(id).c_str(),
+      (int)depth,
+      last_fetch_time);
 
 
   ServerFetchMapVisitor visitor(map_.get(),
@@ -103,13 +97,12 @@ double SlamServer::FetchToDepth(const pb::ReferenceFrameIdMsg& id_msg,
   visitor.set_depth(depth);
   map_->BFS(&visitor);
 
-  LOG(ServerConfig::getConfig()->debug_level)
-      << "Fetched map stats: "
-      << "\n\t" << to_fetch->map().nodes_size() << " nodes, "
-      << "\n\t" << to_fetch->map().edges_size() << " edges,  "
-      << "\n\t" << to_fetch->leaf_size() << " leaves,  "
-      << "\n\t" << to_fetch->dbow_places_size() << " dbow places, and"
-      << "\n\t" << to_fetch->templates_size() << " templates.";
+  ROS_DEBUG_NAMED("SlamServer","Fetched map stats: %d nodes, %d edges, %d leaves, %d dbow places and %d templates",
+      to_fetch->map().nodes_size(),
+      to_fetch->map().edges_size(),
+      to_fetch->leaf_size(),
+      to_fetch->dbow_places_size(),
+      to_fetch->templates_size());
 
   return hal::Tic();
 }
@@ -159,8 +152,7 @@ bool SlamServer::QueryPlace(const pb::CameraMsg& cam,
 
   if (matches.size() != 1) return false;
 
-  LOG(ServerConfig::getConfig()->debug_level)
-      << "Found " << matches.size() << " match candidates";
+  ROS_DEBUG_NAMED("SlamServer", "Found %d match candidates", (int)matches.size());
 
   const PlaceMatchCandidate& match = matches[0];
 
@@ -168,8 +160,7 @@ bool SlamServer::QueryPlace(const pb::CameraMsg& cam,
   // For all the keypoints in the candidate
   MultiViewMeasurement z(1);
   MeasurementId zid(query_frame->id(), LandmarkId());
-  LOG(ServerConfig::getConfig()->debug_level)
-      << "Creating " << match.query.size() << " matching measurements";
+  ROS_DEBUG_NAMED("SlamServer","Creating %d matching measurements", (int)match.query.size());
   for (size_t i = 0; i < match.query.size(); ++i) {
     // Set its landmark_id, frame_id accordingly
     zid.landmark_id = match.match_landmarks[i];
@@ -193,7 +184,7 @@ bool SlamServer::QueryPlace(const pb::CameraMsg& cam,
     meas->emplace_back();
     pb::fill_message(z, &meas->back());
   }
-  LOG(ServerConfig::getConfig()->debug_level) << "Checking matches";
+  ROS_DEBUG_NAMED("SlamServer", "Checking matches");
 
   SlamFramePtr matched_frame = map_->GetFramePtr(match.getFrameId());
   CHECK(matched_frame) << match.getFrameId();

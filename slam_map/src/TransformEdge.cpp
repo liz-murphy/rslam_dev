@@ -3,7 +3,6 @@
 
 #include <slam_map/TransformEdge.h>
 #include <utils/TicToc.h>
-#include <miniglog/logging.h>
 #include <slam_map/NotificationCenter.h>
 
 typedef std::lock_guard<std::mutex> LockGuardT;
@@ -38,7 +37,7 @@ TransformEdge::TransformEdge(const TransformEdgeId& id,
 TransformEdge::~TransformEdge() {}
 
 void TransformEdge::Merge(const TransformEdge& other) {
-  CHECK_EQ(other.id_.load(), id_.load());
+  assert(other.id_.load()==id_.load());
   std::lock_guard<std::mutex> lock(mutex_);
   is_broken_ = other.is_broken_;
   t_se_ = other.t_se_;
@@ -70,7 +69,7 @@ bool TransformEdge::set_transform(const ReferenceFrameId& start_id,
 }
 
 void TransformEdge::transform(Sophus::SE3t* t_se) const {
-  CHECK_NOTNULL(t_se);
+  assert(t_se != NULL);
   *t_se = t_se_;
 }
 

@@ -34,7 +34,8 @@ void GlobalMapViewUpdater::ViewUpdateLoop() {
   rslam::map::MapEventUpdate update;
   while (!should_quit_) {
     update_cond_->wait(lock);
-    while (!should_quit_ && edge_updates_->pop_front(&update)) {
+    //while (!should_quit_ && edge_updates_->pop_front(&update)) {
+    while (!should_quit_ && edge_updates_->pop(update)) {
       HandleUpdate(update);
     }
   }

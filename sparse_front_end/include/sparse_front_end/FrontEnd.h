@@ -108,12 +108,10 @@ class FrontEnd : public FrontEndInterface{
   /// \param[out] ts is filled with current tracking data
   ///
   void tracking_stats(common::TrackingStats* ts) const {
-    CHECK_NOTNULL(ts);
     *ts = tracking_stats_;
   }
 
   void system_status(common::SystemStatus *ss) const override {
-    CHECK_NOTNULL(ss);
     *ss = system_state_;
   }
 

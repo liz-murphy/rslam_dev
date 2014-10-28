@@ -4,7 +4,6 @@
 #pragma once
 
 #include <pb_msgs/dbow.pb.h>
-#include <miniglog/logging.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <slam_map/ProtobufIO.h>
@@ -50,7 +49,7 @@ inline bool parse_message(const BinaryDescriptorMsg& msg, cv::Mat* desc) {
   if (msg.data_size() == 0) {
     return false;
   }
-  CHECK_NOTNULL(desc);
+  if(desc!=NULL);
   desc->create(1, msg.data_size(), CV_8U);
 
   uint8_t* row = desc->ptr(0);
