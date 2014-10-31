@@ -205,16 +205,16 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
     frontend_ = std::make_shared<sparse::FrontEnd>();
 
     sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
-    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, frontend_, _1, _2);
+    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, std::static_pointer_cast<sparse::FrontEnd>(frontend_), _1, _2);
     sparse_frontend_dr_srv_->setCallback(sparse_front_end_cb);
   } 
   else {
-#ifdef HAVE_SEMIDENSE_FRONTEND
     ROS_INFO("Creating semi-dense front-end.");
     frontend_ = std::make_shared<SemiDenseFrontEnd>();
-#else
-    ROS_ERROR("Semi-dense front-end is not enabled in this build.");
-#endif  // HAVE_SEMIDENSE_FRONTEND
+    
+    sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
+    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, std::static_pointer_cast<sparse::FrontEnd>(frontend_), _1, _2);
+    sparse_frontend_dr_srv_->setCallback(sparse_front_end_cb);
   }
 
   if (options.use_server) {
@@ -478,8 +478,8 @@ void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
   if(common_front_end_config_->getConfig()->resetRequired())
   {
     // Something has changed in the front end that requires a reset (eg feature detector changed)
-    frontend_->reset();
-    common_front_end_config_->getConfig()->resetDone();
+    //frontend_->reset();
+    //common_front_end_config_->getConfig()->resetDone();
   }
 
   bool should_process = true;

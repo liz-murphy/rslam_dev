@@ -74,8 +74,8 @@ class RslamEngine {
   }
 
   // Public access objects
-  //std::shared_ptr<rslam::FrontEndInterface> frontend_;
-  std::shared_ptr<sparse::FrontEnd> frontend_;
+  std::shared_ptr<rslam::FrontEndInterface> frontend_;
+  //std::shared_ptr<sparse::FrontEnd> frontend_;
  
   // ROS pollution for dynamic reconfigure
   std::shared_ptr<dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig> > sparse_frontend_dr_srv_;
