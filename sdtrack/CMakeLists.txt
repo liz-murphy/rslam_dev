@@ -1,46 +1,27 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rslam_engine)
+project(sdtrack)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mavx")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall ${CMAKE_CXX_FLAGS}")
 
-#list(APPEND CMAKE_MODULE_PATH "{$PROJECT_SOURCE_DIR}/CMakeModules/")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  ba
-  #back_end
   calibu
-  common_front_end
   miniglog
-  pb_msgs
-  place_matching
   roscpp
-  slam_map
-  slam_server
   sophus
-  sparse_front_end
-  semidense_front_end
   utils
-  sensor_msgs
-  camera_calibration_parsers
-  image_transport
-  message_filters
-  image_geometry
-  cv_bridge
-  tf
-  dynamic_reconfigure
 )
 
-#find_package(OpenCV REQUIRED)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SDTRACKERConfig.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/SDTRACKERConfig.h)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED)
 
-configure_file(
-  "${PROJECT_SOURCE_DIR}/include/rslam_engine/RslamEngineConfig.h.in"
-  "${PROJECT_SOURCE_DIR}/include/rslam_engine/RslamEngineConfig.h"
-)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -95,7 +76,7 @@ configure_file(
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   pb_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
 
 ###################################
@@ -109,9 +90,9 @@ configure_file(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES rslam_engine
-  CATKIN_DEPENDS ba calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils 
-  #DEPENDS opencv 
+  LIBRARIES sdtrack
+  CATKIN_DEPENDS calibu miniglog roscpp sophus
+  DEPENDS OpenCV 
 )
 
 ###########
@@ -124,27 +105,25 @@ catkin_package(
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
+  ${OPENCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-add_library(rslam_engine
-  src/RslamEngine.cpp
-  src/SimpleRslamEngine.cpp
-  src/RslamApp.cpp
-  src/Gui.cpp
+add_library(sdtrack
+  src/semi_dense_tracker.cpp
 )
 
 ## Declare a cpp executable
-add_executable(rslam_engine_node src/main.cpp)
+# add_executable(sdtrack_node src/sdtrack_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(rslam_engine_node rslam_engine_generate_messages_cpp)
+# add_dependencies(sdtrack_node sdtrack_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(rslam_engine_node
-  rslam_engine ${catkin_LIBRARIES} 
-)
+# target_link_libraries(sdtrack_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -161,18 +140,18 @@ target_link_libraries(rslam_engine_node
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS rslam_engine 
-   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
+# install(TARGETS sdtrack sdtrack_node
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
- )
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -186,7 +165,7 @@ install(TARGETS rslam_engine
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_rslam_engine.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_sdtrack.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

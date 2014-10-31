@@ -183,7 +183,7 @@ bool FrontEnd::Init(
   map_ = map;
   place_matcher_ = place_matcher;
   timer_ = timer;
-  timer_->set_window_size(timer_window_size_);
+  timer_->set_window_size(CommonFrontEndConfig::getConfig()->getTimerWindowSize());
   rig_ = rig;
   tracking_stats_.SetRigSize(rig_.cameras.size());
 
@@ -347,8 +347,8 @@ bool FrontEnd::IterateBa() {
   // also modifies the map
   // BackEnd::AdaptiveOptions options(false, 0, 0);
   BackEnd::AdaptiveOptions options(false, false, 15, 100);
-  uint32_t depth = ba_window_size_;
-  uint32_t num_iterations = ba_num_iter_;
+  uint32_t depth = CommonFrontEndConfig::getConfig()->getBAWindowSize();
+  uint32_t num_iterations = CommonFrontEndConfig::getConfig()->getBANumIterAdaptive();
 
   Eigen::Vector3t initial_gravity, initial_velocity;
   Eigen::Vector6t initial_bias;
@@ -430,7 +430,7 @@ void FrontEnd::ProcessKeyframe(
   // Do slidding window bundle adjustment
   //=========================================================
   if (system_state_.tracking_status == common::eTrackingGood &&
-      do_bundle_adjustment_) {
+      CommonFrontEndConfig::getConfig()->doBundleAdjustment()) {
     Tic("BA");
     IterateBa();
     Toc("BA");
@@ -553,12 +553,12 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     // seen in the current optimization window, but nothing more, which is why
     // the local_only flag is set on the lift operation, and the lift window
     // size is set to the ba window size.
-    LiftLocalMap(map_.get(), ba_window_size_,
+    LiftLocalMap(map_.get(), CommonFrontEndConfig::getConfig()->getBAWindowSize(),
                  reference_frame_->id(), work_set_,
                  has_imu_, false, true);
   } else {
     LiftLocalMap(map_.get(),
-                 do_keyframing_ ?
+                 CommonFrontEndConfig::getConfig()->doKeyframing() ?
                  1u : TrackingConfig::getConfig()->matchintime_window_size,
                  reference_frame_->id(), work_set_,
                  has_imu_, false, false);
@@ -758,7 +758,7 @@ bool FrontEnd::Iterate(const std::shared_ptr<pb::ImageArray>& frames,
     Sophus::SE3t pose;
     if (collect_pose_analytics_) {
       pose_analytics_.emplace_back(current_frame_->id(),
-                                   async_ba_window_size_,
+                                   CommonFrontEndConfig::getConfig()->getAsyncBAWindowSize(),
                                    pose,
                                    timestamp);
     }
@@ -1080,7 +1080,7 @@ void FrontEnd::Clear() {
 bool FrontEnd::IsKeyframe(
     const Sophus::SE3t& t_ab,
     const std::vector<MultiViewMeasurement>& measurements) {
-  if (!do_keyframing_) {
+  if (!CommonFrontEndConfig::getConfig()->doKeyframing()) {
     return true;
   }
   // check percentage of lanmarks tracked
@@ -1134,7 +1134,7 @@ void FrontEnd::AsyncBaFunc() {
   std::unique_lock<std::mutex> lock(async_mutex);
   while (!is_quitting_ba_) {
     is_async_busy_ = false;
-    if (!do_async_bundle_adjustment_) {
+    if (!CommonFrontEndConfig::getConfig()->doAsyncBundleAdjustment()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       continue;
     } else if (async_ba_cond_.wait_for(lock, wait_time) ==
@@ -1143,14 +1143,14 @@ void FrontEnd::AsyncBaFunc() {
     }
 
     is_async_busy_ = true;
-    BackEnd::AdaptiveOptions options(do_adaptive_window_,
+    BackEnd::AdaptiveOptions options(CommonFrontEndConfig::getConfig()->doAdaptiveWindow(),
                                      true,
-                                     ba_window_size_, 100);
+                                     CommonFrontEndConfig::getConfig()->getBAWindowSize(), 100);
     // We don't want to include the current frame in our optimizations
     options.ignore_frame = current_frame_->id();
-    async_ba_.RefineMap(async_ba_window_size_,
+    async_ba_.RefineMap(CommonFrontEndConfig::getConfig()->getAsyncBAWindowSize(),
                         async_frame_id_,
-                        ba_num_iter_adaptive_,
+                        CommonFrontEndConfig::getConfig()->getBANumIterAdaptive(),
                         has_imu_,
                         rig_,
                         options,
@@ -1449,22 +1449,14 @@ void FrontEnd::configCallback(sparse_front_end::SparseFrontEndConfig &config, ui
   ROS_ERROR("IN FRONT END CONFIG CALLBACK");
   collect_pose_analytics_ = config.collect_pose_analytics;
   use_imu_for_gn_ = config.use_imu_for_gn;
-  do_adaptive_window_ = config.do_adaptive_window;
   do_dense_init_ = config.do_dense_init;
-  do_bundle_adjustment_= config.do_bundle_adjustment;
-  do_async_bundle_adjustment_ = config.do_async_bundle_adjustment;
   use_inverse_depth_parameterization_ = config.use_inverse_depth_parameterization;
-  do_keyframing_ = config.do_keyframing;
   do_relocalization_ = config.do_relocalization;
 
   relocalizer_match_threshold_ = config.relocalizer_match_threshold;
   relocalizer_min_keyframe_separation_ = config.relocalizer_min_keyframe_separation;
   min_keyframes_for_initializing_ = config.min_keyframes_for_initializing;
   keyframe_search_depth_ = config.keyframe_search_depth;
-  async_ba_window_size_ = config.async_ba_window_size;
-  ba_window_size_ = config.ba_window_size;
-  ba_num_iter_ = config.ba_num_iter;
-  ba_num_iter_adaptive_ = config.ba_num_iter_adaptive;
 
   keyframe_threshold_ = config.keyframe_threshold;
   keyframe_max_distance_ = config.keyframe_max_distance;
@@ -1477,7 +1469,7 @@ void FrontEnd::configCallback(sparse_front_end::SparseFrontEndConfig &config, ui
   inlier_threshold_ = config.inlier_threshold;
 
   ground_truth_file_ = config.ground_truth_file;
-  timer_window_size_ = config.timer_window_size;
+  //timer_window_size_ = config.timer_window_size;
 }
 
 }  // namespace sparse

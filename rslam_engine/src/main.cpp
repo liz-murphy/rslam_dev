@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   std::string image_topic;
   nh.param<std::string>("stereo_topic",image_topic,"/camera");
 
-   RslamApp* rslam_app = new RslamApp(image_topic);
+  RslamApp* rslam_app = new RslamApp(image_topic);
 
   while(ros::ok())
   {

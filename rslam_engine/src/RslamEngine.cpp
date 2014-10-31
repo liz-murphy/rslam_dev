@@ -16,6 +16,7 @@
 #include <slam_server/NodeSlamClient.h>
 #include <slam_server/SlamServer.h>
 #include <sparse_front_end/FrontEnd.h>
+#include <semidense_front_end/semi_dense_frontend.h>
 #include <sparse_front_end/LiftLocalMap.h>
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
@@ -175,6 +176,7 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
 
   ros::NodeHandle nh_common_fe("/common_front_end");
   ros::NodeHandle nh_sparse_fe("/sparse_front_end");
+  ros::NodeHandle nh_sd_fe("/semidense_front_end");
   ros::NodeHandle nh_FAST("/common_front_end/FAST");
   ros::NodeHandle nh_FREAK("/common_front_end/FREAK");
   ros::NodeHandle nh_SURF("/common_front_end/SURF");
@@ -205,16 +207,16 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
     frontend_ = std::make_shared<sparse::FrontEnd>();
 
     sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
-    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, frontend_, _1, _2);
+    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, static_cast<sparse::FrontEnd*>(frontend_.get()), _1, _2);
     sparse_frontend_dr_srv_->setCallback(sparse_front_end_cb);
   } 
   else {
-#ifdef HAVE_SEMIDENSE_FRONTEND
     ROS_INFO("Creating semi-dense front-end.");
-    frontend_ = std::make_shared<SemiDenseFrontEnd>();
-#else
-    ROS_ERROR("Semi-dense front-end is not enabled in this build.");
-#endif  // HAVE_SEMIDENSE_FRONTEND
+    frontend_ = std::make_shared<rslam::SemiDenseFrontEnd>();
+    
+    sd_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<semidense_front_end::SemiDenseConfig>(nh_sd_fe));
+    sd_front_end_cb = boost::bind(&rslam::SemiDenseFrontEnd::configCallback, static_cast<rslam::SemiDenseFrontEnd*>(frontend_.get()), _1, _2);
+    sd_frontend_dr_srv_->setCallback(sd_front_end_cb);
   }
 
   if (options.use_server) {
@@ -409,6 +411,8 @@ double RslamEngine::Timestamp() {
 }
 
 void RslamEngine::LoadCurrentImages() {
+  std::cout << "Loading image 0: " << images_->at(0)->Mat().size() << "\n";
+  std::cout << "Loading image 1: " << images_->at(1)->Mat().size() << "\n";
   if (!is_mono_tracking_ && images_ && !images_->Empty()) {
     image_proc_.DoStereoBrightnessCorrection(
         images_->at(0)->Mat(), images_->at(1)->Mat(),
@@ -478,7 +482,7 @@ void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
   if(common_front_end_config_->getConfig()->resetRequired())
   {
     // Something has changed in the front end that requires a reset (eg feature detector changed)
-    frontend_->reset();
+    frontend_.reset();
     common_front_end_config_->getConfig()->resetDone();
   }
 
@@ -506,7 +510,8 @@ void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
 
 bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
                                    const calibu::CameraRigT<Scalar>& rig_in) {
-  CHECK(!rig_in.cameras.empty());
+  if(rig_in.cameras.empty())
+    return false;
   // Initialize camera
   if (is_using_sim_data_ && simulator_->HasIMU() && is_using_sim_imu_) {
     have_imu_ = true;

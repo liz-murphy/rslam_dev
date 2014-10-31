@@ -13,7 +13,7 @@
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/synchronizer.h>
-#include <message_filters/sync_policies/exact_time.h>
+#include <message_filters/sync_policies/approximate_time.h>
 #include <sensor_msgs/image_encodings.h>
 #include <image_geometry/pinhole_camera_model.h>
 
@@ -35,6 +35,7 @@
 #include <visualization_msgs/Marker.h>
 #include <tf/transform_broadcaster.h>
 
+typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::CameraInfo, sensor_msgs::Image, sensor_msgs::CameraInfo> ApproxSyncPolicy;
 
 class RslamApp
 {
@@ -62,7 +63,8 @@ class RslamApp
 
     message_filters::Subscriber<sensor_msgs::Image> *left_image_sub, *right_image_sub;
     message_filters::Subscriber<sensor_msgs::CameraInfo> *left_info_sub, *right_info_sub;
-    message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::CameraInfo, sensor_msgs::Image, sensor_msgs::CameraInfo> *sync;
+    //message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::CameraInfo, sensor_msgs::Image, sensor_msgs::CameraInfo> *sync;
+    message_filters::Synchronizer<ApproxSyncPolicy> *sync;
 
     calibu::CameraRigT<Scalar> rig;
     bool engine_initialized;

@@ -29,33 +29,14 @@ RslamApp::RslamApp(std::string &image_topic)
   right_image_sub = new message_filters::Subscriber<Image>(nh_, "camera/right/image", 1000);
   right_info_sub = new message_filters::Subscriber<CameraInfo>(nh_, "camera/right/camera_info", 1000);
 
-  sync = new TimeSynchronizer<Image, CameraInfo, Image, CameraInfo>(*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub, 10000);
+  sync = new message_filters::Synchronizer<ApproxSyncPolicy>(ApproxSyncPolicy(10),*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub);
   sync->registerCallback(boost::bind(&RslamApp::stereo_callback, this, _1, _2, _3, _4));
 
   images_ = pb::ImageArray::Create();
-  // quick hack to read in camera models
-  std::string filename = "/home/liz/Data/GWU/cameras.xml";
-  rig = calibu::ReadXmlRig(filename);
-  if(rig.cameras.empty())
-    ROS_ERROR("Camera rig is empty");
-  else
-    ROS_INFO("Loaded camera rig");
+      vis_thread_ = new boost::thread(boost::bind(&RslamApp::visLoop, this, vis_publish_period));
 
-  engine->Reset(options,rig);
-  gui_ = std::make_shared<Gui>();
-  gui_->set_map(std::make_shared<PointerSlamMapProxy>(engine->map_));
-  global_view_.reset(new GlobalMapView(std::make_shared<PointerSlamMapProxy>(engine->map_)));
-  gui_->SetCameraRig(rig);
 
-  vis_thread_ = new boost::thread(boost::bind(&RslamApp::visLoop, this, vis_publish_period));
 
-  initial_pose_ = Sophus::SE3t();
-
-  options.place_matcher_options.parameters.set(1);
-  options.place_matcher_options.parameters.k = 0;
-  options.place_matcher_options.parameters.dislocal = -1;
-  options.place_matcher_options.parameters.use_nss = false;
-  options.place_matcher_options.parameters.alpha = 0.03;
 }
 
 bool RslamApp::Capture(pb::CameraMsg& images_msg, const ImageConstPtr& left_image, const ImageConstPtr& right_image)
@@ -86,7 +67,7 @@ void RslamApp::visLoop(double vis_publish_period)
   ros::Rate r(10.0);
   while(ros::ok())
   {
-    if(gui_->init())
+    if(engine_initialized)
     {
       cv::Mat im;
       gui_->GetDisplayImage(im);
@@ -104,7 +85,6 @@ void RslamApp::visLoop(double vis_publish_period)
         marker_pub.publish(slam_map_msg);
       if(gui_->GetLandmarks(landmark_msg))
         landmark_pub.publish(landmark_msg);
-
     }
     r.sleep();
   }
@@ -112,15 +92,98 @@ void RslamApp::visLoop(double vis_publish_period)
 
 void RslamApp::stereo_callback(const ImageConstPtr& left_image, const CameraInfoConstPtr& left_cam_info, const ImageConstPtr& right_image, const CameraInfoConstPtr&     right_cam_info)
 {
-  images_->Ref().Clear();
-  Capture(images_->Ref(), left_image, right_image);
+  std::shared_ptr<pb::ImageArray> images = pb::ImageArray::Create();
+  Capture(images->Ref(), left_image, right_image);
   if(!engine_initialized)
   {
-    engine->Init(images_);
+   calibu::CameraRig rig;
+    calibu::CameraModelAndTransform cop_left;
+    calibu::CameraModel cam_left("calibu_fu_fv_u0_v0");
+    cam_left.SetVersion(8);
+    cam_left.SetName("left");
+    cam_left.SetIndex(0);
+    cam_left.SetSerialNumber(0);
+    cam_left.SetImageDimensions(left_cam_info->width, left_cam_info->height);
+    ROS_INFO("Dimensions set");
+    Eigen::VectorXd params(4);  // matches up with fu, fv, u0, v0
+    params(0) = left_cam_info->K[0];
+    params(1) = left_cam_info->K[4];
+    params(2) = left_cam_info->K[2];
+    params(3) = left_cam_info->K[5];
+    cam_left.SetGenericParams(params);
+    ROS_INFO("Params set");
+    Eigen::MatrixXd rdf = Eigen::MatrixXd::Zero(3,3);
+    rdf(0,1) = 1;
+    rdf(1,2) = 1;
+    rdf(2,0) = 1;
+    cam_left.SetRDF(rdf.transpose());
+    ROS_INFO("RDF set");
+    cop_left.camera = cam_left;
+    Eigen::MatrixXd rotation = Eigen::MatrixXd::Identity(3,3);
+    Eigen::MatrixXd translation(3,1);
+    translation(0) = left_cam_info->P[3];
+    translation(1) = left_cam_info->P[7];
+    translation(2) = left_cam_info->P[11];
+    std::cout << "translation: " << translation << "\n";
+    std::cout << "rotation: " << rotation << "\n";
+    cop_left.T_wc = Sophus::SE3(rotation,translation);
+    rig.cameras.push_back(cop_left);
+    ROS_INFO("Left done...");
+
+    calibu::CameraModelAndTransform cop_right;
+    calibu::CameraModel cam_right("calibu_fu_fv_u0_v0");
+    cam_right.SetVersion(8);
+    cam_right.SetName("right");
+    cam_right.SetIndex(1);
+    cam_right.SetSerialNumber(0);
+    cam_right.SetImageDimensions(right_cam_info->width, right_cam_info->height);
+    params(0) = right_cam_info->K[0];
+    params(1) = right_cam_info->K[4];
+    params(2) = right_cam_info->K[2];
+    params(3) = right_cam_info->K[5];
+    cam_right.SetGenericParams(params);
+    cam_right.SetRDF(rdf.transpose());
+    cop_right.camera = cam_right;
+
+    rotation = Eigen::MatrixXd::Identity(3,3);
+    translation(0) = right_cam_info->P[3];
+    translation(1) = right_cam_info->P[7];
+    translation(2) = left_cam_info->P[11];
+    std::cout << "translation: " << translation << "\n";
+    std::cout << "rotation: " << rotation << "\n";
+    cop_right.T_wc = Sophus::SE3(rotation,translation);
+    rig.cameras.push_back(cop_right);
+    ROS_INFO("Camera rig initialized");
+
+    calibu::WriteXmlRig("calibu_calibration.xml",rig);
+
+/*
+    // quick hack to read in camera models
+  std::string filename = "/home/liz/Data/GWU/cameras.xml";
+  rig = calibu::ReadXmlRig(filename);
+  if(rig.cameras.empty())
+    ROS_ERROR("Camera rig is empty");
+  else
+    ROS_INFO("Loaded camera rig");
+*/
+
+    options.tracker_type_ = Tracker_Sparse;
+    engine->Reset(options,rig);
+    gui_ = std::make_shared<Gui>();
+    gui_->set_map(std::make_shared<PointerSlamMapProxy>(engine->map_));
+    global_view_.reset(new GlobalMapView(std::make_shared<PointerSlamMapProxy>(engine->map_)));
+    gui_->SetCameraRig(rig);
+    initial_pose_ = Sophus::SE3t();
+    options.place_matcher_options.parameters.set(1);
+    options.place_matcher_options.parameters.k = 0;
+    options.place_matcher_options.parameters.dislocal = -1;
+    options.place_matcher_options.parameters.use_nss = false;
+    options.place_matcher_options.parameters.alpha = 0.03;
+    engine->Init(images);
     engine_initialized = true;
     ROS_INFO("SLAM engine initialized");
   }
-  engine->Iterate(images_);
+  engine->Iterate(images);
 
   // Update transforms
   // Get relative transform and estimate visual odometry
@@ -149,7 +212,7 @@ void RslamApp::stereo_callback(const ImageConstPtr& left_image, const CameraInfo
   engine->timer_->PrintToTerminal(2);
   std::vector<std::vector<cv::KeyPoint> > keypoints;
   engine->frontend_->GetCurrentKeypointsForDisplay(keypoints);
-  gui_->Update(images_, engine->frontend_->current_frame()->id(), keypoints);
+  gui_->Update(images, engine->frontend_->current_frame()->id(), keypoints);
 }
 
 

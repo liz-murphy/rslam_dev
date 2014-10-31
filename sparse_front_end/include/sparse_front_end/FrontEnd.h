@@ -356,22 +356,14 @@ private:
   // configurable variables through dynamic reconfigure
   bool collect_pose_analytics_;
   bool use_imu_for_gn_;
-  bool do_adaptive_window_;
   bool do_dense_init_;
-  bool do_bundle_adjustment_;
-  bool do_async_bundle_adjustment_;
   bool use_inverse_depth_parameterization_;
-  bool do_keyframing_;
   bool do_relocalization_;
   int relocalizer_match_threshold_;
   int relocalizer_min_keyframe_separation_;
   int min_keyframe_separation_;
   int min_keyframes_for_initializing_;
   int keyframe_search_depth_;
-  int async_ba_window_size_;
-  int ba_window_size_;
-  int ba_num_iter_;
-  int ba_num_iter_adaptive_;
   int use_only_camera_id_;
   double keyframe_threshold_;
   double keyframe_max_distance_;
@@ -390,7 +382,7 @@ private:
 
   //gui
   std::string ground_truth_file_;
-  int timer_window_size_;
+  //int timer_window_size_;
   double server_query_spread_;
 };
 }
