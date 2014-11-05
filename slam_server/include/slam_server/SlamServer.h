@@ -12,7 +12,12 @@
 #include <pb_msgs/rslam.pb.h>
 
 class TemplateMatcher;
-class BackEnd;
+
+namespace rslam {
+namespace optimization {
+  class Optimization;
+}
+}
 
 /**
  * Concrete implementation of SlamServerInterface
@@ -64,6 +69,6 @@ class SlamServer : public SlamServerInterface {
  private:
   std::shared_ptr<SlamMap> map_;
   std::shared_ptr<PlaceMatcher> place_matcher_;
-  std::unique_ptr<BackEnd> backend_;
+  std::unique_ptr<rslam::optimization::Optimization> optimization_;
   mutable std::mutex mutex_;
 };

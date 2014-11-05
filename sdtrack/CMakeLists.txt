@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sophus
   utils
+  pb_msgs
 )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SDTRACKERConfig.h.in

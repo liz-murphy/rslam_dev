@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   slam_map
   sophus
   common_front_end
-  back_end
+  optimization
   local_map
 )
 
@@ -91,7 +91,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sparse_tracking
-  CATKIN_DEPENDS common pb_msgs roscpp slam_map sophus common_front_end back_end local_map
+  CATKIN_DEPENDS common pb_msgs roscpp slam_map sophus common_front_end optimization local_map
 #  DEPENDS system_lib
 )
 

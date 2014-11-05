@@ -1,0 +1,9 @@
+<launch>
+   <node name="rslam_engine" pkg="rslam_engine" type="rslam_engine_node" output="screen" launch-prefix="gdb -ex run --args">
+    <remap from="left/image_rect" to="camera/left/image"/>
+    <remap from="right/image_rect" to="camera/right/image"/>
+    <remap from="left_camera/camera_info" to="camera/left/camera_info"/>
+    <remap from="right_camera/camera_info" to="camera/right/camera_info"/>
+  </node>
+
+</launch>

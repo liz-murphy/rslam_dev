@@ -46,7 +46,7 @@
   <build_depend>slam_map</build_depend>
   <build_depend>sophus</build_depend>
   <build_depend>common_front_end</build_depend>
-  <build_depend>back_end</build_depend>
+  <build_depend>optimization</build_depend>
   <build_depend>local_map</build_depend>
   <run_depend>common</run_depend>
   <run_depend>pb_msgs</run_depend>
@@ -54,7 +54,7 @@
   <run_depend>slam_map</run_depend>
   <run_depend>sophus</run_depend>
   <run_depend>common_front_end</run_depend>
-  <run_depend>back_end</run_depend>
+  <run_depend>optimization</run_depend>
   <run_depend>local_map</run_depend>
 
 

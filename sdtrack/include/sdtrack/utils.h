@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 #include <Eigen/Eigen>
-#include <utils/MathTypes.h>
 
 #ifdef REAL_TYPE
 typedef REAL_TYPE Scalar;
@@ -19,7 +18,7 @@ typedef Sophus::SE3Group<Scalar> SE3t;
 /*namespace Eigen
 {
   template<typename EigenT>
-  //using aligned_vector = std::vector<EigenT, Eigen::aligned_allocator<EigenT> >;
+  using aligned_vector = std::vector<EigenT, Eigen::aligned_allocator<EigenT> >;
 
   #define USING_VECTOR_ARRAY(size)                                        \
     using Vector##size##tArray = aligned_vector<Matrix<Scalar, size, 1> >
@@ -36,7 +35,6 @@ typedef Sophus::SE3Group<Scalar> SE3t;
   typedef Matrix<Scalar, 6, 1> Vector6t;
   typedef Matrix<Scalar, 4, 4> Matrix4t;
 }*/
-
 namespace sdtrack
 {
   static Eigen::IOFormat kCleanFmt(4, 0, ", ", ";\n", "", "");
@@ -46,7 +44,7 @@ namespace sdtrack
                                      0, ", ", "\n", "", "");
 
   //template<typename Scalar=double>
-  /*inline Eigen::Matrix<Scalar, 4, 1> MultHomogeneous(
+/*  inline Eigen::Matrix<Scalar, 4, 1> MultHomogeneous(
       const Sophus::SE3Group<Scalar>& lhs,
       const Eigen::Matrix<Scalar, 4, 1>& rhs )
   {
@@ -56,8 +54,8 @@ namespace sdtrack
         lhs.translation()*rhs[3];
     out[3] = rhs[3];
     return out;
-  }*/
-
+  }
+*/
 
   template<typename Scalar = double>
   inline Scalar powi(const Scalar x, const int y) {
@@ -131,9 +129,11 @@ namespace sdtrack
       const unsigned int uImageHeight	//< Input: Image height
       )
   {
-    //    if( !(x >= 0 && y >= 0 && x <= uImageWidth - 2 && y <= uImageHeight - 2) ){
-    //      std::cerr << "\t!!BAD: " << x << ", " << y << std::endl;
-    //    }
+        if( !(x >= 0 && y >= 0 && x <= uImageWidth - 1 &&
+              y <= uImageHeight - 1) ){
+          std::cerr << "\t!!BAD: " << x << ", " << y << " w: " << uImageWidth <<
+                       " h " << uImageHeight << std::endl;
+        }
     //    x = std::max(std::min(x,(double)uImageWidth-2.0),2.0);
     //    y = std::max(std::min(y,(double)uImageHeight-2.0),2.0);
 

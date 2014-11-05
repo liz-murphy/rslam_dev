@@ -37,7 +37,7 @@ class FrontEndInterface {
   virtual void Load(const std::string& filename) = 0;
 
   virtual void GetCurrentKeypointsForDisplay(
-      std::vector<std::vector<cv::KeyPoint>> &keypoints) = 0;
+      std::vector<std::vector<cv::KeyPoint> > &keypoints) = 0;
   virtual void set_server_proxy(
       const std::shared_ptr<SlamServerProxy>& proxy) = 0;
   virtual SlamFramePtr current_frame() const = 0;

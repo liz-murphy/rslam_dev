@@ -9,12 +9,11 @@ set( CMAKE_CXX_FLAGS "-std=c++0x -Wall ${CMAKE_CXX_FLAGS}" )
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sophus
-  ba
   utils
   slam_map
-  common_front_end
   local_map 
   dynamic_reconfigure
+  optimization
 )
 
 generate_dynamic_reconfigure_options(
@@ -93,7 +92,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES back_end
-  CATKIN_DEPENDS roscpp sophus ba slam_map miniglog common_front_end
+  CATKIN_DEPENDS roscpp sophus ba slam_map miniglog common_front_end optimization
 #  DEPENDS system_lib
 )
 
@@ -111,7 +110,7 @@ include_directories(
 
 ## Declare a cpp library
 add_library(back_end
-  src/BackEnd.cpp
+  src/back_end.cpp
 )
 
 # make sure configure headers are built before any node using them

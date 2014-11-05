@@ -31,11 +31,34 @@ namespace sdtrack
     double lm_time;
   };
 
+  struct AlignmentOptions
+  {
+    /// If true, the results of the 2d alignment will be applied to the
+    /// respective keypoint of the track.
+    bool apply_to_kp = true;
+    /// Whether to align tracks started in all cameras, or just a particular
+    /// camera. Specifying -1 will align tracks started in any camera.
+    int only_optimize_camera_id = -1;
+  };
+
   struct OptimizationOptions
+  {
+    bool optimize_landmarks = true;
+    bool optimize_pose = true;
+    bool trust_guess = false;
+    /// Whether to align tracks started in all cameras, or just a particular
+    /// camera. Specifying -1 will align tracks started in any camera.
+    int only_optimize_camera_id = -1;
+  };
+
+  struct PyramidLevelOptimizationOptions
   {
     bool transfer_patches = true;
     bool optimize_landmarks = true;
     bool optimize_pose = true;
+    /// Whether to optimize tracks started in cameras, or just a particular
+    /// camera. Specifying -1 will optimize tracks started in any camera.
+    int only_optimize_camera_id = -1;
   };
 
   struct DescriptorOptions
@@ -84,6 +107,7 @@ namespace sdtrack
     uint32_t iteration_exponent = 2;
     double center_weight = 100;
     bool use_closest_track_to_seed_rho = true;
+    bool use_random_rho_seeding = true;
     bool use_robust_norm_ = false;
     double gn_scaling = 1.0;
     double robust_norm_threshold_ = 5;

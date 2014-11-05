@@ -48,7 +48,7 @@
   <build_depend>sophus</build_depend>
   <build_depend>sparse_tracking</build_depend>
   <build_depend>slam_server</build_depend>
-  <build_depend>back_end</build_depend>
+  <build_depend>optimization</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>
   <run_depend>common</run_depend>
   <run_depend>pb_msgs</run_depend>
@@ -58,7 +58,7 @@
   <run_depend>sophus</run_depend>
   <run_depend>sparse_tracking</run_depend>
   <run_depend>slam_server</run_depend>
-  <run_depend>back_end</run_depend>
+  <run_depend>optimization</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
 
 

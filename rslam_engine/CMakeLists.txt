@@ -9,7 +9,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mavx")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   ba
-  #back_end
+  optimization
+  back_end
   calibu
   common_front_end
   miniglog
@@ -29,6 +30,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   tf
   dynamic_reconfigure
+  semidense_front_end
 )
 
 #find_package(OpenCV REQUIRED)
@@ -109,7 +111,7 @@ configure_file(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rslam_engine
-  CATKIN_DEPENDS ba calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils 
+  CATKIN_DEPENDS ba calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils optimization
   #DEPENDS opencv 
 )
 
@@ -128,7 +130,7 @@ include_directories(
 ## Declare a cpp library
 add_library(rslam_engine
   src/RslamEngine.cpp
-  src/SimpleRslamEngine.cpp
+  #  src/SimpleRslamEngine.cpp
   src/RslamApp.cpp
   src/Gui.cpp
 )

@@ -80,8 +80,9 @@ namespace sdtrack
                uint32_t num_cameras):
       ref_keypoint(num_pyrmaid_levels, pyramid_dims)
     {
+      offset_2d.resize(num_cameras);
       transfer.resize(num_cameras);
-      for (unsigned int ii = 0; ii < num_cameras ; ++ii) {
+      for (uint32_t ii = 0; ii < num_cameras ; ++ii) {
         transfer[ii].projected_values.resize(
               ref_keypoint.patch_pyramid[0].values.size());
         transfer[ii].projections.resize(
@@ -98,6 +99,7 @@ namespace sdtrack
     uint32_t opt_id;
     uint32_t residual_offset;
     std::vector<uint32_t> external_id;
+    uint32_t ref_cam_id;
     uint32_t id;
     uint32_t num_good_tracked_frames = 0;
     DenseKeypoint ref_keypoint;
@@ -105,8 +107,9 @@ namespace sdtrack
     bool residual_used = false;
     bool tracked = false;
     bool is_new = true;
-    Eigen::Vector2d offset_2d;
+    std::vector<Eigen::Vector2d> offset_2d;
     bool is_outlier = false;
+    bool needs_backprojection = false;
     Sophus::SE3d t_ba;
 
     uint32_t external_data = UINT_MAX;

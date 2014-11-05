@@ -1,31 +1,32 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sparse_front_end)
+project(semidense_front_end)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mavx")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  common
+  ba
+  back_end
+  calibu
+  common_front_end
+  miniglog
   pb_msgs
-  place_matching
   roscpp
+  sdtrack
   slam_map
-  sophus
-  sparse_tracking
-  slam_server
-  optimization 
+  sparse_front_end
   dynamic_reconfigure
+  optimization
+)
+
+generate_dynamic_reconfigure_options(
+  cfg/SemiDense.cfg
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
-generate_dynamic_reconfigure_options(
-  cfg/SparseFrontEnd.cfg
-  cfg/FrontEndServer.cfg
-)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -95,9 +96,9 @@ generate_dynamic_reconfigure_options(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES sparse_front_end
-  CATKIN_DEPENDS common pb_msgs place_matching roscpp slam_map sophus sparse_tracking slam_server optimization 
-  #  DEPENDS system_lib
+  LIBRARIES semidense_front_end
+  CATKIN_DEPENDS ba back_end calibu common_front_end miniglog pb_msgs roscpp sdtrack slam_map sparse_front_end
+#  DEPENDS system_lib
 )
 
 ###########
@@ -113,22 +114,19 @@ include_directories(
 )
 
 ## Declare a cpp library
-add_library(sparse_front_end
-  src/FrontEnd.cpp
-  src/FrontEndServerInterface.cpp
-  src/LiftLocalMap.cpp
-  src/PushLocalMap.cpp
-)
+ add_library(semidense_front_end
+   src/semi_dense_frontend.cpp
+ )
 
 ## Declare a cpp executable
-# add_executable(sparse_front_end_node src/sparse_front_end_node.cpp)
+# add_executable(semidense_front_end_node src/semidense_front_end_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(sparse_front_end ${PROJECT_NAME}_gencfg)
+add_dependencies(semidense_front_end ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(sparse_front_end_node
+#target_link_libraries(semidense_front_end_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -147,18 +145,18 @@ add_dependencies(sparse_front_end ${PROJECT_NAME}_gencfg)
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS sparse_front_end 
-   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
+# install(TARGETS semidense_front_end semidense_front_end_node
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
- )
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -172,7 +170,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_sparse_front_end.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_semidense_front_end.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
