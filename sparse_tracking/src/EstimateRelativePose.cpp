@@ -260,7 +260,7 @@ void LiftTrackingData(const CameraRigPtr& rig,
 
 bool EstimateRelativePose(const ReferenceFrameId &frame_id,
                           LocalMap &working_set,
-                          BackEnd &backend,
+                          optimization::Optimization &optimization,
                           const FeatureImageVector &images,
                           std::vector<MultiViewMeasurement> &new_measurements,
                           std::vector<std::vector<Feature *> > &feature_matches,
@@ -411,7 +411,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
   // guess should be provided in t_ab.
   if (true) {
     if (!no_tic) timer->Tic("GaussNewton");
-    backend.GaussNewton(working_set, new_measurements, map, t_ab, has_imu,
+    optimization.GaussNewton(working_set, new_measurements, map, t_ab, has_imu,
                         meas);
 
     // get sigma
@@ -445,7 +445,7 @@ bool EstimateRelativePose(const ReferenceFrameId &frame_id,
                                          new_measurements, images);
       PrintMessage(TrackingConfig::getConfig()->estimate_debug_level,
                    "Rethreaded msr: %d\n", rethreaded_msr );
-      backend.GaussNewton(working_set, new_measurements, map, t_ab, has_imu,
+      optimization.GaussNewton(working_set, new_measurements, map, t_ab, has_imu,
                           meas);
       FlagOutliers(outlier_threshold,
                    GaussNewtonOutlier,

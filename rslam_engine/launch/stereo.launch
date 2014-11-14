@@ -1,0 +1,16 @@
+<launch>
+  <node name="stereo_image_proc" pkg="stereo_image_proc" type="stereo_image_proc" output="screen" ns="/">
+  <remap from="left/image_raw" to="left_camera/image_raw"/>
+  <remap from="left/camera_info" to="left_camera/camera_info"/>
+  <remap from="right/image_raw" to="right_camera/image_raw"/>
+  <remap from="right/camera_info" to="right_camera/camera_info"/>
+  </node>
+
+  <node name="rslam_engine" pkg="rslam_engine" type="rslam_engine_node" output="screen">
+    <remap from="camera/left/image" to="left/image_rect"/>
+    <remap from="camera/left/camera_info" to="left_camera/camera_info"/>
+    <remap from="camera/right/image" to="right/image_rect"/>
+    <remap from="camera/right/camera_info" to="right_camera/camera_info"/>
+  </node>
+
+</launch>

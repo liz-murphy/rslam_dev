@@ -7,8 +7,7 @@
 #include <pb_msgs/SlamServer.pb.h>
 #include <pb_msgs/rslam.pb.h>
 
-#include <back_end/BackEnd.h>
-//#include <common_front_end/CommonFrontEndCVars.h>
+#include <optimization/optimization.h>
 #include <common_front_end/TrackingStats.h>
 #include <utils/TicToc.h>
 #include <miniglog/logging.h>
@@ -19,10 +18,8 @@
 #include <slam_map/ProtobufIO.h>
 #include <slam_map/SlamMap.h>
 #include <slam_server/LoadPlaceMap.h>
-//#include <slam_server/ServerCVars.h>
 #include <slam_server/ServerFetchMapVisitor.h>
 #include <sparse_tracking/EstimateRelativePose.h>
-//#include <sparse_tracking/TrackingCVars.h>
 #include <slam_server/ServerConfig.h>
 
 static const std::string places_filename = "places.pb";
@@ -30,11 +27,11 @@ static const std::string map_filename = "SlamServer.db";
 
 SlamServer::SlamServer(const std::shared_ptr<PlaceMatcher>& matcher,
                        const std::shared_ptr<SlamMap>& map)
-    : map_(map), place_matcher_(matcher), backend_(new BackEnd) {
+    : map_(map), place_matcher_(matcher), optimization_(new rslam::optimization::Optimization) {
   // Always continue so we can restart without worrying
   map_->InitWithPersistence(map_filename, true);
   place_matcher_->Load(places_filename);
-  backend_->Init(map_);
+  optimization_->Init(map_);
   PrintStats();
   ROS_ERROR("SLAM SERVER CONSTRUCTED");
 }
@@ -250,6 +247,6 @@ void SlamServer::Save() const {
 void SlamServer::Reset() {
   std::lock_guard<std::mutex> lock(mutex_);
   map_->Clear();
-  backend_.reset(new BackEnd);
+  optimization_.reset(new rslam::optimization::Optimization);
   /** @todo Reset PlaceMatcher! */
 }

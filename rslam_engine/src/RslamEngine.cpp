@@ -20,19 +20,11 @@
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
 #include <utils/Utils.h>
-
+#include <back_end/back_end.h>
 #include <common_front_end/CommonFrontEndConfig.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
-
-#ifdef HAVE_SEMIDENSE_FRONTEND
 #include <semidense_front_end/semi_dense_frontend.h>
-#endif  // HAVE_SEMIDENSE_FRONTEND
-
-//#ifdef HAVE_GEOCON
-//#include <geocon/geodetic2local.h>
-//#endif  // HAVE_GECON
-
-using namespace rslam;
+#include <optimization/OptimizationParamsConfig.h>
 
 unsigned int g_skip_nframes = 0;
 static int g_debug_level  = 1;
@@ -40,24 +32,22 @@ static int g_debug_level  = 1;
 static const std::string places_log = "places.log";
 static const std::string frontend_log = "frontend.log";
 
+using namespace rslam;
 RslamEngine::RslamEngine() : images_(pb::ImageArray::Create()),
-                             is_using_sim_imu_(false),
-                             is_using_sim_data_(false),
-                             is_mono_tracking_(false),
-                             is_tracking_2d_(false),
-                             is_rectified_(false),
-                             is_continuing_(false),
-                             have_imu_(false),
-                             persist_map_(false),
-                             active_camera_id_(-1),
+  is_using_sim_imu_(false),
+  is_using_sim_data_(false),
+  is_mono_tracking_(false),
+  is_tracking_2d_(false),
+  is_rectified_(false),
+  is_continuing_(false),
+  have_imu_(false),
+  persist_map_(false),
+  active_camera_id_(-1),
   frame_number_(0),
   last_used_frame_number_(-1) {
- // CVarUtils::AttachCVar<unsigned int>("SkipNFrames", &g_skip_nframes );
- // CVarUtils::AttachCVar<int>("ErrorLevel", &google::log_severity_global);
- // CVarUtils::AttachCVar<int>("debug.RslamEngine", &g_debug_level );
- common_front_end_config_ = CommonFrontEndConfig::getConfig();
- back_end_config_ = BackEndConfig::getConfig();
-}
+    common_front_end_config_ = CommonFrontEndConfig::getConfig();
+    optimization_config_ = OptimizationConfig::getConfig();
+  }
 
 RslamEngine::~RslamEngine() {}
 
@@ -66,12 +56,14 @@ void RslamEngine::ResetVars() {
   // Clear data structures
   rois_.clear();
   rectified_frames_.clear();
+
   // Reset pointers
   frontend_.reset();
   place_matcher_.reset();
   map_.reset();
   timer_.reset();
   server_proxy_.reset();
+  backend_.reset();
 
   // Set default config values
   is_using_sim_imu_  = false;
@@ -93,8 +85,8 @@ void RslamEngine::SetupSimulator(const RslamEngineOptions& options) {
     } else {
       simulator_ = SparseSimData::Instance();
       simulator_->ReadData(options.simulation_dir + "/points.csv",
-                           options.simulation_dir + "/accel.csv",
-                           options.simulation_dir + "/gyro.csv");
+          options.simulation_dir + "/accel.csv",
+          options.simulation_dir + "/gyro.csv");
       simulator_->ReadGroundTruth(options.simulation_dir + "/poses.csv");
     }
     is_using_sim_imu_ = options.simulation_imu;
@@ -121,10 +113,10 @@ void RslamEngine::PrintAppInfo() {
 }
 
 bool RslamEngine::Reset(const RslamEngineOptions& options,
-                        const calibu::CameraRigT<Scalar>& rig_in) {
+    const calibu::CameraRigT<Scalar>& rig_in) {
   // Cleanup and initialization of config variables
   common_front_end_config_ = CommonFrontEndConfig::getConfig();
-  back_end_config_ = BackEndConfig::getConfig();
+  optimization_config_ = OptimizationConfig::getConfig();
   ResetVars();
   // If we are using TRACK_2D, we only need the first camera.
   working_directory_ = options.working_dir;
@@ -155,13 +147,13 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   // Create new map, timer, frontEnd and place matcher objects
   timer_ = std::make_shared<Timer>();
   map_   = options.place_matcher_options.map ?
-           options.place_matcher_options.map : std::make_shared<SlamMap>();
+    options.place_matcher_options.map : std::make_shared<SlamMap>();
   if ((persist_map_ = options.persistent_map)) {
     map_->InitWithPersistence(options.map_file, is_continuing_);
   } else {
     map_->InitInMemory(options.single_track ?
-                       SlamMap::kSingleSessionStorage :
-                       SlamMap::kMultipleSessionStorage);
+        SlamMap::kSingleSessionStorage :
+        SlamMap::kMultipleSessionStorage);
   }
 
   // Add current camera rig to the map
@@ -175,10 +167,11 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
 
   ros::NodeHandle nh_common_fe("/common_front_end");
   ros::NodeHandle nh_sparse_fe("/sparse_front_end");
+  ros::NodeHandle nh_sd_fe("/semidense_front_end");
   ros::NodeHandle nh_FAST("/common_front_end/FAST");
   ros::NodeHandle nh_FREAK("/common_front_end/FREAK");
   ros::NodeHandle nh_SURF("/common_front_end/SURF");
-  ros::NodeHandle nh_back_end("/back_end");
+  ros::NodeHandle nh_optimization("/optimization");
 
   common_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>(nh_common_fe));
   common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback,common_front_end_config_, _1, _2);
@@ -196,25 +189,25 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   SURF_cb = boost::bind(&CommonFrontEndConfig::configSURFCallback, common_front_end_config_, _1, _2);
   SURF_dr_srv_->setCallback(SURF_cb);
 
-  back_end_dr_srv_.reset(new dynamic_reconfigure::Server<back_end::BackEndParamsConfig>(nh_back_end));
-  back_end_cb = boost::bind(&BackEndConfig::configCallback, back_end_config_, _1, _2);
-  back_end_dr_srv_->setCallback(back_end_cb);
+  optimization_dr_srv_.reset(new dynamic_reconfigure::Server<::optimization::OptimizationParamsConfig>(nh_optimization));
+  optimization_cb = boost::bind(&OptimizationConfig::configCallback, optimization_config_, _1, _2);
+  optimization_dr_srv_->setCallback(optimization_cb);
 
   if (options.tracker_type_ == Tracker_Sparse) {
     ROS_INFO("Creating sparse front-end.");
-    frontend_ = std::make_shared<sparse::FrontEnd>();
+    frontend_ = std::make_shared<rslam::sparse::FrontEnd>();
 
     sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
-    sparse_front_end_cb = boost::bind(&sparse::FrontEnd::configCallback, frontend_, _1, _2);
+    sparse_front_end_cb = boost::bind(&rslam::sparse::FrontEnd::configCallback, std::static_pointer_cast<rslam::sparse::FrontEnd>(frontend_), _1, _2);
     sparse_frontend_dr_srv_->setCallback(sparse_front_end_cb);
   } 
   else {
-#ifdef HAVE_SEMIDENSE_FRONTEND
     ROS_INFO("Creating semi-dense front-end.");
     frontend_ = std::make_shared<SemiDenseFrontEnd>();
-#else
-    ROS_ERROR("Semi-dense front-end is not enabled in this build.");
-#endif  // HAVE_SEMIDENSE_FRONTEND
+
+    sd_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<semidense_front_end::SemiDenseConfig>(nh_sd_fe));
+    sd_front_end_cb = boost::bind(&SemiDenseFrontEnd::configCallback, std::static_pointer_cast<SemiDenseFrontEnd>(frontend_), _1, _2);
+    sd_frontend_dr_srv_->setCallback(sd_front_end_cb);
   }
 
   if (options.use_server) {
@@ -236,6 +229,10 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
     place_matcher_->Load(places_log);
     frontend_->Load(frontend_log);
   }
+
+  backend_.reset(new backend::BackEnd);
+  backend_->Init(map_);
+
   return true;
 }
 
@@ -247,9 +244,12 @@ bool RslamEngine::Init(const std::shared_ptr<pb::ImageArray>& images) {
   LoadCurrentImages();
 
   frontend_->Init(rig_, images_, Timestamp(),
-                  have_imu_, map_, place_matcher_, timer_,
-                  is_using_sim_data_);
+      have_imu_, map_, place_matcher_, timer_,
+      is_using_sim_data_);
   first_frame_ = frontend_->current_frame()->id();
+
+  backend_->Run();
+
   PrintAppInfo();
   return true;
 }
@@ -264,8 +264,8 @@ bool RslamEngine::LoadSimFrame() {
     simulator_->GetImuData(accel, gyro);
     for (size_t ii=0; ii < accel.size(); ++ii) {
       frontend_->RegisterImuMeasurement(gyro[ii].tail(3),
-                                        accel[ii].tail(3),
-                                        accel[ii](0));
+          accel[ii].tail(3),
+          accel[ii](0));
     }
   }
 
@@ -359,26 +359,26 @@ void RslamEngine::Finish() {
 }
 
 class SavePoseMapVisitor : public TransformMapVisitor {
- public:
-  SavePoseMapVisitor(const std::string& filename) : pose_csv(filename) {
-    static const std::string kHeader =
+  public:
+    SavePoseMapVisitor(const std::string& filename) : pose_csv(filename) {
+      static const std::string kHeader =
         "track_id,frame_id,timestamp,x,y,z,p,q,r";
-    pose_csv << kHeader << std::endl;
-  }
+      pose_csv << kHeader << std::endl;
+    }
 
-  bool Visit(const SlamFramePtr& cur_node) override {
-    static const Eigen::IOFormat CsvFmt(
-        Eigen::FullPrecision, Eigen::DontAlignCols, ",", ",", "", "", "", "");
-    TransformMapVisitor::Visit(cur_node);
-    ReferenceFrameId id = cur_node->id();
+    bool Visit(const SlamFramePtr& cur_node) override {
+      static const Eigen::IOFormat CsvFmt(
+          Eigen::FullPrecision, Eigen::DontAlignCols, ",", ",", "", "", "", "");
+      TransformMapVisitor::Visit(cur_node);
+      ReferenceFrameId id = cur_node->id();
 
-    pose_csv << id.session_id.uuid << "," << id.id << ","
-             << cur_node->time() << ","
-             << T2Cart(CurT().matrix()).format(CsvFmt) << std::endl;
-    return true;
-  }
+      pose_csv << id.session_id.uuid << "," << id.id << ","
+        << cur_node->time() << ","
+        << T2Cart(CurT().matrix()).format(CsvFmt) << std::endl;
+      return true;
+    }
 
-  std::ofstream pose_csv;
+    std::ofstream pose_csv;
 };
 
 void RslamEngine::SaveFrames() const {
@@ -426,13 +426,13 @@ void RslamEngine::ImuCallbackHandler(const pb::ImuMsg& ref) {
     pb::ReadVector(ref.gyro(), &gyro);
 
     frontend_->RegisterImuMeasurement(gyro.cast<Scalar>(),
-                                      accel.cast<Scalar>(),
-                                      ref.device_time());
+        accel.cast<Scalar>(),
+        ref.device_time());
   }
 }
 
 void RslamEngine::PosysCallbackHandler(const pb::PoseMsg& ref) {
-  if (!frontend_) return;
+  if (!frontend_ || !ref.has_pose()) return;
 
   rslam::map::PoseMeasurement pose;
   pose.timestamp = ref.device_time();
@@ -441,22 +441,22 @@ void RslamEngine::PosysCallbackHandler(const pb::PoseMsg& ref) {
   const auto& cov = ref.covariance().data();
   if (ref.type() == pb::PoseMsg::LatLongAlt) {
 #ifdef HAVE_GEOCON
-/*    if (!lla2local_) {
-      lla2local_.reset(geocon::geodetic2local::Create(
+    /*    if (!lla2local_) {
+          lla2local_.reset(geocon::geodetic2local::Create(
           data.Get(0), data.Get(1), data.Get(2)));
-    }
+          }
 
-    MSP::CCS::CartesianCoordinates cart;
-    MSP::CCS::Accuracy acc;
-    lla2local_->to_local(data.Get(0), data.Get(1), data.Get(2), cov.Get(0),
-                         &cart, &acc);
-    pose.t_wv.translation() = {cart.x(), cart.y(), cart.z()};
+          MSP::CCS::CartesianCoordinates cart;
+          MSP::CCS::Accuracy acc;
+          lla2local_->to_local(data.Get(0), data.Get(1), data.Get(2), cov.Get(0),
+          &cart, &acc);
+          pose.t_wv.translation() = {cart.x(), cart.y(), cart.z()};
 
     // Take the 90% error bound and convert it to
     Scalar spherical_std = acc.sphericalError90() / 1.64;
     pose.cov.diagonal().head<3>().setConstant(spherical_std * spherical_std);
     pose.cov.diagonal().tail<3>().setConstant(
-        std::numeric_limits<Scalar>::max());*/
+    std::numeric_limits<Scalar>::max());*/
 #endif
   } else {
     ROS_WARN("Could not register PoseMsg of type %d", ref.type());
@@ -478,8 +478,8 @@ void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
   if(common_front_end_config_->getConfig()->resetRequired())
   {
     // Something has changed in the front end that requires a reset (eg feature detector changed)
-    frontend_->reset();
-    common_front_end_config_->getConfig()->resetDone();
+    //frontend_->reset();
+    //common_front_end_config_->getConfig()->resetDone();
   }
 
   bool should_process = true;
@@ -505,7 +505,7 @@ void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
 }
 
 bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
-                                   const calibu::CameraRigT<Scalar>& rig_in) {
+    const calibu::CameraRigT<Scalar>& rig_in) {
   CHECK(!rig_in.cameras.empty());
   // Initialize camera
   if (is_using_sim_data_ && simulator_->HasIMU() && is_using_sim_imu_) {
@@ -530,9 +530,9 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
     ROS_INFO("Initializing in stereo mode... ");
     // detect if we are rectified
     Eigen::Vector3t fl =
-        crig.cameras[0].T_wc.matrix().block<3,1>(0,1);
+      crig.cameras[0].T_wc.matrix().block<3,1>(0,1);
     Eigen::Vector3t fr =
-        crig.cameras[1].T_wc.matrix().block<3,1>(0,1);
+      crig.cameras[1].T_wc.matrix().block<3,1>(0,1);
 
     double dot = fl.dot(fr);
     double angle;
@@ -546,11 +546,11 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
     std::string sl = crig.cameras[0].camera.Type();
     std::string sr = crig.cameras[1].camera.Type();
     Eigen::Matrix<Scalar,Eigen::Dynamic,1> pl =
-        crig.cameras[0].camera.GenericParams();
+      crig.cameras[0].camera.GenericParams();
     Eigen::Matrix<Scalar,Eigen::Dynamic,1> pr =
-        crig.cameras[1].camera.GenericParams();
+      crig.cameras[1].camera.GenericParams();
     bool bLinear = (sl == "calibu_fu_fv_u0_v0" &&
-                    sr == "calibu_fu_fv_u0_v0");
+        sr == "calibu_fu_fv_u0_v0");
     bLinear |= (sl == "calibu_f_u0_v0" && sr == "calibu_f_u0_v0");
     if (angle < 1e-6  && bLinear && pl == pr) {
       ROS_INFO("Rectified cameras detected.");
@@ -607,8 +607,28 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
 
   for (size_t ii=0; ii < rig_.cameras.size(); ++ii) {
     ROS_INFO("Camera %d, Model: %s, Pose: %s", (int)ii,boost::lexical_cast<std::string>(rig_.cameras[ii].camera.K()).c_str(),
-              boost::lexical_cast<std::string>(rig_.cameras[ii].T_wc.matrix()).c_str());
+        boost::lexical_cast<std::string>(rig_.cameras[ii].T_wc.matrix()).c_str());
   }
 
   return true;
+}
+
+ReferenceFrameId RslamEngine::current_frame_id() const {
+  if (!frontend_) return ReferenceFrameId();
+  return frontend_->current_frame()->id();
+}
+
+/*void RslamEngine::GetCurrentKeypointsForDisplay(
+    std::vector<std::vector<cv::KeyPoint> >* keypoints) {
+  CHECK_NOTNULL(keypoints);
+  if (frontend_) {
+    frontend_->GetCurrentKeypointsForDisplay(*keypoints);
+  }
+}*/
+
+bool RslamEngine::IsInitialized() const {
+  if (frontend_) {
+    return frontend_->IsInitialized();
+  }
+  return false;
 }

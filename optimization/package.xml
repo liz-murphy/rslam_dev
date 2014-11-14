@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>back_end</name>
+  <name>optimization</name>
   <version>0.0.0</version>
   <description>The back_end package</description>
 
@@ -49,7 +49,6 @@
   <build_depend>common_front_end</build_depend>
   <build_depend>local_map</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>optimization</build_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>sophus</run_depend>
   <run_depend>ba</run_depend>
@@ -59,7 +58,6 @@
   <run_depend>common_front_end</run_depend>
   <run_depend>local_map</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
-  <run_depend>optimization</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

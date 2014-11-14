@@ -3,6 +3,9 @@
 #include <cmath>
 #include <miniglog/logging.h>
 
+namespace rslam {
+  namespace optimization {
+
 inline double normalCDF(double u) {
   static const double a[5] = {
     1.161110663653770e-002, 3.951404679838207e-001, 2.846603853776254e+001,
@@ -125,3 +128,5 @@ inline double chi2inv(double P, unsigned int dim) {
                         std::sqrt(2.0 / (9 * dim)) *
                         normalQuantile(P), 3);
 }
+} // namespace optimization
+} // namespace rslam

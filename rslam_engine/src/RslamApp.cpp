@@ -8,7 +8,7 @@ using namespace message_filters;
 //BackEndConfig *BackEndConfig::m_configInstance = 0;
 ServerConfig *ServerConfig::m_configInstance = 0;
 CommonFrontEndConfig *CommonFrontEndConfig::m_configInstance = 0;
-BackEndConfig *BackEndConfig::s_instance = 0;
+OptimizationConfig *OptimizationConfig::s_instance = 0;
 TrackingConfig *TrackingConfig::m_configInstance = 0;
 
 RslamApp::RslamApp(std::string &image_topic)
@@ -28,8 +28,9 @@ RslamApp::RslamApp(std::string &image_topic)
   left_info_sub = new message_filters::Subscriber<CameraInfo>(nh_, "camera/left/camera_info", 1000);
   right_image_sub = new message_filters::Subscriber<Image>(nh_, "camera/right/image", 1000);
   right_info_sub = new message_filters::Subscriber<CameraInfo>(nh_, "camera/right/camera_info", 1000);
-
-  sync = new TimeSynchronizer<Image, CameraInfo, Image, CameraInfo>(*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub, 10000);
+  
+  sync = new message_filters::Synchronizer<ApproxSyncPolicy>(ApproxSyncPolicy(10),*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub);
+ // sync = new TimeSynchronizer<Image, CameraInfo, Image, CameraInfo>(*left_image_sub, *left_info_sub, *right_image_sub, *right_info_sub, 10000);
   sync->registerCallback(boost::bind(&RslamApp::stereo_callback, this, _1, _2, _3, _4));
 
   images_ = pb::ImageArray::Create();
@@ -97,14 +98,13 @@ void RslamApp::visLoop(double vis_publish_period)
       sensor_msgs::ImagePtr img_msg = cv_ptr_im->toImageMsg();
       img_msg->header.stamp = ros::Time::now();
       pub0.publish(img_msg);
-
+      
       visualization_msgs::Marker slam_map_msg;
       visualization_msgs::Marker landmark_msg;
       if(gui_->GetMap(slam_map_msg))
         marker_pub.publish(slam_map_msg);
       if(gui_->GetLandmarks(landmark_msg))
         landmark_pub.publish(landmark_msg);
-
     }
     r.sleep();
   }
@@ -124,7 +124,6 @@ void RslamApp::stereo_callback(const ImageConstPtr& left_image, const CameraInfo
 
   // Update transforms
   // Get relative transform and estimate visual odometry
-
 
   // Get global map pose (relates camera to map)
   // Use this to calculate map-->odom

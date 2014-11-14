@@ -13,6 +13,9 @@
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/TransformEdge.h>
 #include <ros/ros.h>
+
+namespace rslam {
+  namespace optimization {
 /** Visitor to gather active frame set for BackEnd::RefineMap */
 template <typename BundleAdjuster>
 class ParentChainRefineMapVisitor : public MapVisitor {
@@ -196,3 +199,5 @@ class ParentChainRefineMapVisitor : public MapVisitor {
   Scalar imu_prior_weight_ = 10.0;
   bool disable_poses_ = false;
 };
+} // namespace optimization
+} // namespace rslam

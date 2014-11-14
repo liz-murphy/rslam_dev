@@ -1,31 +1,27 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sparse_front_end)
+project(sdtrack)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -mavx")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  common
-  pb_msgs
-  place_matching
+  calibu
+  miniglog
   roscpp
-  slam_map
   sophus
-  sparse_tracking
-  slam_server
-  optimization 
-  dynamic_reconfigure
+  utils
+  pb_msgs
 )
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SDTRACKERConfig.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/SDTRACKERConfig.h)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
-generate_dynamic_reconfigure_options(
-  cfg/SparseFrontEnd.cfg
-  cfg/FrontEndServer.cfg
-)
+find_package(OpenCV REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -81,7 +77,7 @@ generate_dynamic_reconfigure_options(
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   pb_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
 
 ###################################
@@ -95,9 +91,9 @@ generate_dynamic_reconfigure_options(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES sparse_front_end
-  CATKIN_DEPENDS common pb_msgs place_matching roscpp slam_map sophus sparse_tracking slam_server optimization 
-  #  DEPENDS system_lib
+  LIBRARIES sdtrack
+  CATKIN_DEPENDS calibu miniglog roscpp sophus
+  DEPENDS OpenCV 
 )
 
 ###########
@@ -110,25 +106,23 @@ catkin_package(
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
+  ${OPENCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-add_library(sparse_front_end
-  src/FrontEnd.cpp
-  src/FrontEndServerInterface.cpp
-  src/LiftLocalMap.cpp
-  src/PushLocalMap.cpp
+add_library(sdtrack
+  src/semi_dense_tracker.cpp
 )
 
 ## Declare a cpp executable
-# add_executable(sparse_front_end_node src/sparse_front_end_node.cpp)
+# add_executable(sdtrack_node src/sdtrack_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(sparse_front_end ${PROJECT_NAME}_gencfg)
+# add_dependencies(sdtrack_node sdtrack_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(sparse_front_end_node
+# target_link_libraries(sdtrack_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -147,18 +141,18 @@ add_dependencies(sparse_front_end ${PROJECT_NAME}_gencfg)
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS sparse_front_end 
-   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
+# install(TARGETS sdtrack sdtrack_node
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
- )
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -172,7 +166,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_sparse_front_end.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_sdtrack.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

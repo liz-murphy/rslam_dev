@@ -99,6 +99,17 @@ class CommonFrontEndConfig
 
       pyramid_levels_ = config.pyramid_levels;
       pyramid_level_factor_ = config.pyramid_level_factor;
+
+      timer_window_size_ = config.timer_window_size;
+
+      do_keyframing_ = config.do_keyframing;
+      do_bundle_adjustment_ = config.do_bundle_adjustment;
+      do_async_bundle_adjustment_ = config.do_async_bundle_adjustment;
+      do_adaptive_window_ = config.do_adaptive_window;
+      async_ba_window_size_ = config.async_ba_window_size;
+      ba_window_size_ = config.ba_window_size;
+      ba_num_iter_adaptive_ = config.ba_num_iter_adaptive;
+      ba_num_iter_ = config.ba_num_iter;
     }
   
     int getInitialSearchRadius(){return initial_search_radius_;};
@@ -148,6 +159,16 @@ class CommonFrontEndConfig
     bool fastSkipLevel0(){return fast_skip_level0_;};
 
     int getNumMatchInTimeAttempts(){return num_match_in_time_attempts_;};
+
+    int getTimerWindowSize(){return timer_window_size_;};
+    bool doKeyframing(){return do_keyframing_;};
+    bool doBundleAdjustment(){return do_bundle_adjustment_;};
+    bool doAsyncBundleAdjustment(){return do_async_bundle_adjustment_;};
+    bool doAdaptiveWindow(){return do_adaptive_window_;};
+    int getAsyncBAWindowSize(){return async_ba_window_size_;};
+    int getBAWindowSize(){return ba_window_size_;};
+    int getBANumIterAdaptive(){return ba_num_iter_adaptive_;};
+    int getBANumIter(){return ba_num_iter_;};
 
     // have any of the parameters that have been modified caused a need to restart the front end
     bool resetRequired(){return reset_required_;};
@@ -223,6 +244,20 @@ class CommonFrontEndConfig
     bool surf_extended_;
     bool surf_upright_;
 
+    // timer
+    int timer_window_size_;
+
+    bool do_keyframing_;
+    bool do_bundle_adjustment_;
+
+    bool do_async_bundle_adjustment_;
+    bool do_adaptive_window_;
+    int async_ba_window_size_;
+    int ba_window_size_;
+    int ba_num_iter_adaptive_;
+    int ba_num_iter_;
+
+
     CommonFrontEndConfig(){
       initial_search_radius_=20;
       search_radius_grow_rate_=1.2;
@@ -237,7 +272,7 @@ class CommonFrontEndConfig
       esm_threshold_=18.0;
       esm_subpixel_threshold_=1.2;
       esm_use_search_roi_=false;
-      enforce_epipolar_geometry_=false;
+      enforce_epipolar_geometry_=true;
       do_jealous_matching_=false;
       do_marginalization_=false;
       dense_align_threshold_=35.0;
@@ -282,6 +317,8 @@ class CommonFrontEndConfig
 
       pyramid_levels_ = 4;
       pyramid_level_factor_ = 0.8;
+
+      timer_window_size_ = 40;
     };
     static CommonFrontEndConfig * m_configInstance;
 };

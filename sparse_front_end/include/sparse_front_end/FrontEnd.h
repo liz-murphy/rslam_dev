@@ -14,7 +14,7 @@
 #include <vector>
 
 #include <ba/InterpolationBuffer.h>
-#include <back_end/BackEnd.h>
+#include <optimization/optimization.h>
 #include <common_front_end/DenseAlignment.h>
 #include <common_front_end/FeatureImage.h>
 #include <common_front_end/TrackingStats.h>
@@ -139,7 +139,7 @@ class FrontEnd : public FrontEndInterface{
   }
 
   void RegisterPoseMeasurement(
-      const rslam::map::PoseMeasurement& pose) override;
+      const map::PoseMeasurement& pose) override;
 
   void Save(const std::string& filename) const;
   void Load(const std::string& filename);
@@ -309,9 +309,7 @@ private:
   std::shared_ptr<SlamMap>      map_;
   std::shared_ptr<Timer>        timer_;
   LocalMap                      work_set_;
-  BackEnd                       async_ba_;
-  BackEnd                       back_end_opt_;
-  BackEnd                       front_end_opt;
+  optimization::Optimization    async_ba_, back_end_opt_, front_end_opt;
   Sophus::SE3t                  t_ab_;
   SlamFramePtr                  current_frame_;
   SlamFramePtr                  reference_frame_;

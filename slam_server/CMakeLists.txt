@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   slam_map
   sparse_tracking
+  optimization
 )
 
 ## System dependencies are found with CMake's conventions

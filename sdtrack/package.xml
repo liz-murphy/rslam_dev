@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>back_end</name>
+  <name>sdtrack</name>
   <version>0.0.0</version>
-  <description>The back_end package</description>
+  <description>The sdtrack package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/back_end</url> -->
+  <!-- <url type="website">http://wiki.ros.org/sdtrack</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
@@ -40,26 +40,19 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>calibu</build_depend>
+  <build_depend>miniglog</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>sophus</build_depend>
-  <build_depend>ba</build_depend>
-  <build_depend>slam_map</build_depend>
-  <build_depend>miniglog</build_depend>
   <build_depend>utils</build_depend>
-  <build_depend>common_front_end</build_depend>
-  <build_depend>local_map</build_depend>
-  <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>optimization</build_depend>
+  <build_depend>pb_msgs</build_depend>
+  <run_depend>calibu</run_depend>
+  <run_depend>miniglog</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>sophus</run_depend>
-  <run_depend>ba</run_depend>
-  <run_depend>slam_map</run_depend>
-  <run_depend>miniglog</run_depend>
   <run_depend>utils</run_depend>
-  <run_depend>common_front_end</run_depend>
-  <run_depend>local_map</run_depend>
-  <run_depend>dynamic_reconfigure</run_depend>
-  <run_depend>optimization</run_depend>
+  <run_depend>pb_msgs</run_depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

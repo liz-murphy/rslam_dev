@@ -1,8 +1,8 @@
 // Copyright (c) George Washington University, all rights reserved.  See the
 // accompanying LICENSE file for more information.
 
-#ifndef BackEnd_H
-#define BackEnd_H
+#ifndef OPTIMIZATION_H 
+#define OPTIMIZATION_H 
 
 #include <utils/MathTypes.h>
 #include <ba/BundleAdjuster.h>
@@ -13,8 +13,7 @@
 #include <unordered_map>
 #include <local_map/LocalMap.h>
 #include <ba/InterpolationBuffer.h>
-
-#include <back_end/BackEndConfig.h>
+#include <optimization/OptimizationConfig.h>
 
 enum OptimizationStatus {
   OptStatus_DiffOverThreshold = 1,
@@ -23,8 +22,9 @@ enum OptimizationStatus {
 };
 
 namespace rslam {
-namespace backend {
-/** Results of map refinement */
+namespace optimization{
+
+  /** Results of map refinement */
 struct LiftResults {
   std::unordered_map<TransformEdgeId, uint32_t> edge_ba_ids;
   std::unordered_map<ReferenceFrameId, uint32_t> pose_ba_ids;
@@ -32,12 +32,8 @@ struct LiftResults {
   ReferenceFrameId root_pose_id;
   TransformEdgeId root_edge_id;
 };
-}
-}
 
-class BackEnd {
- public:
-  struct AdaptiveOptions {
+struct AdaptiveOptions {
     AdaptiveOptions(bool enable, bool async, uint32_t min_size,
                     uint32_t max_size) : do_adaptive(enable),
                                          is_asynchronous(async),
@@ -51,21 +47,25 @@ class BackEnd {
     // Frame next to root which should not be lifted. Mainly used for
     // async ba to avoid lifting the current frame.
     ReferenceFrameId ignore_frame;
-  };
+};
 
-  /** Callbacks after a map refinement optimization. */
+
+class Optimization{
+ public:
+    /** Callbacks after a map refinement optimization. */
   struct RefineMapCallbacks {
     std::function<void(const ba::VisualInertialBundleAdjuster<Scalar>&,
-                       const rslam::backend::LiftResults&)>
+                       const LiftResults&)>
     visual_inertial_callback;
 
     std::function<void(const ba::VisualBundleAdjuster<Scalar>&,
-                       const rslam::backend::LiftResults&)> visual_callback;
+                       const LiftResults&)> visual_callback;
   };
 
-  BackEnd();
-  virtual ~BackEnd();
+  Optimization();
+  virtual ~Optimization();
 
+  void Init(const std::shared_ptr<SlamMap> &pMap);
   void Clear();
 
   void RegisterImuMeasurement(const Eigen::Vector3t& w,
@@ -76,8 +76,7 @@ class BackEnd {
 
   void RelaxMap(const unsigned int depth,
                 const ReferenceFrameId& root_id,
-                const unsigned int max_iter,
-                const calibu::CameraRigT<Scalar> &rig);
+                const unsigned int max_iter);
 
   bool RefineMap(unsigned int depth,
                  const ReferenceFrameId& root_id,
@@ -92,8 +91,6 @@ class BackEnd {
   void SetVehicleConfiguration(const calibu::CameraRigT<Scalar> &VehCfg);
 
   Eigen::Matrix<Scalar,6,6> GetCurrentCovariance() const { return covariance_; }
-
-  void Init(const std::shared_ptr<SlamMap>& pMap);
 
   const ba::ImuCalibrationT<Scalar>& GetImuCalibration() {
     return imu_ba_.GetImuCalibration();
@@ -184,10 +181,10 @@ class BackEnd {
                const ReferenceFrameId& root_id,
                bool do_landmark_init,
                bool use_imu,
-               rslam::backend::LiftResults* results);
+               LiftResults* results);
 
   bool PushMap(bool use_imu,
-               const rslam::backend::LiftResults& results,
+               const LiftResults& results,
                const RefineMapCallbacks& callbacks);
 
   bool                                      is_running_;
@@ -208,4 +205,6 @@ class BackEnd {
   Scalar prev_cond_error_;
 };
 
+} //namespace optimization
+} // namespace rslam
 #endif	/* BackEnd_H */

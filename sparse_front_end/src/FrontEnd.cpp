@@ -346,7 +346,7 @@ bool FrontEnd::IterateBa() {
   // this modifies m_Rig if calibration is active
   // also modifies the map
   // BackEnd::AdaptiveOptions options(false, 0, 0);
-  BackEnd::AdaptiveOptions options(false, false, 15, 100);
+  optimization::AdaptiveOptions options(false, false, 15, 100);
   uint32_t depth = ba_window_size_;
   uint32_t num_iterations = ba_num_iter_;
 
@@ -371,7 +371,7 @@ bool FrontEnd::IterateBa() {
                           options,
                           true,
                           EdgeAttrib_IsBeingOptimized,
-                          BackEnd::RefineMapCallbacks());
+                          {});
 
   // Get ready for the heuristics!
   if (!system_state_.is_imu_converged && system_state_.keyframe_number > 20) {
@@ -1143,7 +1143,7 @@ void FrontEnd::AsyncBaFunc() {
     }
 
     is_async_busy_ = true;
-    BackEnd::AdaptiveOptions options(do_adaptive_window_,
+    optimization::AdaptiveOptions options(do_adaptive_window_,
                                      true,
                                      ba_window_size_, 100);
     // We don't want to include the current frame in our optimizations
@@ -1156,7 +1156,7 @@ void FrontEnd::AsyncBaFunc() {
                         options,
                         false,
                         EdgeAttrib_AsyncIsBeingOptimized,
-                        BackEnd::RefineMapCallbacks());
+                        {});
   }
   is_async_busy_ = false;
   ROS_INFO("Quitting ba thread.");
@@ -1172,7 +1172,6 @@ void FrontEnd::RelocalizerFunc() {
   last_successful_relocalization_frame_id = query_frame_id;
 
   common::TrackingStats reloc_tracking_stats = tracking_stats_;
-  uint64_t reloc_hold_token = map_->GetHoldToken();
   while (!is_quitting_localizer_) {
     if (!do_relocalization_) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -1183,7 +1182,6 @@ void FrontEnd::RelocalizerFunc() {
     while (is_quitting_localizer_ == false &&
            (query_frame_id == relocalization_frame_id_ ||
             is_relocalizer_busy_ == false)) {
-      map_->RemoveFrameHold(reloc_hold_token);
       relocalizer_cond_.wait_for(lock, to_wait);
     }
 
@@ -1244,17 +1242,6 @@ void FrontEnd::RelocalizerFunc() {
                                      true);
       
     ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Loop closed with edge %d and T_q_m: %s", edge->id().id, boost::lexical_cast<std::string>(match.Tqm.matrix()).c_str());
-
-    // Release frames while we do the relaxation, since we're going
-    // to be iterating over the whole map anyways
-    map_->RemoveFrameHold(reloc_hold_token);
-
-    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Relaxing map at %d", relocalization_frame_id_.id);
- 
-    back_end_opt_.RelaxMap(map_->NumFrames(),
-                           query_frame_id, 100,
-                           rig_);
-    ROS_DEBUG_NAMED("sparse_front_end::Relocalizer", "Map relaxation finished");
 
     // we are no longer lost
     if (is_lost_) {
@@ -1356,7 +1343,7 @@ void FrontEnd::LoadGroundTruth() {
 }
 
 void FrontEnd::PrintPoseCart(Sophus::SE3t &Tab) {
-  Vector6t p = rslam::T2Cart(Tab.matrix());
+  Vector6t p = T2Cart(Tab.matrix());
   ROS_INFO("std::setw(8) x: std::setw(13) %f",p(0));
   /*ROS_INFO("y:" << std::setw(13) << p(1);
   ROS_INFO("z:" << std::setw(13) << p(2);
@@ -1438,7 +1425,7 @@ void FrontEnd::Load(const std::string& /*filename*/) {
 }
 
 void FrontEnd::RegisterPoseMeasurement(
-    const rslam::map::PoseMeasurement& pose) {
+    const map::PoseMeasurement& pose) {
   if (current_frame_) {
     current_frame_->AddPoseMeasurement(pose);
   }

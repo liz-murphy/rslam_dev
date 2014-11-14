@@ -1,18 +1,18 @@
 #ifndef BACK_END_CONFIG_H
 #define BACK_END_CONFIG_H
 
-#include <back_end/BackEndParamsConfig.h>
+#include <optimization/OptimizationParamsConfig.h>
 
-class BackEndConfig
+class OptimizationConfig
 {
   public:
-    static BackEndConfig* getConfig(){
+    static OptimizationConfig* getConfig(){
       if(!s_instance)
-        s_instance = new BackEndConfig;
+        s_instance = new OptimizationConfig;
       return s_instance;
     }
 
-    void configCallback(back_end::BackEndParamsConfig &config, uint32_t level)
+    void configCallback(optimization::OptimizationParamsConfig &config, uint32_t level)
     {
       adaptive_threshold_ = config.adaptive_threshold;
       damping_factor_ = config.damping_factor;
@@ -49,7 +49,7 @@ class BackEndConfig
   int getAdaptiveDepthIncrease(){return adaptive_depth_increase_;};
   double getIMUVisualizationTimeExtra(){return imu_visualization_time_extra_;};
   private:
-    BackEndConfig() :
+    OptimizationConfig() :
       adaptive_threshold_(0.1),
       damping_factor_(1.0),
       error_increase_allowed_(false),
@@ -85,7 +85,7 @@ class BackEndConfig
     int adaptive_depth_increase_;
     double imu_visualization_time_extra_;
 
-    static BackEndConfig *s_instance;
+    static OptimizationConfig *s_instance;
 
 };
 

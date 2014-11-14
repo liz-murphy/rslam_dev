@@ -12,8 +12,12 @@
 #include <slam_map/SlamMap.h>
 #include <slam_map/TransformEdge.h>
 
-#include <back_end/BackEndConfig.h>
+#include <optimization/OptimizationConfig.h>
 #include <ros/ros.h>
+
+namespace rslam {
+  namespace optimization {
+
 /** Visitor to gather active frame set for BackEnd::RefineMap */
 template <typename BundleAdjuster>
 class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
@@ -56,7 +60,7 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
           !track ||
           !frame->GetLandmarkState(lm_id.landmark_index, &lm_state)) {
         ++it;
-        ROS_DEBUG_NAMED("back_end","Can't find landmark %s",boost::lexical_cast<std::string>(lm_id).c_str());
+        ROS_DEBUG_NAMED("optimization","Can't find landmark %s",boost::lexical_cast<std::string>(lm_id).c_str());
         continue;
       }
 
@@ -269,3 +273,5 @@ class GatherLandmarkFramesRefineMapVisitor : public TransformMapVisitor {
   bool use_imu_ = false;
   Scalar root_time_ = 0.0;
 };
+} // end namespace optimization 
+} // end namespace rslam
