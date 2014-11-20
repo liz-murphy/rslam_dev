@@ -15,7 +15,7 @@
 #include <slam_map/SlamMap.h>
 #include <slam_server/NodeSlamClient.h>
 #include <slam_server/SlamServer.h>
-#include <sparse_front_end/FrontEnd.h>
+#include <sparse_front_end/sparse_front_end.h>
 #include <sparse_front_end/LiftLocalMap.h>
 #include <utils/MathTypes.h>
 #include <utils/PoseHelpers.h>
@@ -195,10 +195,10 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
 
   if (options.tracker_type_ == Tracker_Sparse) {
     ROS_INFO("Creating sparse front-end.");
-    frontend_ = std::make_shared<rslam::sparse::FrontEnd>();
+    frontend_ = std::make_shared<rslam::sparse::SparseFrontEnd>();
 
     sparse_frontend_dr_srv_.reset(new dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>(nh_sparse_fe));
-    sparse_front_end_cb = boost::bind(&rslam::sparse::FrontEnd::configCallback, std::static_pointer_cast<rslam::sparse::FrontEnd>(frontend_), _1, _2);
+    sparse_front_end_cb = boost::bind(&rslam::sparse::SparseFrontEnd::configCallback, std::static_pointer_cast<rslam::sparse::SparseFrontEnd>(frontend_), _1, _2);
     sparse_frontend_dr_srv_->setCallback(sparse_front_end_cb);
   } 
   else {

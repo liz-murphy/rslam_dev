@@ -29,8 +29,8 @@ SemiDenseFrontEnd::SemiDenseFrontEnd() : is_quitting_(false) {}
 SemiDenseFrontEnd::~SemiDenseFrontEnd() {
   is_quitting_ = true;
   aac_cond_.notify_all();
-  if(aac_thread_.joinable()){
-    aac_thread_.join();
+  if(ba_thread_.joinable()){
+    ba_thread_.join();
   }
 }
 
@@ -106,7 +106,7 @@ bool SemiDenseFrontEnd::Init(const calibu::CameraRigT<Scalar> &rig,
     current_frame_->set_b(Eigen::Vector6t::Zero());
     current_frame_->set_v_r(Eigen::Vector3t::Zero());
     current_frame_->set_g_r(
-    optimization_.GetImuBuffer().elements.front().a.normalized() *
+    front_end_opt_.GetImuBuffer().elements.front().a.normalized() *
     ba::Gravity);
   }
   current_frame_->set_t_vs(rig_.t_wc_[0]);
@@ -131,8 +131,8 @@ bool SemiDenseFrontEnd::Init(const calibu::CameraRigT<Scalar> &rig,
   }
   keyframe_tracks_ = tracker_.GetNewTracks().size();
 
-  optimization_.Init(map_);
-  optimization_callbacks_.visual_callback = [this](
+  front_end_opt_.Init(map_);
+  front_end_opt_callbacks_.visual_callback = [this](
       const ba::VisualBundleAdjuster<Scalar>& ba,
       const rslam::optimization::LiftResults& results) {
     if (results.pose_ba_ids.empty()) return;
@@ -174,17 +174,17 @@ bool SemiDenseFrontEnd::Init(const calibu::CameraRigT<Scalar> &rig,
     }
   };
 
-  aac_thread_ = std::thread(&SemiDenseFrontEnd::AsyncBaFunc,this);
+  ba_thread_ = std::thread(&SemiDenseFrontEnd::AsyncBaFunc,this);
 
-  system_status_.is_initialized = true;
+  FrontEnd::system_status_.is_initialized = true;
   return true;
 }
 
 void SemiDenseFrontEnd::RegisterImuMeasurement(const Eigen::Vector3t &w,
                                                const Eigen::Vector3t &a,
                                                const double time) {
-  optimization_.RegisterImuMeasurement(w, a, time);
-  aac_optimization_.RegisterImuMeasurement(w, a, time);
+  front_end_opt_.RegisterImuMeasurement(w, a, time);
+  async_ba_.RegisterImuMeasurement(w, a, time);
 }
 
 void SemiDenseFrontEnd::CreateLandmark(
@@ -253,7 +253,7 @@ void SemiDenseFrontEnd::AddKeyframe() {
   LandmarkId lm_id;
   MultiViewMeasurement meas(rig_.cameras_.size());
 
-  ++system_status_.keyframe_number;
+  ++FrontEnd::system_status_.keyframe_number;
   for (std::shared_ptr<sdtrack::DenseTrack> track :
            tracker_.GetCurrentTracks()) {
     for (size_t cam_idx = 0; cam_idx < rig_.cameras_.size(); ++cam_idx) {
@@ -303,8 +303,8 @@ void SemiDenseFrontEnd::AddKeyframe() {
 
 bool SemiDenseFrontEnd::Iterate(const std::shared_ptr<pb::ImageArray> &frames,
                                 double timestamp) {
-  ++system_status_.frame_number;
-  system_status_.time = timestamp;
+  ++FrontEnd::system_status_.frame_number;
+  FrontEnd::system_status_.time = timestamp;
 
   // If this is a keyframe, set it as one on the tracker.
   prev_delta_t_ba_ = tracker_.t_ba() * prev_t_ba_.inverse();
@@ -318,7 +318,7 @@ bool SemiDenseFrontEnd::Iterate(const std::shared_ptr<pb::ImageArray> &frames,
   if (is_prev_keyframe_) {
     // Add the node and edge
     prev_frame_ = current_frame_;
-    current_frame_  = map_->AddFrame(system_status_.time);
+    current_frame_  = map_->AddFrame(FrontEnd::system_status_.time);
     current_edge_ = map_->AddEdge(prev_frame_, current_frame_, Sophus::SE3t());
   }
 
@@ -330,7 +330,7 @@ bool SemiDenseFrontEnd::Iterate(const std::shared_ptr<pb::ImageArray> &frames,
   bool used_imu_for_guess = false;
   if (use_imu_measurements_ &&
       use_imu_for_guess_ &&
-      system_status_.keyframe_number >= min_poses_for_imu_) {
+      FrontEnd::system_status_.keyframe_number >= min_poses_for_imu_) {
 
     ba::PoseT<Scalar> start_pose;
     start_pose.t_wp = Sophus::SE3t();
@@ -339,13 +339,13 @@ bool SemiDenseFrontEnd::Iterate(const std::shared_ptr<pb::ImageArray> &frames,
     start_pose.time = prev_frame_->time();
     // Integrate the measurements since the last frame.
     std::vector<ba::ImuMeasurementT<Scalar> > meas =
-        optimization_.GetImuBuffer().GetRange(prev_frame_->time(),
+        front_end_opt_.GetImuBuffer().GetRange(prev_frame_->time(),
                                         current_frame_->time());
 
     std::vector<ba::ImuPoseT<Scalar> > imu_poses;
     ba::VisualInertialBundleAdjuster<Scalar>::ImuResidual::IntegrateResidual(
         start_pose, meas, start_pose.b.head<3>(), start_pose.b.tail<3>(),
-        optimization_.GetImuCalibration().g_vec, imu_poses);
+        front_end_opt_.GetImuCalibration().g_vec, imu_poses);
 
     if (imu_poses.size() > 1) {
       ba::ImuPoseT<Scalar>& last_pose = imu_poses.back();
@@ -456,12 +456,12 @@ bool SemiDenseFrontEnd::Iterate(const std::shared_ptr<pb::ImageArray> &frames,
 }
 
 void SemiDenseFrontEnd::UpdateStats() {
-  system_status_.num_tracked_landmarks = tracker_.num_successful_tracks();
-  system_status_.num_new_landmarks = tracker_.GetNewTracks().size();
+  FrontEnd::system_status_.num_tracked_landmarks = tracker_.num_successful_tracks();
+  FrontEnd::system_status_.num_new_landmarks = tracker_.GetNewTracks().size();
   tracking_stats_.analytics["Trkd-lmks"] =
-      static_cast<double>(system_status_.num_tracked_landmarks);
+      static_cast<double>(FrontEnd::system_status_.num_tracked_landmarks);
   tracking_stats_.analytics["New-lmks"] =
-      static_cast<double>(system_status_.num_new_landmarks);
+      static_cast<double>(FrontEnd::system_status_.num_new_landmarks);
 }
 
 bool SemiDenseFrontEnd::IterateBa() {
@@ -471,7 +471,7 @@ bool SemiDenseFrontEnd::IterateBa() {
 
 void SemiDenseFrontEnd::AsyncBaFunc() {
   LOG(INFO) << "Starting async ba thread.";
-  aac_optimization_.Init(map_);
+  async_ba_.Init(map_);
 
   std::chrono::seconds wait_time(1);
   std::mutex async_mutex;
@@ -489,7 +489,7 @@ void SemiDenseFrontEnd::AsyncBaFunc() {
                                      CommonFrontEndConfig::getConfig()->getBAWindowSize(), 100);
     // We don't want to include the current frame in our optimizations
     options.ignore_frame = current_frame_->id();
-    aac_optimization_.RefineMap(CommonFrontEndConfig::getConfig()->getAsyncBAWindowSize(),
+    async_ba_.RefineMap(CommonFrontEndConfig::getConfig()->getAsyncBAWindowSize(),
                            prev_frame_->id(),
                            CommonFrontEndConfig::getConfig()->getBANumIterAdaptive(),
                            has_imu_,
@@ -512,7 +512,7 @@ void SemiDenseFrontEnd::AsyncBaFunc() {
 
 void SemiDenseFrontEnd::system_status(common::SystemStatus *ss) const {
   CHECK_NOTNULL(ss);
-  *ss = system_status_;
+  *ss = FrontEnd::system_status_;
 }
 
 void SemiDenseFrontEnd::tracking_stats(common::TrackingStats *ts) const {
@@ -547,7 +547,7 @@ SlamFramePtr SemiDenseFrontEnd::current_frame() const {
 }
 
 bool SemiDenseFrontEnd::IsInitialized() const {
-  return system_status_.is_initialized;
+  return FrontEnd::system_status_.is_initialized;
 }
 
 void SemiDenseFrontEnd::DoSynchronousBundleAdjustment() {
@@ -555,7 +555,7 @@ void SemiDenseFrontEnd::DoSynchronousBundleAdjustment() {
   ba::debug_level = google::INFO + 1;
 
   static const rslam::optimization::AdaptiveOptions options(false, false, 15, 100);
-  optimization_.RefineMap(CommonFrontEndConfig::getConfig()->getBAWindowSize(),
+  front_end_opt_.RefineMap(CommonFrontEndConfig::getConfig()->getBAWindowSize(),
                      current_frame_->id(),
                      CommonFrontEndConfig::getConfig()->getBANumIter(),
                      false,
@@ -563,7 +563,7 @@ void SemiDenseFrontEnd::DoSynchronousBundleAdjustment() {
                      options,
                      false,
                      EdgeAttrib_IsBeingOptimized,
-                     optimization_callbacks_);
+                     front_end_opt_callbacks_);
 }
 
 void SemiDenseFrontEnd::RegisterPoseMeasurement(

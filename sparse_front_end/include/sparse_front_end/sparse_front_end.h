@@ -10,15 +10,12 @@
 #include <map>
 #include <mutex>
 #include <string>
-#include <thread>
 #include <vector>
 
 #include <ba/InterpolationBuffer.h>
 #include <optimization/optimization.h>
 #include <common_front_end/DenseAlignment.h>
 #include <common_front_end/FeatureImage.h>
-#include <common_front_end/TrackingStats.h>
-#include <common_front_end/SystemStatus.h>
 #include <pb_msgs/ImageArray.h>
 #include <pb_msgs/Image.h>
 #include <place_matching/PlaceMatcher.h>
@@ -29,7 +26,7 @@
 #include <sparse_tracking/FeatureMask.h>
 #include <utils/MathTypes.h>
 #include <utils/Timer.h>
-#include <common_front_end/FrontendInterface.h>
+#include <common_front_end/front_end.h>
 
 #include <ros/ros.h>
 
@@ -50,12 +47,12 @@ struct PoseAnalytics {
   double           timestamp;
 };
 
-class FrontEnd : public FrontEndInterface{
+class SparseFrontEnd : public FrontEnd{
   typedef PlaceMatchCandidate PlaceMatchCandidateT;
   typedef std::vector<cv::KeyPoint> KeypointVector;
  public:
-  FrontEnd();
-  ~FrontEnd();
+  SparseFrontEnd();
+  ~SparseFrontEnd();
 
   ///
   /// \brief Initializes the frontend
@@ -114,7 +111,7 @@ class FrontEnd : public FrontEndInterface{
 
   void system_status(common::SystemStatus *ss) const override {
     CHECK_NOTNULL(ss);
-    *ss = system_state_;
+    *ss = system_status_;
   }
 
   ///
@@ -134,8 +131,8 @@ class FrontEnd : public FrontEndInterface{
   void RegisterImuMeasurement(const Eigen::Vector3t &w,
                               const Eigen::Vector3t & a,
                               const double time) {
-    async_ba_.RegisterImuMeasurement(w, a, time);
-    front_end_opt.RegisterImuMeasurement(w, a, time);
+    SparseFrontEnd::async_ba_.RegisterImuMeasurement(w, a, time);
+    SparseFrontEnd::front_end_opt_.RegisterImuMeasurement(w, a, time);
   }
 
   void RegisterPoseMeasurement(
@@ -249,12 +246,6 @@ private:
   void ResetFeatures(FeatureImageVector images);
 
   ///
-  /// \brief Loads ground truth file
-  /// \return
-  ///
-  void LoadGroundTruth();
-
-  ///
   /// \brief Relocalization thread
   ///
   void RelocalizerFunc();
@@ -301,23 +292,14 @@ private:
   void AddPlace(const ReferenceFrameId& id, const cv::Mat& img);
 
 private:
-  bool                          is_simulation_;
-  common::SystemStatus          system_state_;
   Scalar                        learning_rate_;
-  calibu::CameraRigT<Scalar>    rig_;
-  std::shared_ptr<PlaceMatcher> place_matcher_;
-  std::shared_ptr<SlamMap>      map_;
-  std::shared_ptr<Timer>        timer_;
   LocalMap                      work_set_;
-  optimization::Optimization    async_ba_, back_end_opt_, front_end_opt;
   Sophus::SE3t                  t_ab_;
-  SlamFramePtr                  current_frame_;
   SlamFramePtr                  reference_frame_;
   FeatureHandler                feature_handler_[2];
   FeatureImageVector            current_feature_images_;
   ba::BundleAdjuster<Scalar, 1, 6, 0> gauss_newton_ba_;
 
-  Eigen::Vector6tArray            ground_truth_;
   Eigen::Matrix6t                 covariance_;
   DenseAlignment                  dense_aligner_;
 
@@ -334,8 +316,6 @@ private:
   uint64_t                        hold_frame_token_;
   FeatureImageVector              keyframe_images_;
   cv::Mat                         query_vector_;
-  std::shared_ptr<std::thread>    ba_thread_;
-  std::shared_ptr<std::thread>    relocalizer_thread_;
   mutable std::condition_variable relocalizer_cond_;
   mutable std::mutex              relocalizer_mutex_;
   mutable std::condition_variable async_ba_cond_;
@@ -387,7 +367,6 @@ private:
   int server_download_map_size_;
 
   //gui
-  std::string ground_truth_file_;
   int timer_window_size_;
   double server_query_spread_;
 };

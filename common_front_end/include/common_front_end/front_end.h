@@ -6,9 +6,13 @@
 #include <utils/MathTypes.h>
 #include <utils/Timer.h>
 #include <common_front_end/common_front_end_fwd.h>
+#include <common_front_end/SystemStatus.h>
+#include <common_front_end/TrackingStats.h>
+#include <optimization/optimization.h>
+#include <thread>
 
 namespace rslam {
-class FrontEndInterface {
+class FrontEnd{
  public:
   virtual bool Init(
       const calibu::CameraRigT<Scalar>  &rig,
@@ -24,7 +28,7 @@ class FrontEndInterface {
                                       const Eigen::Vector3t & a,
                                       const double time) = 0;
 
-  virtual void RegisterPoseMeasurement(
+ virtual void RegisterPoseMeasurement(
       const rslam::map::PoseMeasurement& pose) = 0;
 
   virtual bool Iterate(const std::shared_ptr<pb::ImageArray>& frames,
@@ -42,5 +46,24 @@ class FrontEndInterface {
       const std::shared_ptr<SlamServerProxy>& proxy) = 0;
   virtual SlamFramePtr current_frame() const = 0;
   virtual bool IsInitialized() const = 0;
+
+ protected:
+  common::SystemStatus system_status_;
+  calibu::Rig<Scalar> rig_;
+  calibu::CameraRigT<Scalar> old_rig_;
+  std::shared_ptr<PlaceMatcher> place_matcher_;
+  std::shared_ptr<SlamMap>      map_;
+  std::shared_ptr<Timer>        timer_;
+  rslam::optimization::Optimization front_end_opt_, async_ba_;
+
+  SlamFramePtr current_frame_;
+  SlamFramePtr reference_frame_;
+
+  std::thread ba_thread_;
+  std::thread relocalizer_thread_;
+
+
+
+
 };
 }  // namespace rslam

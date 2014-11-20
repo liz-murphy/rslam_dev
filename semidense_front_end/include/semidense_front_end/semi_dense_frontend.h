@@ -6,7 +6,7 @@
 #include <miniglog/logging.h>
 
 #include <optimization/optimization.h>
-#include <common_front_end/FrontendInterface.h>
+#include <common_front_end/front_end.h>
 #include <common_front_end/SystemStatus.h>
 #include <common_front_end/TrackingStats.h>
 #include <ba/BundleAdjuster.h>
@@ -15,7 +15,7 @@
 #include <semidense_front_end/SemiDenseConfig.h>
 
 namespace rslam {
-class SemiDenseFrontEnd : public FrontEndInterface {
+class SemiDenseFrontEnd : public FrontEnd{
  public:
   SemiDenseFrontEnd();
   ~SemiDenseFrontEnd();
@@ -68,20 +68,12 @@ class SemiDenseFrontEnd : public FrontEndInterface {
   std::atomic<bool> is_quitting_;
 
   uint64_t hold_frame_token_;
-  calibu::Rig<Scalar> rig_;
-  calibu::CameraRigT<Scalar> old_rig_;
 
-  std::shared_ptr<SlamMap> map_;
-  std::shared_ptr<Timer> timer_;
-  std::shared_ptr<PlaceMatcher> place_matcher_;
   sdtrack::SemiDenseTracker tracker_;
 
-  SlamFramePtr current_frame_, prev_frame_;
-  optimization::Optimization optimization_, aac_optimization_;
-  optimization::Optimization::RefineMapCallbacks optimization_callbacks_;
+  SlamFramePtr prev_frame_;
+  optimization::Optimization::RefineMapCallbacks front_end_opt_callbacks_;
   rslam::common::TrackingStats tracking_stats_;
-  rslam::common::SystemStatus system_status_;
-  std::thread aac_thread_;
   std::condition_variable aac_cond_;
 
   SlamEdgePtr current_edge_;

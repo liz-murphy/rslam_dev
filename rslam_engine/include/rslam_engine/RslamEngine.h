@@ -8,7 +8,7 @@
 // 2) iterates the SLAM system
 
 #include <calibu/Calibu.h>
-#include <common_front_end/FrontendInterface.h>
+#include <common_front_end/front_end.h>
 #include <common_front_end/SparseSimData.h>
 #include <common_front_end/TrackingStats.h>
 #include <pb_msgs/Image.h>
@@ -28,7 +28,7 @@
 #include <common_front_end/FREAKConfig.h>
 #include <common_front_end/FASTConfig.h>
 #include <common_front_end/SURFConfig.h>
-#include <sparse_front_end/FrontEnd.h>
+#include <sparse_front_end/sparse_front_end.h>
 #include <semidense_front_end/SemiDenseConfig.h>
 #include <back_end/back_end.h>
 
@@ -87,7 +87,7 @@ class RslamEngine {
 
   bool IsInitialized() const;
 
-  void set_frontend(const std::shared_ptr<rslam::FrontEndInterface> &frontend)
+  void set_frontend(const std::shared_ptr<rslam::FrontEnd> &frontend)
   {
     frontend_ = frontend;
   }
@@ -115,7 +115,7 @@ class RslamEngine {
   rslam::common::TrackingStats tracking_stats_;
   std::shared_ptr<pb::ImageArray> images_;
 
-  std::shared_ptr<rslam::FrontEndInterface> frontend_;
+  std::shared_ptr<rslam::FrontEnd> frontend_;
  protected:
   void SaveFrames() const;
   void ResetVars();

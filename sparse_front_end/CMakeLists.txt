@@ -114,7 +114,7 @@ include_directories(
 
 ## Declare a cpp library
 add_library(sparse_front_end
-  src/FrontEnd.cpp
+  src/sparse_front_end.cpp
   src/FrontEndServerInterface.cpp
   src/LiftLocalMap.cpp
   src/PushLocalMap.cpp
