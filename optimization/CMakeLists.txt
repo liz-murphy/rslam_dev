@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   ba
   utils
   slam_map
-  common_front_end
   local_map 
   dynamic_reconfigure
 )
@@ -24,7 +23,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES optimization 
-  CATKIN_DEPENDS roscpp sophus ba slam_map miniglog common_front_end
+  CATKIN_DEPENDS roscpp sophus ba utils slam_map local_map dynamic_reconfigure
 #  DEPENDS system_lib
 )
 

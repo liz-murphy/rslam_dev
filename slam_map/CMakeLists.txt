@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   calibu
   ba
   dynamic_reconfigure
+  feature_utils
 )
 
 find_package(Eigen REQUIRED)
@@ -96,7 +97,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES slam_map
-  CATKIN_DEPENDS roscpp pb_msgs sophus common utils cmake_modules sophus ba
+  CATKIN_DEPENDS roscpp pb_msgs sophus common utils cmake_modules sophus ba feature_utils
   DEPENDS system_lib Eigen
 )
 

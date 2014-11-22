@@ -31,6 +31,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   dynamic_reconfigure
   semidense_front_end
+  feature_utils
 )
 
 #find_package(OpenCV REQUIRED)
@@ -111,7 +112,7 @@ configure_file(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rslam_engine
-  CATKIN_DEPENDS ba calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils optimization
+  CATKIN_DEPENDS ba calibu common_front_end miniglog pb_msgs place_matching roscpp slam_map slam_server sophus sparse_front_end utils optimization feature_utils
   #DEPENDS opencv 
 )
 

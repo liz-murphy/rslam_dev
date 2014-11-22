@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   slam_map
   sparse_tracking
   optimization
+  feature_utils
 )
 
 ## System dependencies are found with CMake's conventions
@@ -87,7 +88,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES slam_server
-  CATKIN_DEPENDS pb_msgs place_matching roscpp slam_map sparse_tracking
+  CATKIN_DEPENDS pb_msgs place_matching roscpp slam_map sparse_tracking feature_utils
 #  DEPENDS system_lib
 )
 

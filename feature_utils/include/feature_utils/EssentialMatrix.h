@@ -5,7 +5,7 @@
 
 #include <random>
 #include <utils/MathTypes.h>
-#include <common_front_end/FundamentalMatrix.h>
+#include <feature_utils/FundamentalMatrix.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 Eigen::Vector4t Get3DPoint(

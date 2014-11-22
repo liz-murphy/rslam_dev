@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <cstdint>
 
 typedef uint8_t UINT8;
 

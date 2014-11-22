@@ -1,23 +1,18 @@
 // Copyright (c) George Washington University, all rights reserved.  See the
 // accompanying LICENSE file for more information.
 
-#include <common_front_end/FeatureImage.h>
+#include <feature_utils/FeatureImage.h>
+#include <feature_utils/FeatureParams.h>
 #include <algorithm>
 #include <utility>
 #include <vector>
 
-#include <common_front_end/CommonFrontEndParamsConfig.h>
-//#include <common_front_end/FlybyFeatureDetector.h>
 #include <miniglog/logging.h>
 #include <pb_msgs/Image.h>
 #include <pb_msgs/ImagePyramid.h>
 #include <utils/ESM.h>
 
 #include <ros/ros.h>
-
-/*static double& g_harris_score_threshold =
-    CVarUtils::CreateCVar<>("features.fast.HarrisScoreThrshold", 10000.0, "");
-*/
 
 // used for sorting
 inline bool _CompareScoreFunc(const FeaturePtr& i, const FeaturePtr& j) {
@@ -302,8 +297,8 @@ void FeatureImage::_BucketKeyPoints(std::vector<cv::KeyPoint>& keypoints) {
   const float  y_cell_size =
       std::ceil(static_cast<float>(image_pyramid_->at(0).rows) / rows);
 
-  const double roi_top = static_cast<double>(CANONICAL_PATCH_SIZE) / 2.0;
-  const double roi_left = static_cast<double>(CANONICAL_PATCH_SIZE) / 2.0;
+  const double roi_top = static_cast<double>(FeatureParams::CANONICAL_PATCH_SIZE) / 2.0;
+  const double roi_left = static_cast<double>(FeatureParams::CANONICAL_PATCH_SIZE) / 2.0;
   const double roi_bot =
       static_cast<double>(image_pyramid_->at(0).rows) - roi_top;
   const double roi_right =

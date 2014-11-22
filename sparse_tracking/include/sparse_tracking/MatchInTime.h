@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include <common_front_end/FeatureImage.h>
+#include <feature_utils/FeatureImage.h>
 #include <slam_map/SlamMapFwd.h>
 #include <local_map/LocalMap.h>
 

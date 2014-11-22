@@ -9,7 +9,6 @@
 
 #include <calibu/Calibu.h>
 #include <common_front_end/front_end.h>
-#include <common_front_end/SparseSimData.h>
 #include <common_front_end/TrackingStats.h>
 #include <pb_msgs/Image.h>
 #include <pb_msgs/ImageArray.h>
@@ -25,9 +24,12 @@
 #include <common_front_end/CommonFrontEndParamsConfig.h>
 #include <optimization/OptimizationConfig.h>
 #include <optimization/OptimizationParamsConfig.h>
-#include <common_front_end/FREAKConfig.h>
-#include <common_front_end/FASTConfig.h>
-#include <common_front_end/SURFConfig.h>
+#include <feature_utils/FeatureConfig.h>
+#include <feature_utils/FREAKConfig.h>
+#include <feature_utils/FASTConfig.h>
+#include <feature_utils/SURFConfig.h>
+#include <feature_utils/FeatureConfig.h>
+#include <feature_utils/FeatureParams.h>
 #include <sparse_front_end/sparse_front_end.h>
 #include <semidense_front_end/SemiDenseConfig.h>
 #include <back_end/back_end.h>
@@ -97,17 +99,19 @@ class RslamEngine {
   std::shared_ptr<dynamic_reconfigure::Server<semidense_front_end::SemiDenseConfig> > sd_frontend_dr_srv_;
   std::shared_ptr<dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig> > common_frontend_dr_srv_;
   std::shared_ptr<dynamic_reconfigure::Server<optimization::OptimizationParamsConfig> > optimization_dr_srv_;
-  std::shared_ptr<dynamic_reconfigure::Server<common_front_end::FREAKConfig> > FREAK_dr_srv_;
-  std::shared_ptr<dynamic_reconfigure::Server<common_front_end::FASTConfig> > FAST_dr_srv_;
-  std::shared_ptr<dynamic_reconfigure::Server<common_front_end::SURFConfig> > SURF_dr_srv_;
+  std::shared_ptr<dynamic_reconfigure::Server<feature_utils::FeatureConfig> > Feature_dr_srv_;
+  std::shared_ptr<dynamic_reconfigure::Server<feature_utils::FREAKConfig> > FREAK_dr_srv_;
+  std::shared_ptr<dynamic_reconfigure::Server<feature_utils::FASTConfig> > FAST_dr_srv_;
+  std::shared_ptr<dynamic_reconfigure::Server<feature_utils::SURFConfig> > SURF_dr_srv_;
  
   dynamic_reconfigure::Server<sparse_front_end::SparseFrontEndConfig>::CallbackType sparse_front_end_cb;
   dynamic_reconfigure::Server<semidense_front_end::SemiDenseConfig>::CallbackType sd_front_end_cb;
   dynamic_reconfigure::Server<common_front_end::CommonFrontEndParamsConfig>::CallbackType common_front_end_cb;
   dynamic_reconfigure::Server<optimization::OptimizationParamsConfig>::CallbackType optimization_cb;
-  dynamic_reconfigure::Server<common_front_end::FREAKConfig>::CallbackType FREAK_cb;
-  dynamic_reconfigure::Server<common_front_end::FASTConfig>::CallbackType FAST_cb;
-  dynamic_reconfigure::Server<common_front_end::SURFConfig>::CallbackType SURF_cb;
+  dynamic_reconfigure::Server<feature_utils::FeatureConfig>::CallbackType Feature_cb;
+  dynamic_reconfigure::Server<feature_utils::FREAKConfig>::CallbackType FREAK_cb;
+  dynamic_reconfigure::Server<feature_utils::FASTConfig>::CallbackType FAST_cb;
+  dynamic_reconfigure::Server<feature_utils::SURFConfig>::CallbackType SURF_cb;
  
   std::shared_ptr<SlamMap> map_;
   calibu::CameraRigT<Scalar> rig_;
@@ -120,15 +124,11 @@ class RslamEngine {
   void SaveFrames() const;
   void ResetVars();
   bool HasLookupTable(const std::string& sRigFile);
-  void SetupSimulator(const rslam::RslamEngineOptions& options);
   bool InitResetCameras(const rslam::RslamEngineOptions& options,
                         const calibu::CameraRigT<Scalar>& rig);
-  bool LoadSimFrame();
   void LoadCurrentImages();
 
  private:
-  bool                           is_using_sim_imu_;
-  bool                           is_using_sim_data_;
   bool                           is_mono_tracking_;
   bool                           is_tracking_2d_;
   bool                           is_rectified_;
@@ -141,15 +141,13 @@ class RslamEngine {
   ImageProcessing                image_proc_;
   std::vector<cv::Mat>           rectified_frames_;
   std::vector<Eigen::Vector4i>   rois_;
-  std::shared_ptr<SparseSimData> simulator_;
   std::string                    working_directory_;
   std::string                    error_results_file_;
   ReferenceFrameId               first_frame_;
 
-  std::map<unsigned int, ReferenceFrameId> sim_frames_;
-  std::shared_ptr<SlamServerProxy> server_proxy_;
-  rslam::RslamTracker                   tracker_type_;
+  rslam::RslamTracker            tracker_type_;
   CommonFrontEndConfig* common_front_end_config_;
+  FeatureParams* feature_config_;
   OptimizationConfig* optimization_config_;
   std::unique_ptr<rslam::backend::BackEnd> backend_;
 };

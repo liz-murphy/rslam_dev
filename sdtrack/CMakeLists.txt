@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   sophus
   utils
   pb_msgs
+  cmake_modules
 )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SDTRACKERConfig.h.in
@@ -92,7 +93,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sdtrack
-  CATKIN_DEPENDS calibu miniglog roscpp sophus
+  CATKIN_DEPENDS calibu miniglog roscpp sophus cmake_modules
   DEPENDS OpenCV 
 )
 
@@ -122,9 +123,9 @@ add_library(sdtrack
 # add_dependencies(sdtrack_node sdtrack_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(sdtrack_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(sdtrack
+  ${catkin_LIBRARIES} ${OpenCV_LIBRARIES}
+)
 
 #############
 ## Install ##

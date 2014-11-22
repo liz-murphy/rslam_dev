@@ -1,13 +1,13 @@
 // Copyright (c) George Washington University, all rights reserved.  See the
 // accompanying LICENSE file for more information.
 
-#include <common_front_end/PatchMatch.h>
+#include <feature_utils/PatchMatch.h>
+#include <feature_utils/MatchFlags.h>
 #include <assert.h>
 #include <math.h>
 #include <float.h>
 #include <vector>
-#include <common_front_end/CommonFrontEndConfig.h>
-//using namespace rslam;
+#include <feature_utils/FeatureParams.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 float ScorePatchesNCC(const unsigned char* patch_a,
@@ -242,10 +242,10 @@ Feature* FindBestPatchInRow(
   if( fBestScore == FLT_MAX ){
     eFlag = NoFeaturesToMatch;
   }
-  else if( fBestScore > CommonFrontEndConfig::getConfig()->getMatchErrorThreshold()) {
+  else if( fBestScore > FeatureParams::getParams()->getMatchErrorThreshold()) {
     eFlag  = NoMatchOnLine;
   }
-  else if( fBestScore*CommonFrontEndConfig::getConfig()->getMatchErrorFactor() >= fSecondBest ) {
+  else if( fBestScore*FeatureParams::getParams()->getMatchErrorFactor() >= fSecondBest ) {
     eFlag  = NoMatchOnLine;
   }
   else{
@@ -345,9 +345,9 @@ Feature* FindBestPatchInRegion(
   match_score = best_score;
   if (best_score == FLT_MAX) {
     match_flag = NoFeaturesToMatch;
-  } else if (best_score > CommonFrontEndConfig::getConfig()->getMatchErrorThreshold()) {
+  } else if (best_score > FeatureParams::getParams()->getMatchErrorThreshold()) {
     match_flag  = NoMatchInRegion;
-  } else if (best_score*CommonFrontEndConfig::getConfig()->getMatchErrorFactor() >= second_best_score
+  } else if (best_score*FeatureParams::getParams()->getMatchErrorFactor() >= second_best_score
              && second_feat
              && fabs(feat_out->x - second_feat->x) > 2.0
              && fabs(feat_out->y - second_feat->y) > 2.0 ) {
@@ -364,8 +364,8 @@ Feature* FindBestPatchInRegion(
 
 ///////////////////////////////////////////////////////////////////////////////
 // Specialization, commented out for speed
-template Feature* FindBestPatchInRegion<CANONICAL_PATCH_SIZE>(
-    const PatchHomography<CANONICAL_PATCH_SIZE>& PredictedH,//< Input: where and what shape patch to match
+template Feature* FindBestPatchInRegion<FeatureParams::CANONICAL_PATCH_SIZE>(
+    const PatchHomography<FeatureParams::CANONICAL_PATCH_SIZE>& PredictedH,//< Input: where and what shape patch to match
 const unsigned char* pRefPatch,                      //< Input:
 const int nSearchWidth,           //< Input: Search width delta
 const int nSearchHeight,          //< Input: Search height delta

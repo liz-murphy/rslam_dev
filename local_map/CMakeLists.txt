@@ -9,6 +9,7 @@ set( CMAKE_CXX_FLAGS "-std=c++0x -Wall ${CMAKE_CXX_FLAGS}" )
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   slam_map
+  feature_utils
 )
 
 ## System dependencies are found with CMake's conventions
@@ -83,7 +84,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES local_map
-  CATKIN_DEPENDS roscpp slam_map
+  CATKIN_DEPENDS roscpp slam_map feature_utils
 #  DEPENDS system_lib
 )
 

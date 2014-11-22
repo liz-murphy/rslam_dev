@@ -1,7 +1,7 @@
 // Copyright (c) George Washington University, all rights reserved.  See the
 // accompanying LICENSE file for more information.
 
-#include <common_front_end/QuadTree.h>
+#include <feature_utils/QuadTree.h>
 #include <math.h>
 #include <stdio.h>
 #include <iostream>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <slam_map/PatchHomography.h>
+#include <feature_utils/PatchHomography.h>
 #include <slam_map/Landmark.h>
 #include <slam_map/Measurement.h>
 #include <slam_map/SlamMapFwd.h>

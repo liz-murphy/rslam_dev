@@ -46,12 +46,14 @@
   <build_depend>sophus</build_depend>
   <build_depend>utils</build_depend>
   <build_depend>pb_msgs</build_depend>
+  <build_depend>cmake_modules</build_depend>
   <run_depend>calibu</run_depend>
   <run_depend>miniglog</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>sophus</run_depend>
   <run_depend>utils</run_depend>
   <run_depend>pb_msgs</run_depend>
+  <run_depend>cmake_modules</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

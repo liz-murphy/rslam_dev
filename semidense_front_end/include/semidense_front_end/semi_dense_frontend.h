@@ -34,14 +34,13 @@ class SemiDenseFrontEnd : public FrontEnd{
 
   bool Iterate(const std::shared_ptr<pb::ImageArray> &frames,
                double timestamp) override;
-  bool IterateBa() override;
+  //bool IterateBa() override;
   void tracking_stats(common::TrackingStats *ts) const override;
   void system_status(common::SystemStatus *ss) const override;
   void Save(const std::string &filename) const override;
   void Load(const std::string &filename) override;
   void GetCurrentKeypointsForDisplay(
       std::vector<std::vector<cv::KeyPoint> > &keypoints) override;
-  void set_server_proxy(const std::shared_ptr<SlamServerProxy> &proxy) override;
   SlamFramePtr current_frame() const override;
   bool IsInitialized() const override;
 
@@ -51,11 +50,9 @@ class SemiDenseFrontEnd : public FrontEnd{
   void AddKeyframe();
   void CreateLandmark(const std::shared_ptr<sdtrack::DenseTrack> &track,
                       LandmarkId* lm_id);
-  void DoSynchronousBundleAdjustment();
+  //void DoSynchronousBundleAdjustment();
   void UpdateStats();
-  void AsyncBaFunc();
-  void Tic(const std::string& name) { if (timer_) timer_->Tic(name); }
-  void Toc(const std::string& name) { if (timer_) timer_->Toc(name); }
+  //void AsyncBaFunc();
 
  private:
   uint32_t keyframe_tracks_ = UINT_MAX;

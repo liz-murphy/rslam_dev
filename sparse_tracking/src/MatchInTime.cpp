@@ -2,8 +2,8 @@
 // accompanying LICENSE file for more information.
 
 
-#include <common_front_end/MatchHelpers.h>  // for FindBestMatchInRow and FindBestMatchInRegion
-#include <common_front_end/Triangulation.h>
+#include <feature_utils/MatchHelpers.h>  // for FindBestMatchInRow and FindBestMatchInRegion
+#include <feature_utils/Triangulation.h>
 #include <miniglog/logging.h>
 
 #include <slam_map/SlamMap.h>

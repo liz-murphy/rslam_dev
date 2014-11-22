@@ -7,11 +7,10 @@
 #include <utility>
 #include <memory>
 
-#include <slam_map/PatchHomography.h>
-#include <common_front_end/QuadTree.h>
-#include <common_front_end/Feature.h>
-#include <common_front_end/FeatureHandler.h>
-#include <common_front_end/CommonFrontEndParamsConfig.h>
+#include <feature_utils/PatchHomography.h>
+#include <feature_utils/QuadTree.h>
+#include <feature_utils/Feature.h>
+#include <feature_utils/FeatureHandler.h>
 #include <utils/PrintMessage.h>
 #include <utils/MathTypes.h>
 #include <utils/ESM.h>

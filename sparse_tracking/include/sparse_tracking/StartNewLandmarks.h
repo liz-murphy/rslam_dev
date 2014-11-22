@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <slam_map/SlamMapFwd.h>
-#include <common_front_end/FeatureImage.h>
+#include <feature_utils/FeatureImage.h>
 #include <sparse_tracking/FeatureMask.h>
 
 

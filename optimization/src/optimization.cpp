@@ -15,7 +15,7 @@
 #include <slam_map/TransformEdge.h>
 #include <slam_map/ReferenceFrame.h>
 #include <slam_map/MapVisitor/TransformMapVisitor.h>
-#include <common_front_end/Triangulation.h>
+#include <feature_utils/Triangulation.h>
 #include <utils/MathTypes.h>
 #include <ros/ros.h>
 
@@ -988,7 +988,6 @@ OptimizationStatus ComputeAdaptiveMetrics(const BundleAdjuster& ba,
 bool Optimization::RefineMap(unsigned int depth,
                         const ReferenceFrameId& root_id,
                         unsigned int max_iter,
-                        bool use_imu,
                         calibu::CameraRigT<Scalar> &rig,
                         const AdaptiveOptions& adaptive_options,
                         bool do_landmark_init,
@@ -1002,7 +1001,7 @@ bool Optimization::RefineMap(unsigned int depth,
     return false;
   }
 
-  bool is_using_imu = use_imu && map_->NumFrames() >= (unsigned int)OptimizationConfig::getConfig()->getMinFramesForIMU();
+  bool is_using_imu = false;//use_imu && map_->NumFrames() >= (unsigned int)OptimizationConfig::getConfig()->getMinFramesForIMU();
 
   if (do_landmark_init) {
     // First initialize any landmarks at infinity.

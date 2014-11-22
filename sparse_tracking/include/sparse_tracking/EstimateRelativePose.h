@@ -4,7 +4,7 @@
 #pragma once
 
 #include <common_front_end/SystemStatus.h>
-#include <common_front_end/Ransac.h>
+#include <feature_utils/Ransac.h>
 #include <sparse_tracking/MatchInTime.h>
 
 #include <local_map/LocalMap.h>

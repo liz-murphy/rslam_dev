@@ -34,7 +34,7 @@ bool Gui::Update(const std::shared_ptr<pb::ImageArray> &frames, const ReferenceF
   }
 
   size_t num_meas = current_frame->NumMeasurements();
-  ROS_INFO("Frame has %d measurements", num_meas);
+  ROS_INFO("Frame has %d measurements", (int)num_meas);
   std::vector<MultiViewMeasurement> cur_meas(
       num_meas, MultiViewMeasurement(rig_.cameras.size()));
   for (size_t zi = 0; zi < num_meas; ++zi) {

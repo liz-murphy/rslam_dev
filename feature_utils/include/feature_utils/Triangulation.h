@@ -2,7 +2,7 @@
 #define TRIANGULATION_H
 
 #include <calibu/cam/CameraRig.h>
-#include <common_front_end/Feature.h>
+#include <feature_utils/Feature.h>
 #include <utils/MathTypes.h>
 
 

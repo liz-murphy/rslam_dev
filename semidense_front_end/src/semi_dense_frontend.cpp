@@ -174,7 +174,7 @@ bool SemiDenseFrontEnd::Init(const calibu::CameraRigT<Scalar> &rig,
     }
   };
 
-  ba_thread_ = std::thread(&SemiDenseFrontEnd::AsyncBaFunc,this);
+  ba_thread_ = std::thread(&FrontEnd::AsyncBaFunc,this);
 
   FrontEnd::system_status_.is_initialized = true;
   return true;
@@ -419,7 +419,8 @@ bool SemiDenseFrontEnd::Iterate(const std::shared_ptr<pb::ImageArray> &frames,
   if (is_keyframe_) {
     Tic(sd::timer::kBA);
     if (CommonFrontEndConfig::getConfig()->doBundleAdjustment()) {
-      DoSynchronousBundleAdjustment();
+      //DoSynchronousBundleAdjustment();
+      IterateBa();
     }
     Toc(sd::timer::kBA);
 
@@ -464,51 +465,11 @@ void SemiDenseFrontEnd::UpdateStats() {
       static_cast<double>(FrontEnd::system_status_.num_new_landmarks);
 }
 
+/*
 bool SemiDenseFrontEnd::IterateBa() {
   DoSynchronousBundleAdjustment();
   return true;
-}
-
-void SemiDenseFrontEnd::AsyncBaFunc() {
-  LOG(INFO) << "Starting async ba thread.";
-  async_ba_.Init(map_);
-
-  std::chrono::seconds wait_time(1);
-  std::mutex async_mutex;
-  std::unique_lock<std::mutex> lock(async_mutex);
-  while (!is_quitting_) {
-    if (!CommonFrontEndConfig::getConfig()->doAsyncBundleAdjustment()) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-      continue;
-    } else if (aac_cond_.wait_for(lock, wait_time) == std::cv_status::timeout) {
-      continue;
-    }
-
-    rslam::optimization::AdaptiveOptions options(CommonFrontEndConfig::getConfig()->doAdaptiveWindow(),
-                                     true,
-                                     CommonFrontEndConfig::getConfig()->getBAWindowSize(), 100);
-    // We don't want to include the current frame in our optimizations
-    options.ignore_frame = current_frame_->id();
-    async_ba_.RefineMap(CommonFrontEndConfig::getConfig()->getAsyncBAWindowSize(),
-                           prev_frame_->id(),
-                           CommonFrontEndConfig::getConfig()->getBANumIterAdaptive(),
-                           has_imu_,
-                           old_rig_,
-                           options,
-                           false,
-                           EdgeAttrib_AsyncIsBeingOptimized,
-
-                           /** @todo Use backend_callbacks_ here.
-                            *
-                            * First the tracker interactions must be
-                            * made thread-safe so that updating
-                            * current tracks can be done
-                            * asynchronously.
-                            */
-                           {});
-  }
-  LOG(INFO) << "Quitting ba thread.";
-}
+}*/
 
 void SemiDenseFrontEnd::system_status(common::SystemStatus *ss) const {
   CHECK_NOTNULL(ss);
@@ -538,10 +499,6 @@ void SemiDenseFrontEnd::GetCurrentKeypointsForDisplay(
     }
 }
 
-void SemiDenseFrontEnd::set_server_proxy(
-    const std::shared_ptr<SlamServerProxy> &proxy) {
-}
-
 SlamFramePtr SemiDenseFrontEnd::current_frame() const {
   return current_frame_;
 }
@@ -549,7 +506,7 @@ SlamFramePtr SemiDenseFrontEnd::current_frame() const {
 bool SemiDenseFrontEnd::IsInitialized() const {
   return FrontEnd::system_status_.is_initialized;
 }
-
+/*
 void SemiDenseFrontEnd::DoSynchronousBundleAdjustment() {
   ba::debug_level_threshold = google::log_severity_global;
   ba::debug_level = google::INFO + 1;
@@ -564,7 +521,7 @@ void SemiDenseFrontEnd::DoSynchronousBundleAdjustment() {
                      false,
                      EdgeAttrib_IsBeingOptimized,
                      front_end_opt_callbacks_);
-}
+}*/
 
 void SemiDenseFrontEnd::RegisterPoseMeasurement(
     const rslam::map::PoseMeasurement& pose) {

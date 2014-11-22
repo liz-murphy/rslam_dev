@@ -16,9 +16,9 @@
 #include <sparse_tracking/TrackingConfig.h>
 #include <common_front_end/CommonFrontEndConfig.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
-#include <common_front_end/MatchHelpers.h>
-#include <common_front_end/PatchMatch.h>
-#include <common_front_end/Triangulation.h>
+#include <feature_utils/MatchHelpers.h>
+#include <feature_utils/PatchMatch.h>
+#include <feature_utils/Triangulation.h>
 
 #include <utils/Utils.h>
 #include <utils/MathTypes.h>

@@ -81,7 +81,6 @@ class Optimization{
   bool RefineMap(unsigned int depth,
                  const ReferenceFrameId& root_id,
                  unsigned int max_iter,
-                 bool bUseImu,
                  calibu::CameraRigT<Scalar> &rig,
                  const AdaptiveOptions& adaptive_options,
                  bool do_landmark_init,

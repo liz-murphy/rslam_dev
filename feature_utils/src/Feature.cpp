@@ -1,4 +1,4 @@
-#include <common_front_end/Feature.h>
+#include <feature_utils/Feature.h>
 
 Feature& Feature::operator=(const Feature &rhs) {
     // check for self assignment

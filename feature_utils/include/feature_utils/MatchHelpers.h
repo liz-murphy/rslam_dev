@@ -3,11 +3,12 @@
 
 #pragma once
 
-#include <common_front_end/PatchMatch.h>
+#include <feature_utils/PatchMatch.h>
 #include <common_front_end/CommonFrontEndParamsConfig.h>
 #include <common_front_end/CommonFrontEndConfig.h>
-#include <common_front_end/FeatureMatch.h>
-#include <slam_map/PatchHomography.h>
+#include <feature_utils/FeatureMatch.h>
+#include <feature_utils/PatchHomography.h>
+#include <feature_utils/FeatureParams.h>
 #include <utils/PrintMessage.h>
 #include <utils/MathTypes.h>
 #include <utils/Utils.h>
@@ -18,7 +19,7 @@
 
 //#define DEBUG_HELPERS 0
 
-template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+template<unsigned int PatchSize=FeatureParams::CANONICAL_PATCH_SIZE>
 struct FeatureMatches
 {
   std::vector<Feature*>                    vFeatures;
@@ -135,7 +136,7 @@ inline Feature* FindBestMatchInRegion(
     float                            &match_score,
     MatchFlag                        &match_flag
     ) {
-  if(CommonFrontEndConfig::getConfig()->getFeatureDescriptor() == common_front_end::CommonFrontEndParams_PATCH ) {
+  if(FeatureParams::getParams()->getFeatureDescriptor() == feature_utils::Feature_PATCH) {
     return FindBestPatchInRegion<PatchSize>( H,
         pPatch,
         search_width,
@@ -173,7 +174,7 @@ inline Feature* FindBestMatchInRow(
     MatchFlag& eFlag                //< Output: Match flag [GOOD, BAD or NO match]
     )
 {
-  if(CommonFrontEndConfig::getConfig()->getFeatureDetector() == common_front_end::CommonFrontEndParams_PATCH ){
+  if(FeatureParams::getParams()->getFeatureDetector() == feature_utils::Feature_PATCH ){
     return FindBestPatchInRow( x, y, pPatch, patchsize,
         nSearchWidth, SearchImage, fMatchScore, eFlag );
   }
@@ -185,7 +186,7 @@ inline Feature* FindBestMatchInRow(
 ///////////////////////////////////////////////////////////////////////////////
 /// Given rHRef defining a patch warp into an nxn patch in the ref image,
 /// compute homography H for loading an nxn patch in level 0 of search image.
-  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=FeatureParams::CANONICAL_PATCH_SIZE>
 inline bool GetHomographyIfOnEpipolarLine(
     const PatchHomography<PatchSize>         &rHRef,
     const Eigen::Vector3t                    &rRefRay_sp,
@@ -229,7 +230,7 @@ inline bool GetHomographyIfOnEpipolarLine(
 /// \param[out] match_homography,  homography for best match
 /// \return pointer to matched feature (nullptr is no match is found)
 ///
-  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=FeatureParams::CANONICAL_PATCH_SIZE>
 inline Feature* FindBestPatchOnEpipolarLine(
     const Feature                             &ref_feature,
     const Eigen::Vector3t                     &ref_ray_sp,
@@ -342,10 +343,10 @@ inline Feature* FindBestPatchOnEpipolarLine(
   if( best_score == FLT_MAX ){
     match_flag = NoFeaturesToMatch;
   }
-  else if( best_score > CommonFrontEndConfig::getConfig()->getMatchErrorThreshold() ) {
+  else if( best_score > FeatureParams::getParams()->getMatchErrorThreshold() ) {
     match_flag  = NoMatchInRegion;
   }
-  else if( best_score*CommonFrontEndConfig::getConfig()->getMatchErrorFactor() >= second_best ) {
+  else if( best_score*FeatureParams::getParams()->getMatchErrorFactor() >= second_best ) {
     match_flag  = AmbiguousMatch;
   }
   else{
@@ -358,7 +359,7 @@ inline Feature* FindBestPatchOnEpipolarLine(
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
-template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+template<unsigned int PatchSize=FeatureParams::CANONICAL_PATCH_SIZE>
 ///
 /// \brief FindEpipolarMatch, Look for best match to rRefFeature in
 /// search_image, with warping, and epi-polar geometry check -- e.g, the
@@ -544,7 +545,7 @@ inline Feature* FindEpipolarMatch(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=FeatureParams::CANONICAL_PATCH_SIZE>
 bool Create3DPatchHomography(
     const calibu::CameraModelGeneric<Scalar> &cam,
     const Sophus::SE3Group<Scalar>           &Tvs,
@@ -614,10 +615,10 @@ bool Create3DPatchHomography(
 
 
 #ifndef IGNORE_PATCH_WARPING
-  projected_h = PatchHomography<CANONICAL_PATCH_SIZE>( tl, tr, br, bl );
+  projected_h = PatchHomography<FeatureParams::CANONICAL_PATCH_SIZE>( tl, tr, br, bl );
 #else
-  projected_h = PatchHomography<CANONICAL_PATCH_SIZE>(pt[0], pt[1],
-      PatchHomography<CANONICAL_PATCH_SIZE>::GetQuadrilateralScale(
+  projected_h = PatchHomography<FeatureParams::CANONICAL_PATCH_SIZE>(pt[0], pt[1],
+      PatchHomography<FeatureParams::CANONICAL_PATCH_SIZE>::GetQuadrilateralScale(
         tl,tr,bl,br));
 #endif
 
@@ -628,7 +629,7 @@ bool Create3DPatchHomography(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Search over all images besides uCamera and try to find a match.
-  template<unsigned int PatchSize=CANONICAL_PATCH_SIZE>
+  template<unsigned int PatchSize=FeatureParams::CANONICAL_PATCH_SIZE>
 inline bool GetMultiViewMatchesIfPossible(
     const calibu::CameraRigT<Scalar> &rig,               //< Input: Mullti-view camera rig
     const unsigned                   ref_cam_id,         //< Input: Id of camera feature is in
@@ -651,7 +652,7 @@ inline bool GetMultiViewMatchesIfPossible(
   // rMatches.vPatches.reserve(uNumCam);
   FeatureImage& reference_image = *images[ref_cam_id];
 
-  const unsigned int patch_size = CANONICAL_PATCH_SIZE;
+  const unsigned int patch_size = FeatureParams::CANONICAL_PATCH_SIZE;
   std::vector<unsigned char> patch(patch_size*patch_size);
   unsigned char* pPatch = &patch[0];
   float match_score;
@@ -663,8 +664,8 @@ inline bool GetMultiViewMatchesIfPossible(
   // feature->scale here is (1/levelFactor)^pyramidLevel (so for levelFactor=0.5, scale will be
   // 1, 2, 4 for pyramid level 0, 1, 2. dHomographyWidth is then the width of the homography in pixels
   // as measured on the 0th level of the pyramid
-  Scalar homography_width = feature->scale*(CANONICAL_PATCH_SIZE-1);
-  PatchHomography<CANONICAL_PATCH_SIZE> reference_homography;
+  Scalar homography_width = feature->scale*(FeatureParams::CANONICAL_PATCH_SIZE-1);
+  PatchHomography<FeatureParams::CANONICAL_PATCH_SIZE> reference_homography;
   const Eigen::Vector2t pt(feature->x, feature->y);
 
   // this function may return false if the homography is unsuitable
@@ -677,9 +678,9 @@ inline bool GetMultiViewMatchesIfPossible(
 
   reference_image.LoadPatch(reference_homography, pPatch);
 
-  //PatchHomography<Scalar,CANONICAL_PATCH_SIZE> HRef( pFeature->x, pFeature->y, pFeature->scale );
+  //PatchHomography<Scalar,FeatureParams::CANONICAL_PATCH_SIZE> HRef( pFeature->x, pFeature->y, pFeature->scale );
 
-  PatchHomography<CANONICAL_PATCH_SIZE> match_homography;
+  PatchHomography<FeatureParams::CANONICAL_PATCH_SIZE> match_homography;
 
   for (size_t search_cam_id = 0; search_cam_id < rig.cameras.size(); ++search_cam_id) {
     if( search_cam_id == ref_cam_id ){

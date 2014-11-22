@@ -118,8 +118,8 @@ SET(SOURCES
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES calibu
-  CATKIN_DEPENDS roscpp
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp sophus cmake_modules
+  DEPENDS system_lib Eigen
 )
 
 ###########

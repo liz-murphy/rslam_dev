@@ -5,9 +5,9 @@
 #define _FEATURE_MATCH_H_
 
 // TODO: write SSE version
-#include <common_front_end/FeatureImage.h>
+#include <feature_utils/FeatureImage.h>
+#include <feature_utils/MatchFlags.h>
 #include <vector>
-#include <slam_map/Measurement.h>
 
 ///
 /// \brief FindBestFeatureInRow

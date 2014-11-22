@@ -1,5 +1,4 @@
-
-#include <common_front_end/DenseAlignment.h>
+#include <feature_utils/DenseAlignment.h>
 
 // derivative of transfer function (warping function) wrt to rotation
 Eigen::Matrix2x3t dTransfer_dRba(
@@ -16,15 +15,4 @@ Eigen::Matrix2x3t dTransfer_dRba(
         dP.topLeftCorner<2,3>() * Sophus::SO3t::generator(ii) * ray;
   }
   return dWdR;
-
-  //    Matrix2x6t dWdR;
-  //    const Vector4t ray4;
-  //    ray4 << ray[0], ray[1], ray[2], 1;
-  //    const Matrix2x4t dP = rCam.dTransfer3D_dP( Tba, ray, 1.0/depth(pa) );
-  //    for( unsigned int ii=0; ii<6; ++ii ){
-  //        dWdR.template block<2,1>(0,ii) = dP.template topLeftCorner<2,3>() *
-  //        Sophus::SE3Group<Scalar>::generator(ii)*ray4;
-  //    }
-  //    return dWdR;
-
 }

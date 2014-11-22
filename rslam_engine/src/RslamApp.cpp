@@ -10,6 +10,7 @@ ServerConfig *ServerConfig::m_configInstance = 0;
 CommonFrontEndConfig *CommonFrontEndConfig::m_configInstance = 0;
 OptimizationConfig *OptimizationConfig::s_instance = 0;
 TrackingConfig *TrackingConfig::m_configInstance = 0;
+FeatureParams *FeatureParams::m_configInstance = 0;
 
 RslamApp::RslamApp(std::string &image_topic)
 {

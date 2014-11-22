@@ -6,7 +6,7 @@
 #include <pb_msgs/rslam.pb.h>
 #include <algorithm>
 #include <Eigen/Core>
-#include <slam_map/PatchHomography.h>
+#include <feature_utils/PatchHomography.h>
 #include <pb_msgs/Matrix.h>
 #include <pb_msgs/Pose.h>
 #include <calibu/cam/CameraRig.h>

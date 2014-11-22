@@ -15,8 +15,8 @@
 #include <sparse_tracking/TrackingConfig.h>
 
 #include <common_front_end/CommonFrontEndConfig.h>
-#include <common_front_end/EssentialMatrix.h>
-#include <common_front_end/PatchMatch.h>
+#include <feature_utils/EssentialMatrix.h>
+#include <feature_utils/PatchMatch.h>
 
 #include <slam_map/MapVisitor/RelativePoseMapVisitor.h>
 #include <slam_map/ProtobufIO.h>
@@ -38,6 +38,8 @@
 #include <dynamic_reconfigure/DoubleParameter.h>
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
+
+#include <feature_utils/FeatureParams.h>
 
 namespace rslam {
 namespace sparse {
@@ -85,18 +87,6 @@ SparseFrontEnd::~SparseFrontEnd() {
   Clear();
 }
 
-void SparseFrontEnd::Tic(const std::string &name) {
-  if (timer_) {
-    timer_->Tic(name);
-  }
-}
-
-void SparseFrontEnd::Toc(const std::string &name) {
-  if (timer_) {
-    timer_->Toc(name);
-  }
-}
-
 void SparseFrontEnd::SetupFeatureHandlers() {
   // We need to update the dynamic reconfigure server
   dynamic_reconfigure::ReconfigureRequest srv_req;
@@ -106,7 +96,7 @@ void SparseFrontEnd::SetupFeatureHandlers() {
   dynamic_reconfigure::IntParameter int_param;
   dynamic_reconfigure::Config conf;
 
-  if (CommonFrontEndConfig::getConfig()->getFeatureDetector() == common_front_end::CommonFrontEndParams_DOG) 
+  if (FeatureParams::getParams()->getFeatureDetector() == feature_utils::Feature_DOG) 
   {
     bool_param.name = "do_subpixel_refinement";
     bool_param.value = false;
@@ -236,15 +226,15 @@ bool SparseFrontEnd::Init(
 
   for (size_t ii = 0; ii < old_rig_.cameras.size(); ii++) {
     current_feature_images_[ii] = std::make_shared<FeatureImage>(
-        CommonFrontEndConfig::getConfig()->getPyramidLevels(),
-        CommonFrontEndConfig::getConfig()->getPyramidLevelFactor(),
+        FeatureParams::getParams()->getPyramidLevels(),
+        FeatureParams::getParams()->getPyramidLevelFactor(),
         CommonFrontEndConfig::getConfig()->getNumQuadtreeLevels(),
         CommonFrontEndConfig::getConfig()->getNumFeaturesToTrack(),
         CommonFrontEndConfig::getConfig()->getMaxFeaturesInCell(),
         CommonFrontEndConfig::getConfig()->useFeatureBuckets());
     keyframe_images_[ii] = std::make_shared<FeatureImage>(
-        CommonFrontEndConfig::getConfig()->getPyramidLevels(),
-        CommonFrontEndConfig::getConfig()->getPyramidLevelFactor(),
+        FeatureParams::getParams()->getPyramidLevels(),
+        FeatureParams::getParams()->getPyramidLevelFactor(),
         CommonFrontEndConfig::getConfig()->getNumQuadtreeLevels(),
         CommonFrontEndConfig::getConfig()->getNumFeaturesToTrack(),
         CommonFrontEndConfig::getConfig()->getMaxFeaturesInCell(),
@@ -303,7 +293,7 @@ bool SparseFrontEnd::Init(
   is_relocalizer_busy_ = false;
   relocalizer_thread_ = std::thread(std::bind(&SparseFrontEnd::RelocalizerFunc, this));
 
-  ba_thread_ = std::thread(std::bind(&SparseFrontEnd::AsyncBaFunc,this));
+  ba_thread_ = std::thread(std::bind(&FrontEnd::AsyncBaFunc,this));
 
   return true;
 }
@@ -336,7 +326,7 @@ bool SparseFrontEnd::SwitchToKeyframe(const ReferenceFrameId& closest_keyframe_i
     return false;
   }
 }
-
+/*
 bool SparseFrontEnd::IterateBa() {
   // this modifies m_Rig if calibration is active
   // also modifies the map
@@ -382,7 +372,7 @@ bool SparseFrontEnd::IterateBa() {
   }
   return true;
 }
-
+*/
 void SparseFrontEnd::ProcessKeyframe(
     const cv::Mat& query_frame,
     std::vector<MultiViewMeasurement>* new_measurements,
@@ -1120,43 +1110,6 @@ bool SparseFrontEnd::IsKeyframe(
   return add_keyframe;
 }
 
-void SparseFrontEnd::AsyncBaFunc() {
-  ROS_INFO("Starting async ba thread.");
-  async_ba_.Init(map_);
-
-  std::chrono::seconds wait_time(1);
-  std::mutex async_mutex;
-  std::unique_lock<std::mutex> lock(async_mutex);
-  while (!is_quitting_ba_) {
-    is_async_busy_ = false;
-    if (!do_async_bundle_adjustment_) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-      continue;
-    } else if (async_ba_cond_.wait_for(lock, wait_time) ==
-               std::cv_status::timeout) {
-      continue;
-    }
-
-    is_async_busy_ = true;
-    optimization::AdaptiveOptions options(do_adaptive_window_,
-                                     true,
-                                     ba_window_size_, 100);
-    // We don't want to include the current frame in our optimizations
-    options.ignore_frame = current_frame_->id();
-    async_ba_.RefineMap(async_ba_window_size_,
-                        async_frame_id_,
-                        ba_num_iter_adaptive_,
-                        has_imu_,
-                        old_rig_,
-                        options,
-                        false,
-                        EdgeAttrib_AsyncIsBeingOptimized,
-                        {});
-  }
-  is_async_busy_ = false;
-  ROS_INFO("Quitting ba thread.");
-}
-
 void SparseFrontEnd::RelocalizerFunc() {
   const std::chrono::milliseconds to_wait(30);
   std::unique_lock<std::mutex> lock(relocalizer_mutex_);
@@ -1375,7 +1328,7 @@ void SparseFrontEnd::AddPlace(const ReferenceFrameId& id, const cv::Mat& img) {
   // Save keyframe thumbnail in our place matcher object
   //=========================================================
   server_interface_.AsyncQueryServerWithPlace(
-      SparseFrontEnd::map_, SparseFrontEnd::place_matcher_, id, img);
+      map_, place_matcher_, id, img);
 #if _BUILD_OVV
   // Iterate over current images to extract the descriptors which are
   // stored in Compressed Row Storage
@@ -1403,8 +1356,8 @@ void SparseFrontEnd::Load(const std::string& /*filename*/) {
 
 void SparseFrontEnd::RegisterPoseMeasurement(
     const map::PoseMeasurement& pose) {
-  if (FrontEnd::current_frame_) {
-    FrontEnd::current_frame_->AddPoseMeasurement(pose);
+  if (current_frame_) {
+    current_frame_->AddPoseMeasurement(pose);
   }
 }
 

@@ -5,13 +5,9 @@
 #define _PATCH_MATCH_H_
 
 // TODO: write SSE version
-#include <common_front_end/FeatureImage.h>
+#include <feature_utils/FeatureImage.h>
 #include <vector>
-#include <slam_map/Measurement.h>
-
-//typedef std::pair<uint8_t,uint8_t>  ImagePoint;
-//typedef std::pair<uint8_t,uint8_t>  RegionSize;
-
+#include <feature_utils/MatchFlags.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 Feature* FindBestPatchInRow(

@@ -46,7 +46,6 @@
   <build_depend>slam_map</build_depend>
   <build_depend>miniglog</build_depend>
   <build_depend>utils</build_depend>
-  <build_depend>common_front_end</build_depend>
   <build_depend>local_map</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>
   <run_depend>roscpp</run_depend>
@@ -55,7 +54,6 @@
   <run_depend>slam_map</run_depend>
   <run_depend>miniglog</run_depend>
   <run_depend>utils</run_depend>
-  <run_depend>common_front_end</run_depend>
   <run_depend>local_map</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
 

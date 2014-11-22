@@ -14,8 +14,8 @@
 
 #include <ba/InterpolationBuffer.h>
 #include <optimization/optimization.h>
-#include <common_front_end/DenseAlignment.h>
-#include <common_front_end/FeatureImage.h>
+#include <feature_utils/DenseAlignment.h>
+#include <feature_utils/FeatureImage.h>
 #include <pb_msgs/ImageArray.h>
 #include <pb_msgs/Image.h>
 #include <place_matching/PlaceMatcher.h>
@@ -88,7 +88,7 @@ class SparseFrontEnd : public FrontEnd{
   /// \brief Iterates the bundle adjuster
   /// \return
   ///
-  bool IterateBa();
+  //bool IterateBa();
 
   ///
   /// \brief Returns the current keypoints for view in the display
@@ -166,12 +166,12 @@ protected:
   /// \brief Pushes the start time of a segment given the name
   /// \param[in] name the name of the element to time
   ///
-  inline void Tic(const std::string &name = "");
+  //inline void Tic(const std::string &name = "");
   ///
   /// \brief Pops the start time and calculates duration of a segment
   /// \param[in] the name of the segment
   ///
-  inline void Toc(const std::string &name = "");
+  //inline void Toc(const std::string &name = "");
 
   void ProcessKeyframe(
       const cv::Mat& query_frame,
@@ -254,7 +254,7 @@ private:
   /// \brief Bundle adjustment thread
   /// \return
   ///
-  void AsyncBaFunc();
+//  void AsyncBaFunc();
 
   ///
   /// \brief
@@ -318,7 +318,7 @@ private:
   cv::Mat                         query_vector_;
   mutable std::condition_variable relocalizer_cond_;
   mutable std::mutex              relocalizer_mutex_;
-  mutable std::condition_variable async_ba_cond_;
+  //mutable std::condition_variable async_ba_cond_;
 
   common::TrackingStats           tracking_stats_;
 

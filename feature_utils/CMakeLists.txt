@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(common_front_end)
+project(feature_utils)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -mavx ${CMAKE_CXX_FLAGS}")
-
-#list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules/")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,27 +10,15 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   calibu
   utils
-  miniglog
-  common
-  dynamic_reconfigure
-  cmake_modules
   pb_msgs
-  slam_map
-  place_matching
-  optimization
+  dynamic_reconfigure
 )
-
-find_package(Eigen REQUIRED)
-find_package(OpenCV REQUIRED)
-
-message("\n\n common_front_end opencv: ${OpenCV_LIBRARIES} \n\n")
 
 generate_dynamic_reconfigure_options(
-  cfg/CommonFrontEndParams.cfg
-)
-
-set(SRCS 
-  src/front_end.cpp
+  cfg/FREAK.cfg
+  cfg/SURF.cfg
+  cfg/FAST.cfg
+  cfg/Feature.cfg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,8 +92,11 @@ set(SRCS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES common_front_end
-  CATKIN_DEPENDS roscpp common pb_msgs 
+  LIBRARIES feature_utils
+  CATKIN_DEPENDS roscpp
+  calibu
+  utils
+  pb_msgs
 #  DEPENDS system_lib
 )
 
@@ -119,28 +108,32 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/include
-  ${Eigen_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 )
 
-message("Common Front End include directories: ${catkin_INCLUDE_DIRS}")
+
 ## Declare a cpp library
-add_library(common_front_end
-  ${SRCS}
+add_library(feature_utils
+  src/DenseAlignment.cpp
+  src/Feature.cpp
+  src/FeatureHandler.cpp
+  src/FeatureImage.cpp
+  src/FeatureMatch.cpp
+  src/PatchMatch.cpp
+  src/QuadTree.cpp
+  src/Triangulation.cpp
 )
-
-target_link_libraries(common_front_end ${OpenCV_LIBRARIES})
 
 ## Declare a cpp executable
-# add_executable(common_front_end_node src/common_front_end_node.cpp)
+# add_executable(feature_utils_node src/feature_utils_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(common_front_end ${PROJECT_NAME}_gencfg)
+add_dependencies(feature_utils ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(common_front_end_node
+# target_link_libraries(feature_utils_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -159,18 +152,18 @@ add_dependencies(common_front_end ${PROJECT_NAME}_gencfg)
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS common_front_end 
-   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
- )
+# install(TARGETS feature_utils feature_utils_node
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
- install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".svn" EXCLUDE
- )
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -184,7 +177,7 @@ install(TARGETS common_front_end
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_common_front_end.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_feature_utils.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

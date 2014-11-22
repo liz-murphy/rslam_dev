@@ -1,5 +1,5 @@
 
-#include <common_front_end/Triangulation.h>
+#include <feature_utils/Triangulation.h>
 #include <utils/PrintMessage.h>
 
 

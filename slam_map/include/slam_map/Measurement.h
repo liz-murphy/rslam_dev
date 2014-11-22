@@ -8,10 +8,10 @@
 
 #include <string>
 #include <vector>
-#include <slam_map/PatchHomography.h>
+#include <feature_utils/PatchHomography.h>
 #include <Eigen/Core>
 #include <miniglog/logging.h>
-#include <slam_map/MatchFlags.h>
+#include <feature_utils/MatchFlags.h>
 #include <slam_map/MeasurementId.h>
 #include <common/config.h>
 #include <common/scalar.h>

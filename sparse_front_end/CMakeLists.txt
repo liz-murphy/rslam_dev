@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   slam_server
   optimization 
   dynamic_reconfigure
+  feature_utils
 )
 
 ## System dependencies are found with CMake's conventions

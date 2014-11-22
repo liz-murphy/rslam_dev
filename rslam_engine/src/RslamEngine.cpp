@@ -34,8 +34,6 @@ static const std::string frontend_log = "frontend.log";
 
 using namespace rslam;
 RslamEngine::RslamEngine() : images_(pb::ImageArray::Create()),
-  is_using_sim_imu_(false),
-  is_using_sim_data_(false),
   is_mono_tracking_(false),
   is_tracking_2d_(false),
   is_rectified_(false),
@@ -47,6 +45,7 @@ RslamEngine::RslamEngine() : images_(pb::ImageArray::Create()),
   last_used_frame_number_(-1) {
     common_front_end_config_ = CommonFrontEndConfig::getConfig();
     optimization_config_ = OptimizationConfig::getConfig();
+    feature_config_ = FeatureParams::getParams();
   }
 
 RslamEngine::~RslamEngine() {}
@@ -62,12 +61,9 @@ void RslamEngine::ResetVars() {
   place_matcher_.reset();
   map_.reset();
   timer_.reset();
-  server_proxy_.reset();
   backend_.reset();
 
   // Set default config values
-  is_using_sim_imu_  = false;
-  is_using_sim_data_ = false;
   is_mono_tracking_  = false;
   is_tracking_2d_    = false;
   is_rectified_      = false;
@@ -77,36 +73,13 @@ void RslamEngine::ResetVars() {
   active_camera_id_  = -1;
 }
 
-// Init / Reset simulated data
-void RslamEngine::SetupSimulator(const RslamEngineOptions& options) {
-  if (options.simulation) {
-    if (simulator_) {
-      simulator_->Restart();
-    } else {
-      simulator_ = SparseSimData::Instance();
-      simulator_->ReadData(options.simulation_dir + "/points.csv",
-          options.simulation_dir + "/accel.csv",
-          options.simulation_dir + "/gyro.csv");
-      simulator_->ReadGroundTruth(options.simulation_dir + "/poses.csv");
-    }
-    is_using_sim_imu_ = options.simulation_imu;
-    is_using_sim_data_ = true;
-    if (options.simulation_mono) {
-      is_mono_tracking_ = true;
-      active_camera_id_ = 0;
-    } else {
-    }
-  }
-}
-
 // Print app  info
 void RslamEngine::PrintAppInfo() {
   ROS_INFO("RslamEngine - Initial State.");
-  ROS_INFO("Feat detector: %s", CommonFrontEndConfig::getConfig()->getFeatureDetectorStr().c_str());
+  ROS_INFO("Feature detector: %s", FeatureParams::getParams()->getFeatureDetectorStr().c_str());
   ROS_INFO("Work dir: %s", working_directory_.c_str());
   ROS_INFO("Map persistence: %s", persist_map_ ? "true." : "false.");
   ROS_INFO("Using imu: %s", have_imu_ ? "true." : "false.");
-  ROS_INFO("Using sim data: %s", is_using_sim_data_ ? "true." : "false.");
   if (map_) {
     ROS_INFO("Building map %s", map_->id().uuid);
   }
@@ -117,6 +90,7 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   // Cleanup and initialization of config variables
   common_front_end_config_ = CommonFrontEndConfig::getConfig();
   optimization_config_ = OptimizationConfig::getConfig();
+  feature_config_ = FeatureParams::getParams();
   ResetVars();
   // If we are using TRACK_2D, we only need the first camera.
   working_directory_ = options.working_dir;
@@ -137,7 +111,6 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
 
   have_imu_ = options.imu;
   is_continuing_ = options.continue_run;
-  SetupSimulator(options);
 
   // Initialize drivers
   if (!InitResetCameras(options, rig_in)) {
@@ -177,16 +150,16 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
   common_front_end_cb = boost::bind(&CommonFrontEndConfig::configCallback,common_front_end_config_, _1, _2);
   common_frontend_dr_srv_->setCallback(common_front_end_cb);
 
-  FAST_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::FASTConfig>(nh_FAST));
-  FAST_cb = boost::bind(&CommonFrontEndConfig::configFASTCallback, common_front_end_config_, _1, _2);
+  FAST_dr_srv_.reset(new dynamic_reconfigure::Server<feature_utils::FASTConfig>(nh_FAST));
+  FAST_cb = boost::bind(&FeatureParams::configFASTCallback, feature_config_, _1, _2);
   FAST_dr_srv_->setCallback(FAST_cb);
 
-  FREAK_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::FREAKConfig>(nh_FREAK));
-  FREAK_cb = boost::bind(&CommonFrontEndConfig::configFREAKCallback, common_front_end_config_, _1, _2);
+  FREAK_dr_srv_.reset(new dynamic_reconfigure::Server<feature_utils::FREAKConfig>(nh_FREAK));
+  FREAK_cb = boost::bind(&FeatureParams::configFREAKCallback, feature_config_, _1, _2);
   FREAK_dr_srv_->setCallback(FREAK_cb);
 
-  SURF_dr_srv_.reset(new dynamic_reconfigure::Server<common_front_end::SURFConfig>(nh_SURF));
-  SURF_cb = boost::bind(&CommonFrontEndConfig::configSURFCallback, common_front_end_config_, _1, _2);
+  SURF_dr_srv_.reset(new dynamic_reconfigure::Server<feature_utils::SURFConfig>(nh_SURF));
+  SURF_cb = boost::bind(&FeatureParams::configSURFCallback, feature_config_, _1, _2);
   SURF_dr_srv_->setCallback(SURF_cb);
 
   optimization_dr_srv_.reset(new dynamic_reconfigure::Server<::optimization::OptimizationParamsConfig>(nh_optimization));
@@ -210,21 +183,6 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
     sd_frontend_dr_srv_->setCallback(sd_front_end_cb);
   }
 
-  if (options.use_server) {
-    if (options.server_type == "local") {
-      server_proxy_ = std::make_shared<SlamServerProxy>(
-          std::make_shared<SlamServer>(place_matcher_, map_));
-      frontend_->set_server_proxy(server_proxy_);
-    } else if (options.server_type == "node") {
-#ifdef HAVE_NODE
-      server_proxy_ = std::make_shared<SlamServerProxy>(
-          std::make_shared<NodeSlamClient>());
-      frontend_->set_server_proxy(server_proxy_);
-#else  // HAVE_NODE
-      ROS_ERROR("Node SlamServer client is not available!");
-#endif
-    }
-  }
   if (is_continuing_) {
     place_matcher_->Load(places_log);
     frontend_->Load(frontend_log);
@@ -238,47 +196,18 @@ bool RslamEngine::Reset(const RslamEngineOptions& options,
 
 bool RslamEngine::Init(const std::shared_ptr<pb::ImageArray>& images) {
   images_ = images;
-  if (is_using_sim_data_) {
-    LoadSimFrame();
-  }
+  
   LoadCurrentImages();
 
   frontend_->Init(rig_, images_, Timestamp(),
-      have_imu_, map_, place_matcher_, timer_,
-      is_using_sim_data_);
+      have_imu_, map_, place_matcher_, timer_);
+
   first_frame_ = frontend_->current_frame()->id();
 
   backend_->Run();
 
   PrintAppInfo();
   return true;
-}
-
-// Capture data from sensors.
-bool RslamEngine::LoadSimFrame() {
-  bool success = simulator_->Capture();
-  // add imu
-  if (success && simulator_->HasIMU() && is_using_sim_imu_) {
-    Eigen::Vector4tArray accel;
-    Eigen::Vector4tArray gyro;
-    simulator_->GetImuData(accel, gyro);
-    for (size_t ii=0; ii < accel.size(); ++ii) {
-      frontend_->RegisterImuMeasurement(gyro[ii].tail(3),
-          accel[ii].tail(3),
-          accel[ii](0));
-    }
-  }
-
-  images_->Ref().Clear();
-  for (unsigned int ii = 0; ii < rig_.cameras.size() ; ++ii) {
-    pb::ImageMsg* img = images_->Ref().add_image();
-    img->set_width(640);
-    img->set_height(480);
-    img->set_format(pb::PB_LUMINANCE);
-    img->mutable_data()->resize(640*480);
-    std::fill(img->mutable_data()->begin(), img->mutable_data()->end(), 0);
-  }
-  return success;
 }
 
 // Naive statistic functions. why is this here?
@@ -297,65 +226,6 @@ Scalar stdev(const std::vector<Scalar>& values) {
     sum += (s - mu) * (s - mu);
   }
   return std::sqrt(sum / values.size());
-}
-
-// Compute statistics at the end of a run if we have
-// ground truth.
-void RslamEngine::Finish() {
-  if (!is_using_sim_data_ || sim_frames_.empty()) return;
-
-  // Find frame matching frame 0
-  SlamFramePtr frame0 = map_->GetFramePtr(sim_frames_.begin()->second);
-  if (!frame0) return;
-
-  // Lift map relative to frame 0
-  LocalMap lifted;
-  rslam::sparse::LiftAllPoses(map_.get(), frame0->id(), lifted);
-
-  Sophus::SE3t true_pose;
-  std::vector<Scalar> angular_errors = {0};
-  std::vector<Scalar> translation_errors = {0};
-  std::vector<Scalar> log_errors = {0};
-  size_t num_frames = 0;
-
-  // For every frame in the simulator data
-  for (const std::pair<unsigned int, ReferenceFrameId>& sim_id : sim_frames_) {
-    // Find matching frame in map
-    // Skip if frame doesn't exist
-    if (!lifted.poses.count(sim_id.second)) continue;
-
-    const PoseContainerT& est_pose = lifted.poses[sim_id.second];
-    if (!simulator_->GetPose(sim_id.first, true_pose)) continue;
-
-    Sophus::SE3t error = est_pose.t_wp.inverse() * true_pose;
-
-    angular_errors.push_back(Sophus::SO3t::log(error.rotationMatrix()).norm());
-    translation_errors.push_back(error.translation().norm());
-    log_errors.push_back(error.log().norm());
-
-    ++num_frames;
-  }
-
-  // Write errors to results file as a YAML style properties file
-  std::map<std::string, Scalar> data = {
-    {"mean_angular_error", mean(angular_errors)},
-    {"mean_translation_error", mean(translation_errors)},
-    {"mean_log_error", mean(log_errors)},
-    {"stdev_angular_error", stdev(angular_errors)},
-    {"stdev_translation_error", stdev(translation_errors)},
-    {"stdev_log_error", stdev(log_errors)},
-  };
-
-  std::ofstream fout(error_results_file_ + ".csv");
-  std::string last_column = data.rbegin()->first;
-  for (const auto& pair : data) {
-    fout << pair.first << (pair.first != last_column ? "," : "");
-  }
-  fout << std::endl;
-
-  for (const auto& pair : data) {
-    fout << pair.second << (pair.first != last_column ? "," : "");
-  }
 }
 
 class SavePoseMapVisitor : public TransformMapVisitor {
@@ -401,11 +271,7 @@ void RslamEngine::Save() {
 
 // Get data timestamp.
 double RslamEngine::Timestamp() {
-  if(is_using_sim_data_){
-    return simulator_->Timestamp();
-  }else{
     return images_->Timestamp();
-  }
 }
 
 void RslamEngine::LoadCurrentImages() {
@@ -482,19 +348,10 @@ void RslamEngine::Iterate(const std::shared_ptr<pb::ImageArray>& images) {
     //common_front_end_config_->getConfig()->resetDone();
   }
 
-  bool should_process = true;
-  if (is_using_sim_data_) {
-    should_process = LoadSimFrame();
-  } else {
-    should_process = (frame_number_ > last_used_frame_number_ + g_skip_nframes);
-  }
+  bool should_process = (frame_number_ > last_used_frame_number_ + g_skip_nframes);
 
   if (should_process) {
     LoadCurrentImages();
-    if (is_using_sim_data_) {
-      sim_frames_.insert(
-          {simulator_->Frame(), frontend_->current_frame()->id()});
-    }
 
     frontend_->Iterate(images_, Timestamp());
 
@@ -508,9 +365,6 @@ bool RslamEngine::InitResetCameras(const RslamEngineOptions& options,
     const calibu::CameraRigT<Scalar>& rig_in) {
   CHECK(!rig_in.cameras.empty());
   // Initialize camera
-  if (is_using_sim_data_ && simulator_->HasIMU() && is_using_sim_imu_) {
-    have_imu_ = true;
-  }
 
   // @todo Add rectification handling code here
   calibu::CameraRigT<Scalar> crig = calibu::ToCoordinateConvention<Scalar>(
